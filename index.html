@@ -1040,12 +1040,12 @@
   </div>
   <div class="resource-grid" style="grid-template-columns: repeat(5, 1fr);">
     <div class="resource-card reveal delay-1">
-      <div class="resource-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+      <div class="resource-icon" onclick="downloadFile('arsrc-constitution.pdf')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
       <h5>Constitution</h5>
       <span>PDF · Full document</span>
     </div>
     <div class="resource-card reveal delay-2">
-      <div class="resource-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+      <div class="resource-icon" onclick="downloadFile('writers-debaters-bylaws.pdf')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
       <h5>Writers &amp; Debaters By-Laws</h5>
       <span>PDF · WDS Society</span>
     </div>
@@ -1055,7 +1055,7 @@
       <span>PDF · Prefectorial Board</span>
     </div>
     <div class="resource-card reveal delay-1">
-      <div class="resource-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+      <div class="resource-icon" onclick="downloadFile('minutes-template.docx')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
       <h5>Minutes Template</h5>
       <span>DOCX · [Size]</span>
     </div>
@@ -1254,14 +1254,7 @@
   document.getElementById('toTop').addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
-function downloadConstitution() {
-    const link = document.createElement("a");
-    link.href = "arsrc-constitution.pdf"; // Change to your PDF filename
-    link.download = "arsrc-constitution.pdf";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
+
 
 function downloadFile(fileName) {
     const link = document.createElement("a");
