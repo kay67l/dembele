@@ -185,6 +185,7 @@
   .stat-num { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 900; color: var(--blue); }
   .stat-num.red { color: var(--red); }
   .stat-label { font-size: 12.5px; color: var(--gray); font-weight: 600; margin-top: 6px; text-transform: uppercase; letter-spacing: .5px; }
+  .stat-labelling { font-size: 16px; color: var(--gray); font-weight: 600; margin-top: 6px; letter-spacing: .5px; }
   @media (max-width: 700px) { .stats { grid-template-columns: repeat(2, 1fr); } .stat-item { border-bottom: 1px solid #edf1fa; } }
 
   /* ===== SECTION GENERIC ===== */
@@ -502,7 +503,7 @@
 <div class="stats">
   <div class="stat-item"><div class="stat-num" data-count="146">0</div><div class="stat-label">Member Schools</div></div>
   <div class="stat-item"><div class="stat-num red" data-count="4">0</div><div class="stat-label">Zones</div></div>
-  <div class="stat-item"><time class="stat-num" datetime='1997'>1997</time><div class="stat-label">Established</div></div>
+  <div class="stat-item"><time class="stat-num" data-count='1997' datetime='1997'>1997</time><div class="stat-label">Established</div></div>
   <div class="stat-item"><div class="stat-num red" data-count="50">0</div><div class="stat-label">Regional Executives</div></div>
 </div>
 
@@ -516,8 +517,9 @@
 
   <div class="about-grid">
     <div class="about-text reveal">
-      <h3>Our Mission &amp; Vision</h3>
-      <p><strong>Aims and Objectives:</strong> 
+      <h3>Aims &amp; Objectives</h3>
+      <div class="stat-labelling">
+      <p> 
         <ul>
           <li>~To constitute a mouthpiece for the interests of second cycle students in the Ashanti Region.</li>
           <li>~To ensure a constant flow of information between students and educational authorities</li>
@@ -530,6 +532,7 @@
       </p>
       <p>Founded in 1997, the ARSRC is the second oldest regional students' council in Ghana and remains one of the most active, having been recognized as Most Outstanding Regional SRC of the Year at the 2019 NUGS Excellence Awards. Today the Council coordinates 146 member schools across four zones.</p>
     </div>
+  </div>
     <div class="about-illustration reveal delay-1">
       <img src = '1.jpg'>
     </div>
@@ -576,8 +579,12 @@
       </div>
       <h4>ARSRC Constitution</h4>
       <p>LG By-Laws, WDS By-Laws &amp; Prefects Manual<br>Amended 2015/2016 · Published 2021</p>
-      <button href="arsrc-constitution.pdf" class="btn btn-solid-red" style="width:100%; justify-content:center;" download>⬇ Download PDF</button>
-    </div>
+    <button class="btn btn-solid-red"
+            style="width:100%; justify-content:center;"
+            onclick="downloadConstitution()">
+        ⬇ Download PDF
+    </button>
+  </div>
 
     <div class="reveal delay-2">
       <div class="accordion-item open">
@@ -645,7 +652,7 @@
     <p class="exec-group-note">The Regional Executive Committee (REC) is the Council's highest standing leadership body — the President, Vice-President, Secretary, and four Trustees, each of whom also heads one of the four zones.</p>
     <div class="exec-grid">
       <div class="exec-card reveal">
-        <div class="exec-photo"><div class="exec-avatar">RC</div></div>
+        <div class="exec-photo"><img src='2.jpg'><div class="exec-avatar">RC</div></div>
         <h4>Mr. Osborne Kwame Opoku</h4>
         <div class="exec-role">Regional Coordinator</div>
         <div class="exec-school">GES Ashanti Regional Office</div>
@@ -1018,7 +1025,7 @@
       <div class="news-body">
         <h4>Inter-School Leadership Summit</h4>
         <p>Coming soon...</p>
-        <a class="news-link" href="#">Read more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        <a class="news-link" href="inter.html">Read more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
       </div>
     </div>
   </div>
@@ -1247,7 +1254,14 @@
   document.getElementById('toTop').addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
-  target="_blank"
+function downloadConstitution() {
+    const link = document.createElement("a");
+    link.href = "ARSRC_Constitution.pdf"; // Change to your PDF filename
+    link.download = "ARSRC_Constitution.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 </script>
 
 </body>
