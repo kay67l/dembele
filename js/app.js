@@ -91,12 +91,7 @@
   // Contact form fake submit
   const form = document.getElementById('contactForm');
   const success = document.getElementById('formSuccess');
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    success.classList.add('show');
-    form.querySelectorAll('input, textarea').forEach(el => el.value = '');
-    setTimeout(() => success.classList.remove('show'), 4000);
-  });
+
 
   // Back to top
   document.getElementById('toTop').addEventListener('click', () => {
