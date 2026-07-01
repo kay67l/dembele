@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARSRC Admin Dashboard</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <h2>ARSRC</h2>
+
+    <ul>
+
+<ul>
+
+    <li onclick="location.href='dashboard.html'">
+        <i class="fa-solid fa-house"></i> Dashboard
+    </li>
+
+    <li onclick="location.href='news.html'">
+        <i class="fa-solid fa-newspaper"></i> News
+    </li>
+
+    <li onclick="location.href='resources.html'">
+        <i class="fa-solid fa-folder"></i> Resources
+    </li>
+
+    <li onclick="location.href='gallery.html'">
+        <i class="fa-solid fa-image"></i> Gallery
+    </li>
+
+    <li onclick="location.href='executives.html'">
+        <i class="fa-solid fa-users"></i> Executives
+    </li>
+
+    <li onclick="location.href='events.html'">
+        <i class="fa-solid fa-calendar"></i> Events
+    </li>
+
+    <li onclick="location.href='settings.html'">
+        <i class="fa-solid fa-gear"></i> Settings
+    </li>
+
+    <li id="logout">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </li>
+
+</ul>
+
+    </ul>
+
+</div>
+
+<div class="main">
+
+    <div class="topbar">
+
+        <h1>Dashboard</h1>
+
+        <div class="admin">
+
+            <i class="fa-solid fa-user-circle"></i>
+
+            Administrator
+
+        </div>
+
+    </div>
+
+    <div class="cards">
+
+        <div class="card">
+            <h2>12</h2>
+            <p>Total Posts</p>
+        </div>
+
+        <div class="card">
+            <h2>5</h2>
+            <p>Resources</p>
+        </div>
+
+        <div class="card">
+            <h2>16</h2>
+            <p>Executives</p>
+        </div>
+
+        <div class="card">
+            <h2>24</h2>
+            <p>Gallery Images</p>
+        </div>
+
+    </div>
+
+<div class="content">
+
+    <h2>Recent Posts</h2>
+
+    <table id="postTable">
+
+        <thead>
+
+            <tr>
+
+                <th>Title</th>
+
+                <th>Category</th>
+
+                <th>Date</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+</div>
+
+<script src="js/dashboard.js"></script>
+
+</body>
+</html>

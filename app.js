@@ -111,3 +111,9 @@ function downloadFile(fileName) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);}
+
+    fetch("http://localhost:5000/api/blogs")
+  .then(res => res.json())
+  .then(data => {
+    console.log(data); // render on homepage
+  });

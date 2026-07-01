@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ARSRC Blogs</title>
+
+<style>
+
+body{
+    font-family:Arial;
+    background:#f4f7fb;
+    margin:40px;
+}
+
+.post{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.category{
+    color:#0A3D91;
+    font-weight:bold;
+}
+
+.date{
+    color:gray;
+    font-size:14px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Latest News</h1>
+
+<div id="posts"></div>
+
+<script>
+
+let posts = JSON.parse(localStorage.getItem("arsrcPosts")) || [];
+
+const container = document.getElementById("posts");
+
+posts.forEach(post=>{
+
+container.innerHTML += `
+
+<div class="post">
+
+<h2>${post.title}</h2>
+
+<p class="category">${post.category}</p>
+
+<p class="date">${post.date}</p>
+
+<p>${post.content}</p>
+
+</div>
+
+`;
+
+});
+
+</script>
+
+</body>
+</html>
