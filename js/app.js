@@ -88,10 +88,7 @@
   const ticker = document.getElementById('ticker');
   ticker.innerHTML += ticker.innerHTML;
 
-  // Contact form fake submit
-  const form = document.getElementById('contactForm');
-  const success = document.getElementById('formSuccess');
-
+  // Contact form is handled by contact-api.js
 
   // Back to top
   document.getElementById('toTop').addEventListener('click', () => {
@@ -107,8 +104,3 @@ function downloadFile(fileName) {
     link.click();
     document.body.removeChild(link);}
 
-    fetch("http://localhost:5000/api/blogs")
-  .then(res => res.json())
-  .then(data => {
-    console.log(data); // render on homepage
-  });

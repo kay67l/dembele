@@ -1,37 +1,30 @@
-// contact-api.js — Phase 1: wires the contact form to /api/contact
-// Add AFTER <script src="app.js"></script> in index.html
-// This overrides whatever submit behaviour app.js sets for contactForm
+// contact-api.js — wires the contact form to /api/contact
+// Loaded AFTER app.js. app.js no longer sets a form handler, so no conflict.
 
 (function () {
-  const form    = document.getElementById('contactForm');
-  const success = document.getElementById('formSuccess');
-  const btn     = form ? form.querySelector('.submit-btn') : null;
-
-  if (!form) return; // safety: do nothing if element isn't on this page
-
-  // Remove any prior submit listeners app.js may have attached
-  const freshForm = form.cloneNode(true);
-  form.parentNode.replaceChild(freshForm, form);
-
-  // Re-grab references after the clone
   const liveForm    = document.getElementById('contactForm');
   const liveSuccess = document.getElementById('formSuccess');
-  const liveBtn     = liveForm.querySelector('.submit-btn');
+  const liveBtn     = liveForm ? liveForm.querySelector('.submit-btn') : null;
+
+  if (!liveForm || !liveBtn) {
+    console.warn('[ARSRC] contactForm or submit button not found on this page.');
+    return;
+  }
 
   liveForm.addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    // ── UI: loading state ──────────────────────────────────────────────────
+    // UI: loading state
     liveBtn.disabled    = true;
     liveBtn.textContent = 'Sending…';
 
+    // Grab fields — adjust selectors here if your HTML uses name="" attributes
+    const inputs  = liveForm.querySelectorAll('input[type="text"]');
     const body = {
-      name:    liveForm.querySelector('input[type="text"]').value,
-      email:   liveForm.querySelector('input[type="email"]').value,
-      subject: liveForm.querySelectorAll('input[type="text"]')[1]
-               ? liveForm.querySelectorAll('input[type="text"]')[1].value
-               : '',
-      message: liveForm.querySelector('textarea').value,
+      name:    inputs[0]?.value || '',
+      email:   liveForm.querySelector('input[type="email"]')?.value || '',
+      subject: inputs[1]?.value || '',
+      message: liveForm.querySelector('textarea')?.value || '',
     };
 
     try {
@@ -43,22 +36,15 @@
       const data = await res.json();
 
       if (!res.ok) {
-        // Server returned a validation or 500 error
         showError(data.error || 'Something went wrong. Please try again.');
         return;
       }
 
-      // ── Success ────────────────────────────────────────────────────────────
+      // Success
       liveForm.reset();
-      if (liveSuccess) {
-        liveSuccess.textContent = '✓ Message sent! The council will respond shortly.';
-        liveSuccess.classList.add('show');
-        // Auto-hide after 6 seconds
-        setTimeout(() => liveSuccess.classList.remove('show'), 6000);
-      }
+      showSuccess('✓ Message sent! The council will respond shortly.');
 
     } catch (err) {
-      // Network failure (offline, DNS, etc.)
       showError('Network error — please check your connection and try again.');
       console.error('[ARSRC] Contact form fetch error:', err);
     } finally {
@@ -66,6 +52,14 @@
       liveBtn.textContent = 'Send Message';
     }
   });
+
+  function showSuccess(msg) {
+    if (!liveSuccess) return;
+    liveSuccess.textContent = msg;
+    liveSuccess.style.cssText = '';  // clear any leftover error styles
+    liveSuccess.classList.add('show');
+    setTimeout(() => liveSuccess.classList.remove('show'), 6000);
+  }
 
   function showError(msg) {
     if (!liveSuccess) return;
