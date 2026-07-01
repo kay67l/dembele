@@ -1,27 +1,9 @@
 {
   "name": "dembele",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kay67l/dembele.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/kay67l/dembele/issues"
-  },
-  "homepage": "https://github.com/kay67l/dembele#readme",
+  "private": true,
   "dependencies": {
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "mongoose": "^9.7.3"
+    "@supabase/supabase-js": "^2.45.0",
+    "resend": "^4.0.0"
   }
 }
