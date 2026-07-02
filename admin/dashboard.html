@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — ARSRC</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: #060c1f;
+      font-family: 'Segoe UI', -apple-system, sans-serif;
+      color: #eef2ff;
+    }
+
+    /* Auth guard overlay — shown while verifying, hidden once confirmed */
+    .auth-guard {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #060c1f;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 16px;
+    }
+
+    .auth-guard.hidden { display: none; }
+
+    .spinner {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 3px solid rgba(59,130,246,0.2);
+      border-top-color: #3b82f6;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .auth-guard p { font-size: 13px; color: rgba(238,242,255,0.4); }
+
+    /* Top navbar */
+    .admin-nav {
+      background: rgba(10,19,48,0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px);
+      padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px; position: sticky; top: 0; z-index: 100;
+    }
+
+    .admin-nav .brand {
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    .admin-nav .badge {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #1d4ed8, #102a6b);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 900; color: white;
+    }
+
+    .admin-nav .brand span {
+      font-size: 14px; font-weight: 800; color: #eef2ff;
+    }
+
+    .admin-nav .brand small {
+      display: block; font-size: 10px;
+      color: rgba(238,242,255,0.4); font-weight: 500;
+    }
+
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+
+    .site-link {
+      font-size: 13px; color: rgba(238,242,255,0.5);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .site-link:hover { color: #3b82f6; }
+
+    .logout-btn {
+      padding: 8px 18px; border-radius: 8px; border: none;
+      background: rgba(220,38,38,0.15);
+      border: 1px solid rgba(220,38,38,0.3);
+      color: #fca5a5; font-size: 13px; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+      transition: background 0.2s ease;
+    }
+    .logout-btn:hover { background: rgba(220,38,38,0.25); }
+
+    /* Main content */
+    .main { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+
+    .welcome {
+      margin-bottom: 36px;
+    }
+
+    .welcome h1 {
+      font-size: 26px; font-weight: 900; margin-bottom: 6px;
+      background: linear-gradient(135deg, #ffffff 30%, #3b82f6 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+
+    .welcome p { font-size: 14px; color: rgba(238,242,255,0.5); }
+
+    /* Stats row */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin-bottom: 36px;
+    }
+
+    .stat-card {
+      background: rgba(10,19,48,0.7);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 24px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-card .label {
+      font-size: 11px; font-weight: 700; color: rgba(238,242,255,0.4);
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+    }
+
+    .stat-card .value {
+      font-size: 32px; font-weight: 900; color: #3b82f6;
+      line-height: 1;
+    }
+
+    .stat-card .sub {
+      font-size: 12px; color: rgba(238,242,255,0.4); margin-top: 6px;
+    }
+
+    /* Section panels */
+    .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    @media (max-width: 700px) { .panels { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: rgba(10,19,48,0.7);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px; padding: 28px;
+      backdrop-filter: blur(10px);
+    }
+
+    .panel-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .panel-head h2 { font-size: 16px; font-weight: 800; color: #eef2ff; }
+
+    .badge-pill {
+      padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+      background: rgba(59,130,246,0.15); color: #3b82f6;
+      border: 1px solid rgba(59,130,246,0.25);
+    }
+
+    .coming-soon {
+      background: rgba(59,130,246,0.15);
+      border: 1px solid rgba(59,130,246,0.25);
+      border-radius: 10px;
+    }
+
+    .badge-pill.orange {
+      background: rgba(245,158,11,0.15); color: #fbbf24;
+      border-color: rgba(245,158,11,0.25);
+    }
+
+    /* Message preview list */
+    .msg-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .msg-item {
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+    }
+
+    .msg-item .meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .msg-item .name { font-size: 13px; font-weight: 700; color: #eef2ff; }
+    .msg-item .time { font-size: 11px; color: rgba(238,242,255,0.35); }
+    .msg-item .subject { font-size: 12px; color: rgba(238,242,255,0.55); }
+    .msg-item .preview { font-size: 12px; color: rgba(238,242,255,0.35); margin-top: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .empty-state {
+      text-align: center; padding: 32px;
+      color: rgba(238,242,255,0.3); font-size: 13px;
+    }
+
+    /* Coming soon placeholder */
+    .phase-placeholder {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 12px; padding: 32px;
+      text-align: center;
+    }
+
+    .phase-placeholder .icon {
+      font-size: 32px; opacity: 0.4;
+    }
+
+    .phase-placeholder p {
+      font-size: 13px; color: rgba(238,242,255,0.35); max-width: 200px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Auth guard overlay — hides once session is verified -->
+<div class="auth-guard" id="authGuard">
+  <div class="spinner"></div>
+  <p>Verifying session…</p>
+</div>
+
+<!-- Dashboard (hidden until auth confirmed) -->
+<div id="dashContent" style="display:none;">
+
+  <nav class="admin-nav">
+    <div class="brand">
+      <div class="badge">AR</div>
+      <div>
+        <span>ARSRC Admin</span>
+        <small>Council Management Dashboard</small>
+      </div>
+    </div>
+    <div class="nav-right">
+      <a href="/" class="site-link">← View website</a>
+      <button class="logout-btn" id="logoutBtn">Sign Out</button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="welcome">
+      <h1>Welcome back</h1>
+      <p id="welcomeSub">Loading dashboard…</p>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="label">Contact Messages</div>
+        <div class="value" id="msgCount">—</div>
+        <div class="sub">Total received</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">News Posts</div>
+        <div class="value" style="color:#a78bfa;">—</div>
+        <div class="sub">Phase 3 — coming soon</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Schools Registered</div>
+        <div class="value" style="color:#34d399;">146</div>
+        <div class="sub">Across Ashanti Region</div>
+      </div>
+    </div>
+
+    <div class="panels">
+
+      <!-- Recent messages panel -->
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Recent Messages</h2>
+          <span class="badge-pill" id="msgBadge">Loading…</span>
+        </div>
+        <div id="msgList" class="msg-list">
+          <div class="empty-state">Loading messages…</div>
+        </div>
+      </div>
+
+      <!-- Blog posts panel (Phase 3) -->
+      <div class="panel">
+        <div class="panel-head">
+          <h2>News &amp; Blog Posts</h2>
+          <span class="badge-pill orange">Phase 3</span>
+        </div>
+        <div class="phase-placeholder">
+          <div class="icon">📝</div>
+          <p>Blog publishing is coming in Phase 3. You'll be able to write and publish news posts from here.</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<script>
+  // ── Auth guard ──────────────────────────────────────────────────────────────
+  (async function checkAuth() {
+    try {
+      const res = await fetch('/api/admin/verify', { credentials: 'same-origin' });
+      if (!res.ok) {
+        window.location.href = '/admin/';
+        return;
+      }
+      // Auth confirmed — show dashboard
+      document.getElementById('authGuard').classList.add('hidden');
+      document.getElementById('dashContent').style.display = 'block';
+      loadDashboard();
+    } catch {
+      window.location.href = '/admin/';
+    }
+  })();
+
+  // ── Logout ──────────────────────────────────────────────────────────────────
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' });
+    window.location.href = '/admin/';
+  });
+
+  // ── Load dashboard data ─────────────────────────────────────────────────────
+  async function loadDashboard() {
+    const now = new Date();
+    document.getElementById('welcomeSub').textContent =
+      `${now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' })} · Ashanti Region`;
+
+    // Load recent messages from Supabase via API
+    try {
+      const res  = await fetch('/api/admin/messages', { credentials: 'same-origin' });
+      if (res.ok) {
+        const data = await res.json();
+        renderMessages(data.messages || [], data.total || 0);
+      } else if (res.status === 401) {
+        window.location.href = '/admin/';
+      } else {
+        document.getElementById('msgList').innerHTML =
+          '<div class="empty-state">Could not load messages.</div>';
+      }
+    } catch {
+      document.getElementById('msgList').innerHTML =
+        '<div class="empty-state">Could not load messages.</div>';
+    }
+  }
+
+  function renderMessages(messages, total) {
+    document.getElementById('msgCount').textContent = total;
+    document.getElementById('msgBadge').textContent = `${total} total`;
+
+    const list = document.getElementById('msgList');
+
+    if (!messages.length) {
+      list.innerHTML = '<div class="empty-state">No messages yet.</div>';
+      return;
+    }
+
+    list.innerHTML = messages.map(m => `
+      <div class="msg-item">
+        <div class="meta">
+          <span class="name">${esc(m.name)}</span>
+          <span class="time">${timeAgo(m.created_at)}</span>
+        </div>
+        <div class="subject">${esc(m.subject)}</div>
+        <div class="preview">${esc(m.email)} · ${esc(m.message)}</div>
+      </div>
+    `).join('');
+  }
+
+  function esc(str) {
+    return String(str || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function timeAgo(iso) {
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1)  return 'Just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24)  return `${hrs}h ago`;
+    return Math.floor(hrs / 24) + 'd ago';
+  }
+</script>
+</body>
+</html>
