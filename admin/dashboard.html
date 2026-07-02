@@ -601,7 +601,7 @@
       publishBtn.textContent = 'Publishing…';
 
       try {
-        const res  = await fetch('/api/posts', {
+        const res  = await fetch('/api/admin/posts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ title, category, excerpt, content, author }),
