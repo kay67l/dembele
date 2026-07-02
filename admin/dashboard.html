@@ -277,6 +277,130 @@
     .delete-btn:hover { background:rgba(220,38,38,.25); }
     .news-empty { grid-column:1/-1; text-align:center; padding:40px;
       color:rgba(238,242,255,.35); font-size:14px; }
+    /* ── Phase 4: Messages log styles ─────────────────────────────────── */
+    .msg-filters {
+      display: flex; gap: 8px; margin-bottom: 16px; align-items: center;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+      border: 1.5px solid rgba(255,255,255,0.1); background: transparent;
+      color: rgba(238,242,255,0.6); cursor: pointer; font-family: inherit;
+      transition: all .2s ease;
+    }
+    .filter-btn.active {
+      background: linear-gradient(135deg, #1d4ed8, #102a6b);
+      border-color: transparent; color: white;
+      box-shadow: 0 4px 12px rgba(29,78,216,0.3);
+    }
+    .unread-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 20px; height: 20px; border-radius: 10px; padding: 0 6px;
+      background: #dc2626; color: white; font-size: 11px; font-weight: 800;
+      margin-left: 6px;
+    }
+    .msg-item {
+      padding: 16px 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px; cursor: pointer;
+      transition: background .2s ease, border-color .2s ease;
+      position: relative;
+    }
+    .msg-item:hover { background: rgba(255,255,255,0.06); border-color: rgba(59,130,246,0.25); }
+    .msg-item.unread { border-left: 3px solid #3b82f6; }
+    .msg-item.unread .msg-name { color: #ffffff; }
+    .unread-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #3b82f6;
+      display: inline-block; margin-right: 8px; flex-shrink: 0;
+    }
+    .msg-item .msg-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 4px;
+    }
+    .msg-name-row { display: flex; align-items: center; }
+    .msg-name   { font-size: 13px; font-weight: 700; color: #eef2ff; }
+    .msg-time   { font-size: 11px; color: rgba(238,242,255,0.35); }
+    .msg-subject { font-size: 12px; color: rgba(238,242,255,0.55); margin-bottom: 3px; }
+    .msg-preview {
+      font-size: 12px; color: rgba(238,242,255,0.35);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* Full message modal */
+    .msg-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px); z-index: 500;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; animation: fadeIn .2s ease;
+    }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    .msg-modal {
+      background: #0a1330; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px; padding: 32px; max-width: 580px; width: 100%;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+      animation: slideUp .25s ease;
+      max-height: 85vh; overflow-y: auto;
+    }
+    @keyframes slideUp { from { transform: translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 20px; gap: 12px;
+    }
+    .modal-header h3 { font-size: 17px; font-weight: 800; color: #eef2ff; line-height: 1.3; }
+    .modal-close {
+      width: 32px; height: 32px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,0.08); color: rgba(238,242,255,0.7);
+      cursor: pointer; font-size: 16px; font-family: inherit; flex-shrink: 0;
+      transition: background .2s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.15); }
+    .modal-meta {
+      display: grid; grid-template-columns: auto 1fr; gap: 6px 12px;
+      margin-bottom: 20px; font-size: 13px;
+    }
+    .modal-meta .label { color: rgba(238,242,255,0.4); font-weight: 600; }
+    .modal-meta .value { color: #eef2ff; }
+    .modal-divider { height:1px; background:rgba(255,255,255,0.08); margin-bottom:16px; }
+    .modal-message {
+      font-size: 14px; color: rgba(238,242,255,0.8); line-height: 1.8;
+      white-space: pre-wrap; margin-bottom: 24px;
+    }
+    .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .modal-btn {
+      padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 700; font-family: inherit; transition: all .2s;
+    }
+    .modal-btn.reply {
+      background: linear-gradient(135deg, #1d4ed8, #102a6b); color: white;
+      box-shadow: 0 4px 14px rgba(29,78,216,0.3);
+    }
+    .modal-btn.reply:hover { opacity: .9; transform: translateY(-1px); }
+    .modal-btn.toggle-read {
+      background: rgba(255,255,255,0.06); color: rgba(238,242,255,0.7);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .modal-btn.toggle-read:hover { background: rgba(255,255,255,0.1); }
+    .modal-btn.close-modal {
+      background: rgba(220,38,38,0.1); color: #fca5a5;
+      border: 1px solid rgba(220,38,38,0.2);
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex; gap: 8px; justify-content: center;
+      align-items: center; margin-top: 16px; flex-wrap: wrap;
+    }
+    .page-btn {
+      padding: 7px 14px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.1);
+      background: transparent; color: rgba(238,242,255,0.6);
+      cursor: pointer; font-size: 13px; font-weight: 700; font-family: inherit;
+      transition: all .2s;
+    }
+    .page-btn:hover:not(:disabled) { border-color: #3b82f6; color: #3b82f6; }
+    .page-btn.active { background: #1d4ed8; border-color: #1d4ed8; color: white; }
+    .page-btn:disabled { opacity: .3; cursor: not-allowed; }
+    .page-info { font-size: 12px; color: rgba(238,242,255,.4); }
   </style>
 </head>
 <body>
@@ -292,7 +416,7 @@
 
   <nav class="admin-nav">
     <div class="brand">
-      <div class="badge"><img viewBox="0 0 200 200" width="100%" height="100%" src="ar.png"></div>
+      <div class="badge">AR</div>
       <div>
         <span>ARSRC Admin</span>
         <small>Council Management Dashboard</small>
@@ -314,7 +438,7 @@
       <div class="stat-card">
         <div class="label">Contact Messages</div>
         <div class="value" id="msgCount">—</div>
-        <div class="sub">Total received</div>
+        <div class="sub" id="msgCountSub">Total received</div>
       </div>
       <div class="stat-card">
         <div class="label">News Posts</div>
@@ -330,15 +454,20 @@
 
     <div class="panels">
 
-      <!-- Recent messages panel -->
+      <!-- Full messages log (Phase 4) -->
       <div class="panel">
         <div class="panel-head">
-          <h2>Recent Messages</h2>
+          <h2>Contact Messages <span class="unread-badge" id="unreadBadge" style="display:none;"></span></h2>
           <span class="badge-pill" id="msgBadge">Loading…</span>
+        </div>
+        <div class="msg-filters">
+          <button class="filter-btn active" data-filter="all"  id="filterAll">All</button>
+          <button class="filter-btn"        data-filter="unread" id="filterUnread">Unread</button>
         </div>
         <div id="msgList" class="msg-list">
           <div class="empty-state">Loading messages…</div>
         </div>
+        <div class="pagination" id="msgPagination" style="display:none;"></div>
       </div>
 
       <!-- Blog posts panel (Phase 3 — live) -->
@@ -436,18 +565,39 @@
 
     // Load posts and messages in parallel
     loadPosts();
+    loadMessages();
+  }
 
-    // Load recent messages from Supabase via API
+  // ── Phase 4: Full messages log ──────────────────────────────────────────────
+  let currentPage   = 1;
+  let currentFilter = 'all';
+  let activeModal   = null;
+
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      currentFilter = this.dataset.filter;
+      currentPage   = 1;
+      loadMessages();
+    });
+  });
+
+  async function loadMessages() {
+    const list = document.getElementById('msgList');
+    list.innerHTML = '<div class="empty-state">Loading…</div>';
+
     try {
-      const res  = await fetch('/api/admin/messages', { credentials: 'same-origin' });
+      const url = `/api/admin/messages?page=${currentPage}&limit=10&filter=${currentFilter}`;
+      const res  = await fetch(url, { credentials: 'same-origin' });
+      if (res.status === 401) { window.location.href = '/admin/'; return; }
+      const data = await res.json();
+
       if (res.ok) {
-        const data = await res.json();
-        renderMessages(data.messages || [], data.total || 0);
-      } else if (res.status === 401) {
-        window.location.href = '/admin/';
+        renderMessages(data);
       } else {
-        document.getElementById('msgList').innerHTML =
-          '<div class="empty-state">Could not load messages.</div>';
+        list.innerHTML = '<div class="empty-state">Could not load messages.</div>';
       }
     } catch {
       document.getElementById('msgList').innerHTML =
@@ -455,27 +605,161 @@
     }
   }
 
-  function renderMessages(messages, total) {
+  function renderMessages(data) {
+    const { messages, total, unread, page, totalPages } = data;
+
+    // Update stat card
     document.getElementById('msgCount').textContent = total;
+    document.getElementById('msgCountSub').textContent =
+      unread > 0 ? `${unread} unread` : 'All read';
+
+    // Unread badge in panel header
+    const badge = document.getElementById('unreadBadge');
+    if (unread > 0) {
+      badge.textContent = unread;
+      badge.style.display = 'inline-flex';
+    } else {
+      badge.style.display = 'none';
+    }
+
     document.getElementById('msgBadge').textContent = `${total} total`;
 
     const list = document.getElementById('msgList');
 
-    if (!messages.length) {
-      list.innerHTML = '<div class="empty-state">No messages yet.</div>';
+    if (!messages || messages.length === 0) {
+      list.innerHTML = `<div class="empty-state">${
+        currentFilter === 'unread' ? 'No unread messages.' : 'No messages yet.'
+      }</div>`;
+      document.getElementById('msgPagination').style.display = 'none';
       return;
     }
 
     list.innerHTML = messages.map(m => `
-      <div class="msg-item">
-        <div class="meta">
-          <span class="name">${esc(m.name)}</span>
-          <span class="time">${timeAgo(m.created_at)}</span>
+      <div class="msg-item ${!m.read ? 'unread' : ''}" data-id="${esc(m.id)}"
+           data-name="${esc(m.name)}" data-email="${esc(m.email)}"
+           data-subject="${esc(m.subject)}" data-message="${esc(m.message)}"
+           data-time="${esc(m.created_at)}" data-read="${m.read}">
+        <div class="msg-meta">
+          <div class="msg-name-row">
+            ${!m.read ? '<span class="unread-dot"></span>' : ''}
+            <span class="msg-name">${esc(m.name)}</span>
+          </div>
+          <span class="msg-time">${timeAgo(m.created_at)}</span>
         </div>
-        <div class="subject">${esc(m.subject)}</div>
-        <div class="preview">${esc(m.email)} · ${esc(m.message)}</div>
+        <div class="msg-subject">${esc(m.subject)}</div>
+        <div class="msg-preview">${esc(m.email)} · ${esc(m.message)}</div>
       </div>
     `).join('');
+
+    // Click to open full message modal
+    list.querySelectorAll('.msg-item').forEach(item => {
+      item.addEventListener('click', function () {
+        openMessageModal({
+          id:      this.dataset.id,
+          name:    this.dataset.name,
+          email:   this.dataset.email,
+          subject: this.dataset.subject,
+          message: this.dataset.message,
+          time:    this.dataset.time,
+          read:    this.dataset.read === 'true',
+        });
+      });
+    });
+
+    // Pagination
+    renderPagination(page, totalPages);
+  }
+
+  function renderPagination(page, totalPages) {
+    const pag = document.getElementById('msgPagination');
+    if (totalPages <= 1) { pag.style.display = 'none'; return; }
+
+    pag.style.display = 'flex';
+    pag.innerHTML = `
+      <button class="page-btn" id="prevPage" ${page <= 1 ? 'disabled' : ''}>← Prev</button>
+      <span class="page-info">Page ${page} of ${totalPages}</span>
+      <button class="page-btn" id="nextPage" ${page >= totalPages ? 'disabled' : ''}>Next →</button>
+    `;
+
+    document.getElementById('prevPage')?.addEventListener('click', () => {
+      if (currentPage > 1) { currentPage--; loadMessages(); }
+    });
+    document.getElementById('nextPage')?.addEventListener('click', () => {
+      if (currentPage < totalPages) { currentPage++; loadMessages(); }
+    });
+  }
+
+  // ── Message modal ───────────────────────────────────────────────────────────
+  function openMessageModal(msg) {
+    // Auto-mark as read when opened
+    if (!msg.read) markReadState(msg.id, true);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'msg-modal-overlay';
+    overlay.id = 'msgModalOverlay';
+    overlay.innerHTML = `
+      <div class="msg-modal">
+        <div class="modal-header">
+          <h3>${esc(msg.subject)}</h3>
+          <button class="modal-close" id="modalClose">✕</button>
+        </div>
+        <div class="modal-meta">
+          <span class="label">From</span>   <span class="value">${esc(msg.name)}</span>
+          <span class="label">Email</span>  <span class="value">${esc(msg.email)}</span>
+          <span class="label">Received</span><span class="value">${new Date(msg.time).toLocaleString('en-GB')}</span>
+        </div>
+        <div class="modal-divider"></div>
+        <div class="modal-message">${esc(msg.message)}</div>
+        <div class="modal-actions">
+          <button class="modal-btn reply" id="modalReply">↩ Reply to ${esc(msg.name)}</button>
+          <button class="modal-btn toggle-read" id="modalToggleRead">
+            ${msg.read ? 'Mark as Unread' : 'Mark as Read'}
+          </button>
+          <button class="modal-btn close-modal" id="modalCloseBtn">Close</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+    activeModal = { id: msg.id, read: msg.read };
+
+    // Reply — opens mailto with pre-filled fields
+    document.getElementById('modalReply').addEventListener('click', () => {
+      const subject = encodeURIComponent(`Re: ${msg.subject}`);
+      const body    = encodeURIComponent(
+        `\n\n---\nOriginal message from ${msg.name}:\n${msg.message}`
+      );
+      window.open(`mailto:${msg.email}?subject=${subject}&body=${body}`, '_blank');
+    });
+
+    // Toggle read
+    document.getElementById('modalToggleRead').addEventListener('click', async function () {
+      const nowRead = !activeModal.read;
+      await markReadState(msg.id, nowRead);
+      activeModal.read = nowRead;
+      this.textContent = nowRead ? 'Mark as Unread' : 'Mark as Read';
+    });
+
+    // Close
+    const closeModal = () => {
+      overlay.remove();
+      activeModal = null;
+      loadMessages(); // refresh list to update read state
+    };
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  }
+
+  async function markReadState(id, read) {
+    try {
+      await fetch('/api/admin/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: read ? 'mark_read' : 'mark_unread', id }),
+        credentials: 'same-origin',
+      });
+    } catch { /* non-fatal — UI still works */ }
   }
 
   function esc(str) {
