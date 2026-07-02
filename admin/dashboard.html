@@ -723,13 +723,17 @@
     document.body.appendChild(overlay);
     activeModal = { id: msg.id, read: msg.read };
 
-    // Reply — opens mailto with pre-filled fields
+    // Reply — opens Gmail compose directly in a new tab
     document.getElementById('modalReply').addEventListener('click', () => {
+      const to      = encodeURIComponent(msg.email);
       const subject = encodeURIComponent(`Re: ${msg.subject}`);
       const body    = encodeURIComponent(
-        `\n\n---\nOriginal message from ${msg.name}:\n${msg.message}`
+        `\n\n---\nOriginal message from ${msg.name} (${msg.email}):\n${msg.message}`
       );
-      window.open(`mailto:${msg.email}?subject=${subject}&body=${body}`, '_blank');
+      window.open(
+        `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`,
+        '_blank'
+      );
     });
 
     // Toggle read
