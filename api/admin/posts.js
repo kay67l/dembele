@@ -9,7 +9,7 @@ const supabase = createClient(
 );
 
 module.exports = async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed.' });
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed.' });
 
   // Cache at CDN level for 60s, serve stale for up to 5min while revalidating
   // This means the news section is fast for visitors without hammering Supabase
