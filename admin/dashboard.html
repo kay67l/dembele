@@ -203,6 +203,80 @@
       font-size: 13px; color: rgba(238,242,255,0.35); max-width: 200px;
       line-height: 1.6;
     }
+    /* Skeleton loading cards */
+    .skeleton-card .news-top { background: rgba(255,255,255,0.04) !important; }
+    .skel { background: rgba(255,255,255,0.06); border-radius: 6px; margin-bottom: 10px; height: 14px; }
+    .skel-title { height: 18px; width: 75%; }
+    .skel-line  { width: 90%; }
+    .skel-line.short { width: 55%; }
+    @keyframes shimmer { 0%,100%{opacity:.5} 50%{opacity:1} }
+    .skeleton-card .skel { animation: shimmer 1.4s ease-in-out infinite; }
+
+    /* Post creation form */
+    .create-post-section { margin-top: 28px; }
+    .create-post-section h2 { font-size:16px; font-weight:800; color:#eef2ff; margin-bottom:18px; }
+
+    .post-form { display:flex; flex-direction:column; gap:14px; }
+    .post-form label { font-size:11px; font-weight:700; color:#3b82f6;
+      text-transform:uppercase; letter-spacing:.5px; display:block; margin-bottom:5px; }
+    .post-form input, .post-form textarea, .post-form select {
+      width:100%; padding:11px 14px; background:rgba(255,255,255,0.04);
+      border:1.5px solid rgba(255,255,255,0.1); border-radius:10px;
+      color:#eef2ff; font-size:14px; font-family:inherit;
+      transition:border-color .2s ease;
+    }
+    .post-form input::placeholder, .post-form textarea::placeholder { color:rgba(238,242,255,0.3); }
+    .post-form input:focus, .post-form textarea:focus, .post-form select:focus {
+      outline:none; border-color:#3b82f6; }
+    .post-form select option { background:#0a1330; color:#eef2ff; }
+    .post-form textarea { resize:vertical; min-height:90px; }
+
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    @media(max-width:600px) { .form-row { grid-template-columns:1fr; } }
+
+    .char-hint { font-size:11px; color:rgba(238,242,255,.3); margin-top:4px; }
+    .char-hint span { color:#3b82f6; }
+
+    .publish-btn {
+      padding:12px 28px; border-radius:10px; border:none; cursor:pointer;
+      background:linear-gradient(135deg,#1d4ed8,#102a6b);
+      color:white; font-size:14px; font-weight:800; font-family:inherit;
+      transition:opacity .2s, transform .2s;
+      box-shadow:0 6px 18px rgba(29,78,216,.3);
+    }
+    .publish-btn:hover:not(:disabled) { opacity:.9; transform:translateY(-2px); }
+    .publish-btn:disabled { opacity:.5; cursor:not-allowed; }
+
+    .post-msg { display:none; margin-top:12px; padding:11px 14px; border-radius:10px;
+      font-size:13px; font-weight:700; text-align:center; }
+    .post-msg.success { display:block; background:rgba(16,185,129,.12);
+      border:1px solid rgba(16,185,129,.3); color:#34d399; }
+    .post-msg.error { display:block; background:rgba(220,38,38,.12);
+      border:1px solid rgba(220,38,38,.3); color:#fca5a5; }
+
+    /* Posts list */
+    .posts-list { display:flex; flex-direction:column; gap:10px; margin-top:20px; }
+    .post-item {
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:13px 16px; background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.06); border-radius:10px;
+    }
+    .post-item-left { flex:1; min-width:0; }
+    .post-item .post-title { font-size:13px; font-weight:700; color:#eef2ff;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .post-item .post-meta { font-size:11px; color:rgba(238,242,255,.4); margin-top:3px; }
+    .cat-pill { display:inline-block; padding:2px 8px; border-radius:20px;
+      font-size:10px; font-weight:700; margin-right:6px;
+      background:rgba(59,130,246,.15); color:#3b82f6; border:1px solid rgba(59,130,246,.2); }
+    .delete-btn {
+      padding:6px 12px; border-radius:7px; border:none; cursor:pointer;
+      background:rgba(220,38,38,.12); color:#fca5a5; font-size:12px; font-weight:700;
+      font-family:inherit; border:1px solid rgba(220,38,38,.2);
+      transition:background .2s; flex-shrink:0;
+    }
+    .delete-btn:hover { background:rgba(220,38,38,.25); }
+    .news-empty { grid-column:1/-1; text-align:center; padding:40px;
+      color:rgba(238,242,255,.35); font-size:14px; }
   </style>
 </head>
 <body>
@@ -244,8 +318,8 @@
       </div>
       <div class="stat-card">
         <div class="label">News Posts</div>
-        <div class="value" style="color:#a78bfa;">—</div>
-        <div class="sub">Phase 3 — coming soon</div>
+        <div class="value" style="color:#a78bfa;" id="postCount">—</div>
+        <div class="sub">Published</div>
       </div>
       <div class="stat-card">
         <div class="label">Schools Registered</div>
@@ -267,15 +341,61 @@
         </div>
       </div>
 
-      <!-- Blog posts panel (Phase 3) -->
+      <!-- Blog posts panel (Phase 3 — live) -->
       <div class="panel">
         <div class="panel-head">
           <h2>News &amp; Blog Posts</h2>
-          <span class="badge-pill orange">Phase 3</span>
+          <span class="badge-pill" id="postBadge">Loading…</span>
         </div>
-        <div class="phase-placeholder">
-          <div class="icon">📝</div>
-          <p>Blog publishing is coming in Phase 3. You'll be able to write and publish news posts from here.</p>
+        <div id="postsList" class="posts-list">
+          <div class="empty-state">Loading posts…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create New Post -->
+    <div class="panel create-post-section">
+      <div class="panel-head">
+        <h2>✍️ Publish a New Post</h2>
+      </div>
+
+      <div class="post-form" id="postForm">
+        <div class="form-row">
+          <div>
+            <label for="postTitle">Title</label>
+            <input type="text" id="postTitle" placeholder="e.g. ARSRC holds inter-school summit">
+          </div>
+          <div>
+            <label for="postCategory">Category</label>
+            <select id="postCategory">
+              <option value="News">News</option>
+              <option value="Announcement">Announcement</option>
+              <option value="Achievement">Achievement</option>
+              <option value="Event">Event</option>
+              <option value="Press Release">Press Release</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label for="postExcerpt">Excerpt <span style="color:rgba(238,242,255,.4);font-weight:400;">(shown on homepage card — max 280 chars)</span></label>
+          <textarea id="postExcerpt" rows="2" placeholder="Short summary of the post…" maxlength="280"></textarea>
+          <div class="char-hint">Characters: <span id="excerptCount">0</span> / 280</div>
+        </div>
+
+        <div>
+          <label for="postContent">Full Content</label>
+          <textarea id="postContent" rows="5" placeholder="Write the full post content here…"></textarea>
+        </div>
+
+        <div>
+          <label for="postAuthor">Author</label>
+          <input type="text" id="postAuthor" value="ARSRC Council" placeholder="Author name">
+        </div>
+
+        <div>
+          <button class="publish-btn" id="publishBtn">Publish Post</button>
+          <div class="post-msg" id="postMsg"></div>
         </div>
       </div>
 
@@ -313,6 +433,9 @@
     const now = new Date();
     document.getElementById('welcomeSub').textContent =
       `${now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' })} · Ashanti Region`;
+
+    // Load posts and messages in parallel
+    loadPosts();
 
     // Load recent messages from Supabase via API
     try {
@@ -368,6 +491,153 @@
     const hrs = Math.floor(mins / 60);
     if (hrs < 24)  return `${hrs}h ago`;
     return Math.floor(hrs / 24) + 'd ago';
+  }
+
+  // ── Phase 3: Posts management ───────────────────────────────────────────────
+
+  // Load posts list
+  async function loadPosts() {
+    try {
+      const res  = await fetch('/api/admin/posts', { credentials: 'same-origin' });
+      if (res.status === 401) { window.location.href = '/admin/'; return; }
+      const data = await res.json();
+      renderPosts(data.posts || [], data.total || 0);
+    } catch {
+      document.getElementById('postsList').innerHTML =
+        '<div class="empty-state">Could not load posts.</div>';
+    }
+  }
+
+  function renderPosts(posts, total) {
+    document.getElementById('postCount').textContent = total;
+    document.getElementById('postBadge').textContent = `${total} total`;
+
+    const list = document.getElementById('postsList');
+    if (!posts.length) {
+      list.innerHTML = '<div class="empty-state">No posts yet. Publish your first one below.</div>';
+      return;
+    }
+
+    list.innerHTML = posts.map(p => `
+      <div class="post-item" data-id="${esc(p.id)}">
+        <div class="post-item-left">
+          <div class="post-title">${esc(p.title)}</div>
+          <div class="post-meta">
+            <span class="cat-pill">${esc(p.category)}</span>
+            ${timeAgo(p.created_at)}
+          </div>
+        </div>
+        <button class="delete-btn" data-id="${esc(p.id)}">Delete</button>
+      </div>
+    `).join('');
+
+    // Wire delete buttons
+    list.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', async function () {
+        const id = this.dataset.id;
+        if (!confirm('Delete this post? This cannot be undone.')) return;
+        this.disabled = true;
+        this.textContent = 'Deleting…';
+        try {
+          const res = await fetch('/api/admin/posts', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id }),
+            credentials: 'same-origin',
+          });
+          if (res.ok) {
+            this.closest('.post-item').remove();
+            const remaining = document.querySelectorAll('.post-item').length;
+            document.getElementById('postCount').textContent = remaining;
+            document.getElementById('postBadge').textContent = `${remaining} total`;
+            if (remaining === 0) {
+              document.getElementById('postsList').innerHTML =
+                '<div class="empty-state">No posts yet. Publish your first one below.</div>';
+            }
+          } else {
+            alert('Could not delete post. Try again.');
+            this.disabled = false;
+            this.textContent = 'Delete';
+          }
+        } catch {
+          alert('Network error. Try again.');
+          this.disabled = false;
+          this.textContent = 'Delete';
+        }
+      });
+    });
+  }
+
+  // Excerpt character counter
+  const excerptField = document.getElementById('postExcerpt');
+  const excerptCount = document.getElementById('excerptCount');
+  if (excerptField) {
+    excerptField.addEventListener('input', () => {
+      excerptCount.textContent = excerptField.value.length;
+    });
+  }
+
+  // Publish post
+  const publishBtn = document.getElementById('publishBtn');
+  const postMsg    = document.getElementById('postMsg');
+
+  if (publishBtn) {
+    publishBtn.addEventListener('click', async function () {
+      const title    = document.getElementById('postTitle').value;
+      const category = document.getElementById('postCategory').value;
+      const excerpt  = document.getElementById('postExcerpt').value;
+      const content  = document.getElementById('postContent').value;
+      const author   = document.getElementById('postAuthor').value;
+
+      postMsg.className = 'post-msg';
+
+      if (!title.trim() || !excerpt.trim() || !content.trim()) {
+        postMsg.textContent = '✗ Title, excerpt and content are all required.';
+        postMsg.classList.add('error');
+        return;
+      }
+
+      publishBtn.disabled    = true;
+      publishBtn.textContent = 'Publishing…';
+
+      try {
+        const res  = await fetch('/api/admin/posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, category, excerpt, content, author }),
+          credentials: 'same-origin',
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          postMsg.textContent = '✗ ' + (data.error || 'Could not publish post.');
+          postMsg.classList.add('error');
+          return;
+        }
+
+        postMsg.textContent = '✓ Post published successfully. It is now live on the website.';
+        postMsg.classList.add('success');
+
+        // Clear form
+        document.getElementById('postTitle').value   = '';
+        document.getElementById('postExcerpt').value = '';
+        document.getElementById('postContent').value = '';
+        document.getElementById('postAuthor').value  = 'ARSRC Council';
+        excerptCount.textContent = '0';
+
+        // Reload posts list to show new post
+        loadPosts();
+
+        setTimeout(() => { postMsg.className = 'post-msg'; }, 5000);
+
+      } catch {
+        postMsg.textContent = '✗ Network error. Check your connection and try again.';
+        postMsg.classList.add('error');
+      } finally {
+        publishBtn.disabled    = false;
+        publishBtn.textContent = 'Publish Post';
+      }
+    });
   }
 </script>
 </body>
