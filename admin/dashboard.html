@@ -1070,19 +1070,6 @@
       }
     });
 
-    const formData = new FormData();
-formData.append("image", selectedFile);
-
-const response = await fetch("/api/upload-image", {
-    method: "POST",
-    body: formData
-});
-
-const data = await response.json();
-
-if (data.success) {
-    console.log(data.imageUrl);
-}
   }
 </script>
 </body>
