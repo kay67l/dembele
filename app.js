@@ -1,3 +1,7 @@
+  const uploadImage = require("./upload-image");
+  app.use("/uploads", express.static("public/uploads"));
+  app.use(uploadImage);
+  
   // Hero title word animation
   const titleWords = "Ashanti Regional Students' Representative Council".split(" ");
   const heroTitle = document.getElementById('heroTitle');
