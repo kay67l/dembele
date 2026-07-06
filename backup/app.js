@@ -149,13 +149,9 @@ function downloadFile(fileName) {
         const date = new Date(post.created_at).toLocaleDateString('en-GB', {
           day: 'numeric', month: 'short', year: 'numeric'
         });
-        const topStyle = post.cover_image_url
-          ? `background-image:url('${esc(post.cover_image_url)}');`
-          : `background:${gradient};`;
-        const topClass = post.cover_image_url ? 'news-top has-image' : 'news-top';
         return `
           <div class="news-card reveal">
-            <div class="${topClass}" style="${topStyle}">
+            <div class="news-top" style="background:${gradient};">
               <span class="news-date">${date}</span>
             </div>
             <div class="news-body">

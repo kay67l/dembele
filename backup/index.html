@@ -360,15 +360,9 @@
   .news-top {
     height: 130px; background: linear-gradient(135deg, var(--blue-light), var(--blue));
     position: relative; display: flex; align-items: flex-end; padding: 14px;
-    background-size: cover; background-position: center;
   }
-  .news-card:nth-child(2) .news-top:not(.has-image) { background: linear-gradient(135deg, #ef4444, var(--red-deep)); }
-  .news-card:nth-child(3) .news-top:not(.has-image) { background: linear-gradient(135deg, var(--blue-deep), #0c1a44); }
-  .news-top.has-image::before {
-    content: ""; position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%);
-  }
-  .news-top .news-date { position: relative; z-index: 1; }
+  .news-card:nth-child(2) .news-top { background: linear-gradient(135deg, #ef4444, var(--red-deep)); }
+  .news-card:nth-child(3) .news-top { background: linear-gradient(135deg, var(--blue-deep), #0c1a44); }
   .news-date {
     background: white; color: var(--ink); font-weight: 800; font-size: 12px;
     padding: 6px 12px; border-radius: 8px;

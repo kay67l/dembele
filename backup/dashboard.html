@@ -254,40 +254,6 @@
     .post-msg.error { display:block; background:rgba(220,38,38,.12);
       border:1px solid rgba(220,38,38,.3); color:#fca5a5; }
 
-    /* Cover image uploader */
-    .image-drop {
-      border: 1.5px dashed rgba(255,255,255,0.15); border-radius: 12px;
-      padding: 18px; text-align: center; cursor: pointer;
-      background: rgba(255,255,255,0.02); transition: border-color .2s, background .2s;
-      position: relative;
-    }
-    .image-drop:hover, .image-drop.dragover { border-color: #3b82f6; background: rgba(59,130,246,0.05); }
-    .image-drop input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
-    .image-drop .hint { font-size: 12px; color: rgba(238,242,255,0.4); }
-    .image-drop .hint strong { color: #3b82f6; }
-
-    .image-preview-wrap { position: relative; display: inline-block; margin-top: 10px; }
-    .image-preview-wrap img {
-      max-width: 100%; max-height: 180px; border-radius: 10px; display: block;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    .image-remove-btn {
-      position: absolute; top: -8px; right: -8px; width: 24px; height: 24px;
-      border-radius: 50%; background: #dc2626; color: white; border: 2px solid #060c1f;
-      cursor: pointer; font-size: 13px; font-weight: 800; line-height: 1;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .image-upload-status { font-size: 12px; margin-top: 6px; color: rgba(238,242,255,0.5); }
-    .image-upload-status.error { color: #fca5a5; }
-    .image-upload-status.success { color: #34d399; }
-
-    .post-item-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
-    .post-thumb {
-      width: 44px; height: 44px; border-radius: 8px; object-fit: cover; flex-shrink: 0;
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
-    }
-    .post-item-text { flex: 1; min-width: 0; }
-
     /* Posts list */
     .posts-list { display:flex; flex-direction:column; gap:10px; margin-top:20px; }
     .post-item {
@@ -538,20 +504,6 @@
               <option value="Press Release">Press Release</option>
             </select>
           </div>
-        </div>
-
-        <div>
-          <label for="postImageInput">Cover Image <span style="color:rgba(238,242,255,.4);font-weight:400;">(shown on the homepage news card)</span></label>
-          <div class="image-drop" id="imageDrop">
-            <input type="file" id="postImageInput" accept="image/png,image/jpeg,image/webp">
-            <div class="hint" id="imageDropHint"><strong>Click to upload</strong> or drag an image here — JPG, PNG or WEBP, max 5MB</div>
-          </div>
-          <div id="imagePreviewWrap" style="display:none;" class="image-preview-wrap">
-            <img id="imagePreviewImg" src="" alt="Cover preview">
-            <button type="button" class="image-remove-btn" id="imageRemoveBtn">×</button>
-          </div>
-          <div class="image-upload-status" id="imageUploadStatus"></div>
-          <input type="hidden" id="postCoverImageUrl" value="">
         </div>
 
         <div>
@@ -857,15 +809,10 @@
     list.innerHTML = posts.map(p => `
       <div class="post-item" data-id="${esc(p.id)}">
         <div class="post-item-left">
-          ${p.cover_image_url
-            ? `<img class="post-thumb" src="${esc(p.cover_image_url)}" alt="">`
-            : `<div class="post-thumb"></div>`}
-          <div class="post-item-text">
-            <div class="post-title">${esc(p.title)}</div>
-            <div class="post-meta">
-              <span class="cat-pill">${esc(p.category)}</span>
-              ${timeAgo(p.created_at)}
-            </div>
+          <div class="post-title">${esc(p.title)}</div>
+          <div class="post-meta">
+            <span class="cat-pill">${esc(p.category)}</span>
+            ${timeAgo(p.created_at)}
           </div>
         </div>
         <button class="delete-btn" data-id="${esc(p.id)}">Delete</button>
@@ -918,94 +865,6 @@
     });
   }
 
-  // ── Cover image upload ──────────────────────────────────────────────────────
-  const imageInput      = document.getElementById('postImageInput');
-  const imageDrop        = document.getElementById('imageDrop');
-  const imageDropHint     = document.getElementById('imageDropHint');
-  const imagePreviewWrap  = document.getElementById('imagePreviewWrap');
-  const imagePreviewImg   = document.getElementById('imagePreviewImg');
-  const imageRemoveBtn    = document.getElementById('imageRemoveBtn');
-  const imageUploadStatus = document.getElementById('imageUploadStatus');
-  const postCoverImageUrl = document.getElementById('postCoverImageUrl');
-
-  const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
-  const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
-
-  function resetImageField() {
-    postCoverImageUrl.value = '';
-    imagePreviewWrap.style.display = 'none';
-    imagePreviewImg.src = '';
-    imageDrop.style.display = 'block';
-    imageInput.value = '';
-    imageUploadStatus.textContent = '';
-    imageUploadStatus.className = 'image-upload-status';
-  }
-
-  async function handleImageFile(file) {
-    if (!file) return;
-
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      imageUploadStatus.textContent = '✗ Only JPG, PNG or WEBP images are allowed.';
-      imageUploadStatus.className = 'image-upload-status error';
-      return;
-    }
-    if (file.size > MAX_IMAGE_BYTES) {
-      imageUploadStatus.textContent = '✗ Image is too large — max 5MB.';
-      imageUploadStatus.className = 'image-upload-status error';
-      return;
-    }
-
-    // Local preview while the upload runs
-    const localUrl = URL.createObjectURL(file);
-    imagePreviewImg.src = localUrl;
-    imagePreviewWrap.style.display = 'inline-block';
-    imageDrop.style.display = 'none';
-    imageUploadStatus.textContent = 'Uploading…';
-    imageUploadStatus.className = 'image-upload-status';
-
-    try {
-      const formData = new FormData();
-      formData.append('image', file);
-
-      const res = await fetch('/api/admin/upload-image', {
-        method: 'POST',
-        body: formData,
-        credentials: 'same-origin',
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        imageUploadStatus.textContent = '✗ ' + (data.error || 'Upload failed.');
-        imageUploadStatus.className = 'image-upload-status error';
-        return;
-      }
-
-      postCoverImageUrl.value = data.url;
-      imageUploadStatus.textContent = '✓ Image uploaded.';
-      imageUploadStatus.className = 'image-upload-status success';
-    } catch {
-      imageUploadStatus.textContent = '✗ Network error uploading image.';
-      imageUploadStatus.className = 'image-upload-status error';
-    }
-  }
-
-  if (imageInput) {
-    imageInput.addEventListener('change', e => handleImageFile(e.target.files[0]));
-
-    ['dragenter', 'dragover'].forEach(evt =>
-      imageDrop.addEventListener(evt, e => { e.preventDefault(); imageDrop.classList.add('dragover'); })
-    );
-    ['dragleave', 'drop'].forEach(evt =>
-      imageDrop.addEventListener(evt, e => { e.preventDefault(); imageDrop.classList.remove('dragover'); })
-    );
-    imageDrop.addEventListener('drop', e => {
-      const file = e.dataTransfer.files[0];
-      if (file) handleImageFile(file);
-    });
-
-    imageRemoveBtn.addEventListener('click', resetImageField);
-  }
-
   // Publish post
   const publishBtn = document.getElementById('publishBtn');
   const postMsg    = document.getElementById('postMsg');
@@ -1017,7 +876,6 @@
       const excerpt  = document.getElementById('postExcerpt').value;
       const content  = document.getElementById('postContent').value;
       const author   = document.getElementById('postAuthor').value;
-      const coverImageUrl = postCoverImageUrl.value;
 
       postMsg.className = 'post-msg';
 
@@ -1034,7 +892,7 @@
         const res  = await fetch('/api/admin/posts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, category, excerpt, content, author, cover_image_url: coverImageUrl }),
+          body: JSON.stringify({ title, category, excerpt, content, author }),
           credentials: 'same-origin',
         });
         const data = await res.json();
@@ -1054,7 +912,6 @@
         document.getElementById('postContent').value = '';
         document.getElementById('postAuthor').value  = 'ARSRC Council';
         excerptCount.textContent = '0';
-        resetImageField();
 
         // Reload posts list to show new post
         loadPosts();
