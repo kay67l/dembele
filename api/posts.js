@@ -17,7 +17,7 @@ module.exports = async function handler(req, res) {
 
   const { data, error } = await supabase
     .from('blog_posts')
-    .select('id, title, excerpt, author, category, slug, created_at')
+    .select('id, title, excerpt, author, category, slug, image_url, created_at')
     .eq('published', true)
     .order('created_at', { ascending: false })
     .limit(6); // Show latest 6 on the homepage

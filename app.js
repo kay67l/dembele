@@ -149,13 +149,15 @@ function downloadFile(fileName) {
         const date = new Date(post.created_at).toLocaleDateString('en-GB', {
           day: 'numeric', month: 'short', year: 'numeric'
         });
-        const topStyle = post.cover_image_url
-          ? `background-image:url('${esc(post.cover_image_url)}');`
+
+        const heroStyle = post.image_url
+          ? `background:linear-gradient(rgba(6,12,31,0.35),rgba(6,12,31,0.7)),url(${post.image_url}) center/cover no-repeat;`
           : `background:${gradient};`;
-        const topClass = post.cover_image_url ? 'news-top has-image' : 'news-top';
+
         return `
-          <div class="news-card reveal">
-            <div class="${topClass}" style="${topStyle}">
+          <a class="news-card reveal" href="/post.html?slug=${encodeURIComponent(post.slug)}"
+             style="display:block; text-decoration:none; color:inherit;">
+            <div class="news-top" style="${heroStyle}">
               <span class="news-date">${date}</span>
             </div>
             <div class="news-body">
@@ -165,11 +167,9 @@ function downloadFile(fileName) {
               </span>
               <h4>${esc(post.title)}</h4>
               <p>${esc(post.excerpt)}</p>
-              <span class="news-link">
-                By ${esc(post.author)} &rarr;
-              </span>
+              <span class="news-link">Read more &rarr;</span>
             </div>
-          </div>
+          </a>
         `;
       }).join('');
 
