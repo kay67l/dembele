@@ -834,7 +834,7 @@
   // Load posts list
   async function loadPosts() {
     try {
-      const res  = await fetch('/api/admin/posts-create', { credentials: 'same-origin' });
+      const res  = await fetch('/api/admin/posts', { credentials: 'same-origin' });
       if (res.status === 401) { window.location.href = '/admin/'; return; }
       const data = await res.json();
       renderPosts(data.posts || [], data.total || 0);
@@ -880,7 +880,7 @@
         this.disabled = true;
         this.textContent = 'Deleting…';
         try {
-          const res = await fetch('/api/admin/posts-create', {
+          const res = await fetch(`/api/admin/posts`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id }),
