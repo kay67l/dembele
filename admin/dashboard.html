@@ -216,6 +216,30 @@
     .create-post-section { margin-top: 28px; }
     .create-post-section h2 { font-size:16px; font-weight:800; color:#eef2ff; margin-bottom:18px; }
 
+    /* Executives management */
+    .exec-list-group { margin-top: 18px; }
+    .exec-list-group h3 {
+      font-size: 12px; font-weight: 800; color: #3b82f6; text-transform: uppercase;
+      letter-spacing: .5px; margin: 18px 0 8px; padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .exec-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 12px 14px; background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.06); border-radius: 10px; margin-bottom: 8px;
+    }
+    .exec-row-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+    .exec-row-thumb {
+      width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+      background: linear-gradient(135deg, #1d4ed8, #102a6b); display: flex; align-items: center;
+      justify-content: center; font-size: 11px; font-weight: 800; color: white;
+    }
+    .exec-row-text { min-width: 0; }
+    .exec-row-name { font-size: 13px; font-weight: 700; color: #eef2ff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .exec-row-meta { font-size: 11px; color: rgba(238,242,255,.4); margin-top: 2px; }
+    .exec-category-select-wrap { margin-bottom: 16px; }
+    .exec-empty { text-align:center; padding: 24px; color: rgba(238,242,255,.3); font-size: 13px; }
+
     .post-form { display:flex; flex-direction:column; gap:14px; }
     .post-form label { font-size:11px; font-weight:700; color:#3b82f6;
       text-transform:uppercase; letter-spacing:.5px; display:block; margin-bottom:5px; }
@@ -577,6 +601,79 @@
       </div>
 
     </div>
+
+    <!-- Manage Executives -->
+    <div class="panel create-post-section">
+      <div class="panel-head">
+        <h2>👥 Manage Executives</h2>
+      </div>
+
+      <div class="post-form" id="execForm">
+        <div class="form-row">
+          <div>
+            <label for="execCategory">Committee / Body</label>
+            <select id="execCategory">
+              <option value="rec">Regional Executive Committee (REC)</option>
+              <option value="zec">Zonal Executive Committee (ZEC)</option>
+              <option value="lit">Literary &amp; Editorial</option>
+              <option value="wds">Writers &amp; Debaters Society (WDS)</option>
+              <option value="sec">Secretariat</option>
+              <option value="adhoc">ADHOC</option>
+            </select>
+          </div>
+          <div id="execSubgroupWrap">
+            <label for="execSubgroup">Sub-group / Committee Name <span style="color:rgba(238,242,255,.4);font-weight:400;">(e.g. "Zone 1", "Editorial Committee (EDICOM)")</span></label>
+            <input type="text" id="execSubgroup" list="execSubgroupList" placeholder="e.g. Zone 1">
+            <datalist id="execSubgroupList"></datalist>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label for="execName">Full Name</label>
+            <input type="text" id="execName" placeholder="e.g. James Hope Arthur">
+          </div>
+          <div>
+            <label for="execRole">Role / Position</label>
+            <input type="text" id="execRole" placeholder="e.g. Regional President">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label for="execSchool">School <span style="color:rgba(238,242,255,.4);font-weight:400;">(optional)</span></label>
+            <input type="text" id="execSchool" placeholder="e.g. Prempeh College">
+          </div>
+          <div>
+            <label for="execInitials">Avatar Initials <span style="color:rgba(238,242,255,.4);font-weight:400;">(optional — auto-generated if blank)</span></label>
+            <input type="text" id="execInitials" maxlength="4" placeholder="e.g. PR">
+          </div>
+        </div>
+
+        <div>
+          <label for="execImageInput">Photo <span style="color:rgba(238,242,255,.4);font-weight:400;">(optional — falls back to initials avatar)</span></label>
+          <div class="image-drop" id="execImageDrop">
+            <input type="file" id="execImageInput" accept="image/png,image/jpeg,image/webp">
+            <div class="hint"><strong>Click to upload</strong> or drag a photo here — JPG, PNG or WEBP, max 5MB</div>
+          </div>
+          <div id="execImagePreviewWrap" style="display:none;" class="image-preview-wrap">
+            <img id="execImagePreviewImg" src="" alt="Executive photo preview">
+            <button type="button" class="image-remove-btn" id="execImageRemoveBtn">×</button>
+          </div>
+          <div class="image-upload-status" id="execImageUploadStatus"></div>
+          <input type="hidden" id="execPhotoUrl" value="">
+        </div>
+
+        <div>
+          <button class="publish-btn" id="execAddBtn">Add Executive</button>
+          <div class="post-msg" id="execMsg"></div>
+        </div>
+      </div>
+
+      <div id="execListContainer">
+        <div class="exec-empty">Loading executives…</div>
+      </div>
+    </div>
   </main>
 
 </div>
@@ -611,9 +708,10 @@
     document.getElementById('welcomeSub').textContent =
       `${now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' })} · Ashanti Region`;
 
-    // Load posts and messages in parallel
+    // Load posts, messages, and executives in parallel
     loadPosts();
     loadMessages();
+    loadExecutives();
   }
 
   // ── Phase 4: Full messages log ──────────────────────────────────────────────
@@ -1118,6 +1216,286 @@
     });
 
   }
+
+  // ── Executives management ───────────────────────────────────────────────────
+  const EXEC_CATEGORY_LABELS = {
+    rec: 'Regional Executive Committee (REC)',
+    zec: 'Zonal Executive Committee (ZEC)',
+    lit: 'Literary & Editorial',
+    wds: 'Writers & Debaters Society (WDS)',
+    sec: 'Secretariat',
+    adhoc: 'ADHOC',
+  };
+  const EXEC_CATEGORY_ORDER = ['rec', 'zec', 'lit', 'wds', 'sec', 'adhoc'];
+
+  let execCache = [];
+
+  async function loadExecutives() {
+    const container = document.getElementById('execListContainer');
+    try {
+      const res = await fetch('/api/executives', { credentials: 'same-origin' });
+      const data = await res.json();
+      if (!res.ok) {
+        container.innerHTML = '<div class="exec-empty">Could not load executives.</div>';
+        return;
+      }
+      execCache = data.executives || [];
+      renderExecList();
+      updateExecSubgroupOptions();
+    } catch {
+      container.innerHTML = '<div class="exec-empty">Could not load executives.</div>';
+    }
+  }
+
+  function renderExecList() {
+    const container = document.getElementById('execListContainer');
+    if (!execCache.length) {
+      container.innerHTML = '<div class="exec-empty">No executives added yet.</div>';
+      return;
+    }
+
+    let html = '';
+    EXEC_CATEGORY_ORDER.forEach(cat => {
+      const inCat = execCache.filter(e => e.category === cat);
+      if (!inCat.length) return;
+
+      html += `<div class="exec-list-group"><h3>${esc(EXEC_CATEGORY_LABELS[cat])}</h3>`;
+
+      // Group by subgroup within this category (REC has no subgroup)
+      const subgroups = [...new Set(inCat.map(e => e.subgroup || ''))];
+      subgroups.forEach(sg => {
+        if (sg) html += `<div style="font-size:11px;font-weight:700;color:rgba(238,242,255,.5);margin:10px 0 6px;">${esc(sg)}</div>`;
+        inCat.filter(e => (e.subgroup || '') === sg).forEach(ex => {
+          html += `
+            <div class="exec-row" data-id="${esc(ex.id)}">
+              <div class="exec-row-left">
+                ${ex.photo_url
+                  ? `<img class="exec-row-thumb" src="${esc(ex.photo_url)}" alt="">`
+                  : `<div class="exec-row-thumb">${esc(ex.initials || '')}</div>`}
+                <div class="exec-row-text">
+                  <div class="exec-row-name">${esc(ex.name)}</div>
+                  <div class="exec-row-meta">${esc(ex.role)}${ex.school ? ' · ' + esc(ex.school) : ''}</div>
+                </div>
+              </div>
+              <button class="delete-btn exec-delete-btn" data-id="${esc(ex.id)}">Delete</button>
+            </div>`;
+        });
+      });
+
+      html += `</div>`;
+    });
+
+    container.innerHTML = html || '<div class="exec-empty">No executives added yet.</div>';
+
+    container.querySelectorAll('.exec-delete-btn').forEach(btn => {
+      btn.addEventListener('click', async function () {
+        const id = this.dataset.id;
+        if (!confirm('Remove this executive? This cannot be undone.')) return;
+        this.disabled = true;
+        this.textContent = 'Removing…';
+        try {
+          const res = await fetch('/api/admin/executives-create', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id }),
+            credentials: 'same-origin',
+          });
+          if (res.ok) {
+            execCache = execCache.filter(e => e.id !== id);
+            renderExecList();
+            updateExecSubgroupOptions();
+          } else {
+            alert('Could not remove executive. Try again.');
+            this.disabled = false;
+            this.textContent = 'Delete';
+          }
+        } catch {
+          alert('Network error. Try again.');
+          this.disabled = false;
+          this.textContent = 'Delete';
+        }
+      });
+    });
+  }
+
+  // Subgroup field: hidden/optional for REC, suggested via datalist for others
+  const execCategorySelect = document.getElementById('execCategory');
+  const execSubgroupWrap   = document.getElementById('execSubgroupWrap');
+  const execSubgroupInput  = document.getElementById('execSubgroup');
+  const execSubgroupList   = document.getElementById('execSubgroupList');
+
+  function updateExecSubgroupOptions() {
+    const cat = execCategorySelect.value;
+    const isRec = cat === 'rec';
+    execSubgroupWrap.style.opacity = isRec ? '0.4' : '1';
+    execSubgroupInput.placeholder = isRec ? 'Not used for REC' : 'e.g. Zone 1';
+    execSubgroupInput.disabled = isRec;
+
+    const options = [...new Set(execCache.filter(e => e.category === cat && e.subgroup).map(e => e.subgroup))];
+    execSubgroupList.innerHTML = options.map(o => `<option value="${esc(o)}"></option>`).join('');
+  }
+  execCategorySelect.addEventListener('change', updateExecSubgroupOptions);
+
+  // Photo upload — reuses the same compressImage() helper defined above for post covers
+  const execImageInput      = document.getElementById('execImageInput');
+  const execImageDrop       = document.getElementById('execImageDrop');
+  const execImagePreviewWrap= document.getElementById('execImagePreviewWrap');
+  const execImagePreviewImg = document.getElementById('execImagePreviewImg');
+  const execImageRemoveBtn  = document.getElementById('execImageRemoveBtn');
+  const execImageUploadStatus = document.getElementById('execImageUploadStatus');
+  const execPhotoUrl        = document.getElementById('execPhotoUrl');
+
+  function resetExecImageField() {
+    execPhotoUrl.value = '';
+    execImagePreviewWrap.style.display = 'none';
+    execImagePreviewImg.src = '';
+    execImageDrop.style.display = 'block';
+    execImageInput.value = '';
+    execImageUploadStatus.textContent = '';
+    execImageUploadStatus.className = 'image-upload-status';
+  }
+
+  async function handleExecImageFile(file) {
+    if (!file) return;
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      execImageUploadStatus.textContent = '✗ Only JPG, PNG or WEBP images are allowed.';
+      execImageUploadStatus.className = 'image-upload-status error';
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      execImageUploadStatus.textContent = '✗ Image is too large — max 5MB.';
+      execImageUploadStatus.className = 'image-upload-status error';
+      return;
+    }
+
+    const localUrl = URL.createObjectURL(file);
+    execImagePreviewImg.src = localUrl;
+    execImagePreviewWrap.style.display = 'inline-block';
+    execImageDrop.style.display = 'none';
+    execImageUploadStatus.textContent = 'Compressing…';
+    execImageUploadStatus.className = 'image-upload-status';
+
+    try {
+      const compressed = await compressImage(file);
+
+      execImageUploadStatus.textContent = 'Uploading…';
+      const urlRes = await fetch('/api/admin/upload-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, folder: 'executives' }),
+        credentials: 'same-origin',
+      });
+      const urlData = await urlRes.json();
+      if (!urlRes.ok) {
+        execImageUploadStatus.textContent = '✗ ' + (urlData.error || 'Could not get upload URL.');
+        execImageUploadStatus.className = 'image-upload-status error';
+        return;
+      }
+
+      const uploadRes = await fetch(urlData.signedUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'image/jpeg' },
+        body: compressed,
+      });
+      if (!uploadRes.ok) {
+        execImageUploadStatus.textContent = '✗ Upload to storage failed. Check bucket policy.';
+        execImageUploadStatus.className = 'image-upload-status error';
+        return;
+      }
+
+      execPhotoUrl.value = urlData.publicUrl;
+      execImageUploadStatus.textContent = '✓ Photo uploaded and ready.';
+      execImageUploadStatus.className = 'image-upload-status success';
+    } catch (err) {
+      execImageUploadStatus.textContent = '✗ ' + (err.message || 'Network error uploading photo.');
+      execImageUploadStatus.className = 'image-upload-status error';
+    }
+  }
+
+  if (execImageInput) {
+    execImageInput.addEventListener('change', e => handleExecImageFile(e.target.files[0]));
+    ['dragenter', 'dragover'].forEach(evt =>
+      execImageDrop.addEventListener(evt, e => { e.preventDefault(); execImageDrop.classList.add('dragover'); })
+    );
+    ['dragleave', 'drop'].forEach(evt =>
+      execImageDrop.addEventListener(evt, e => { e.preventDefault(); execImageDrop.classList.remove('dragover'); })
+    );
+    execImageDrop.addEventListener('drop', e => {
+      const file = e.dataTransfer.files[0];
+      if (file) handleExecImageFile(file);
+    });
+    execImageRemoveBtn.addEventListener('click', resetExecImageField);
+  }
+
+  // Add executive
+  const execAddBtn = document.getElementById('execAddBtn');
+  const execMsg    = document.getElementById('execMsg');
+
+  execAddBtn.addEventListener('click', async function () {
+    const category = execCategorySelect.value;
+    const subgroup = execSubgroupInput.value.trim();
+    const name     = document.getElementById('execName').value.trim();
+    const role     = document.getElementById('execRole').value.trim();
+    const school   = document.getElementById('execSchool').value.trim();
+    const initials = document.getElementById('execInitials').value.trim();
+
+    execMsg.className = 'post-msg';
+
+    if (!name || !role) {
+      execMsg.textContent = '✗ Name and role are required.';
+      execMsg.classList.add('error');
+      return;
+    }
+    if (category !== 'rec' && !subgroup) {
+      execMsg.textContent = '✗ Sub-group / committee name is required for this category.';
+      execMsg.classList.add('error');
+      return;
+    }
+
+    execAddBtn.disabled = true;
+    execAddBtn.textContent = 'Adding…';
+
+    try {
+      const res = await fetch('/api/admin/executives-create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category, subgroup, name, role, school, initials,
+          photo_url: execPhotoUrl.value,
+        }),
+        credentials: 'same-origin',
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        execMsg.textContent = '✗ ' + (data.error || 'Could not add executive.');
+        execMsg.classList.add('error');
+        return;
+      }
+
+      execMsg.textContent = '✓ Executive added and now live on the website.';
+      execMsg.classList.add('success');
+
+      document.getElementById('execName').value = '';
+      document.getElementById('execRole').value = '';
+      document.getElementById('execSchool').value = '';
+      document.getElementById('execInitials').value = '';
+      execSubgroupInput.value = '';
+      resetExecImageField();
+
+      loadExecutives();
+
+      setTimeout(() => { execMsg.className = 'post-msg'; }, 5000);
+    } catch {
+      execMsg.textContent = '✗ Network error. Check your connection and try again.';
+      execMsg.classList.add('error');
+    } finally {
+      execAddBtn.disabled = false;
+      execAddBtn.textContent = 'Add Executive';
+    }
+  });
+
+  updateExecSubgroupOptions();
 </script>
 </body>
 </html>

@@ -49,11 +49,15 @@ module.exports = async function handler(req, res) {
     return res.status(401).json({ error: 'Not authenticated.' });
   }
 
-  const { filename } = req.body || {};
+  const { filename, folder } = req.body || {};
   if (!filename) return res.status(400).json({ error: 'Filename is required.' });
 
+  // Restrict to known folders so callers can't write arbitrary paths into the bucket.
+  const ALLOWED_FOLDERS = ['posts', 'executives'];
+  const safeFolder = ALLOWED_FOLDERS.includes(folder) ? folder : 'posts';
+
   // Always store as JPEG — Canvas compression always outputs JPEG
-  const path = `posts/${Date.now()}-${crypto.randomBytes(4).toString('hex')}.jpg`;
+  const path = `${safeFolder}/${Date.now()}-${crypto.randomBytes(4).toString('hex')}.jpg`;
 
   const { data, error } = await supabase.storage
     .from('post-images')

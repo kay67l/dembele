@@ -22,12 +22,29 @@ function slugify(title) {
 }
 
 module.exports = async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed.' });
-
   const cookies = parseCookies(req.headers.cookie);
   if (!verifyToken(cookies['arsrc_session'], process.env.SESSION_SECRET)) {
     return res.status(401).json({ error: 'Not authenticated.' });
   }
+
+  // ── DELETE: remove a post ────────────────────────────────────────────────
+  // (previously unhandled — the dashboard's delete button called this method
+  // but the endpoint only ever accepted POST, so deletes silently 405'd)
+  if (req.method === 'DELETE') {
+    const { id } = req.body || {};
+    if (!id) return res.status(400).json({ error: 'id is required.' });
+
+    const { error } = await supabase.from('blog_posts').delete().eq('id', id);
+
+    if (error) {
+      console.error('[ARSRC Admin] Failed to delete post:', error);
+      return res.status(500).json({ error: 'Could not delete post. Try again.' });
+    }
+
+    return res.status(200).json({ success: true });
+  }
+
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed.' });
 
   const { title, excerpt, content, category, author, image_url } = req.body || {};
 

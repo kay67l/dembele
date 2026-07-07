@@ -105,6 +105,76 @@ function downloadFile(fileName) {
     document.body.removeChild(link);}
 
 
+// ─── Dynamic executives section ──────────────────────────────────────────────
+// Fetches from /api/executives and renders into the REC flat grid plus the
+// sub-group mini-grids for ZEC/Literary/WDS/Secretariat/ADHOC. Falls back to
+// an empty-state message per tab if no executives have been added yet.
+(function () {
+  const recGrid = document.getElementById('execGrid-rec');
+  if (!recGrid) return; // not on a page with the executives section
+
+  const GROUPED_CATEGORIES = ['zec', 'lit', 'wds', 'sec', 'adhoc'];
+
+  function escExec(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function execCardHTML(ex) {
+    const photo = ex.photo_url
+      ? `<img class="exec-cover-photo" src="${escExec(ex.photo_url)}" alt="">`
+      : '';
+    return `
+      <div class="exec-card reveal">
+        <div class="exec-photo">${photo}<div class="exec-avatar">${escExec(ex.initials || '')}</div></div>
+        <h4>${escExec(ex.name)}</h4>
+        <div class="exec-role">${escExec(ex.role)}</div>
+        ${ex.school ? `<div class="exec-school">${escExec(ex.school)}</div>` : ''}
+      </div>`;
+  }
+
+  fetch('/api/executives')
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(({ executives }) => {
+      const list = executives || [];
+
+      // REC: flat grid, no sub-group headings
+      const recItems = list.filter(e => e.category === 'rec');
+      recGrid.innerHTML = recItems.length
+        ? recItems.map(execCardHTML).join('')
+        : '<div class="news-empty">No REC members added yet.</div>';
+
+      // Every other tab: grouped into named sub-committees
+      GROUPED_CATEGORIES.forEach(cat => {
+        const container = document.getElementById(`execGroups-${cat}`);
+        if (!container) return;
+
+        const items = list.filter(e => e.category === cat);
+        if (!items.length) {
+          container.innerHTML = '<div class="news-empty">No members added yet for this section.</div>';
+          return;
+        }
+
+        // Preserve first-appearance order of each sub-group
+        const subgroups = [...new Set(items.map(e => e.subgroup || 'General'))];
+        container.innerHTML = subgroups.map(sg => `
+          <div class="exec-zone-group">
+            <h4>${escExec(sg)}</h4>
+            <div class="mini-exec-grid">
+              ${items.filter(e => (e.subgroup || 'General') === sg).map(execCardHTML).join('')}
+            </div>
+          </div>
+        `).join('');
+      });
+
+      // Newly-injected .reveal cards start visible immediately (they were
+      // added after the IntersectionObserver already ran its initial pass)
+      document.querySelectorAll('#executives .reveal').forEach(el => el.classList.add('visible'));
+    })
+    .catch(() => {
+      recGrid.innerHTML = '<div class="news-empty">Could not load executives.</div>';
+    });
+})();
+
 // ─── Phase 3: Dynamic news section ───────────────────────────────────────────
 // Fetches published posts from /api/posts and renders them in #newsContainer.
 // Falls back to an empty state if no posts exist yet.
