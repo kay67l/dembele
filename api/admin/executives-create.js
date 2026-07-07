@@ -1,4 +1,4 @@
-// api/admin/executives-create.js — POST: add an executive, DELETE: remove one
+// api/admin/executives-create.js — POST: add, PATCH: edit, DELETE: remove an executive
 const { createClient } = require('@supabase/supabase-js');
 const crypto = require('crypto');
 
@@ -33,6 +33,49 @@ module.exports = async function handler(req, res) {
   const cookies = parseCookies(req.headers.cookie);
   if (!verifyToken(cookies['arsrc_session'], process.env.SESSION_SECRET)) {
     return res.status(401).json({ error: 'Not authenticated.' });
+  }
+
+  // ── PATCH: edit an existing executive ────────────────────────────────────
+  if (req.method === 'PATCH') {
+    const { id, category, subgroup, name, role, school, initials, photo_url } = req.body || {};
+
+    if (!id) return res.status(400).json({ error: 'id is required.' });
+    if (category && !VALID_CATEGORIES.includes(category)) {
+      return res.status(400).json({ error: 'Invalid committee/body selected.' });
+    }
+    if (name !== undefined && !name.trim()) return res.status(400).json({ error: 'Name cannot be empty.' });
+    if (role !== undefined && !role.trim()) return res.status(400).json({ error: 'Role cannot be empty.' });
+    if (category && category !== 'rec' && subgroup !== undefined && !subgroup.trim()) {
+      return res.status(400).json({ error: 'Sub-group / committee name is required for this category.' });
+    }
+
+    // Only update fields the client actually sent — this is a partial update,
+    // not a full overwrite, so omitted fields keep their existing DB value.
+    const updates = {};
+    if (category !== undefined) updates.category = category;
+    if (name !== undefined) updates.name = name.trim();
+    if (role !== undefined) updates.role = role.trim();
+    if (school !== undefined) updates.school = school.trim() || null;
+    if (initials !== undefined) updates.initials = (initials.trim() || deriveInitials(name || '')).slice(0, 4).toUpperCase();
+    if (photo_url !== undefined) updates.photo_url = photo_url.trim() || null;
+    if (subgroup !== undefined) {
+      updates.subgroup = (category === 'rec' || (category === undefined && subgroup === '')) ? null : subgroup.trim();
+    }
+    // If category is being changed to 'rec', force subgroup to null regardless
+    if (category === 'rec') updates.subgroup = null;
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: 'No fields to update.' });
+    }
+
+    const { data, error } = await supabase.from('executives').update(updates).eq('id', id).select().single();
+
+    if (error) {
+      console.error('[ARSRC Admin] Failed to update executive:', error);
+      return res.status(500).json({ error: 'Could not save changes. Try again.' });
+    }
+
+    return res.status(200).json({ success: true, executive: data });
   }
 
   // ── DELETE: remove an executive ──────────────────────────────────────────

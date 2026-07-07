@@ -608,6 +608,11 @@
         <h2>👥 Manage Executives</h2>
       </div>
 
+      <div id="execEditBanner" style="display:none; margin-bottom:14px; padding:10px 14px; background:rgba(59,130,246,.12); border:1px solid rgba(59,130,246,.3); border-radius:10px; font-size:13px; color:#93c5fd; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <span id="execEditBannerText">Editing executive…</span>
+        <button type="button" id="execCancelEditBtn" style="background:none; border:1px solid rgba(147,197,253,.4); color:#93c5fd; border-radius:6px; padding:4px 10px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;">Cancel</button>
+      </div>
+
       <div class="post-form" id="execForm">
         <div class="form-row">
           <div>
@@ -1277,7 +1282,10 @@
                   <div class="exec-row-meta">${esc(ex.role)}${ex.school ? ' · ' + esc(ex.school) : ''}</div>
                 </div>
               </div>
-              <button class="delete-btn exec-delete-btn" data-id="${esc(ex.id)}">Delete</button>
+              <div style="display:flex; gap:8px; flex-shrink:0;">
+                <button class="delete-btn exec-edit-btn" data-id="${esc(ex.id)}" style="background:rgba(59,130,246,.12); color:#93c5fd; border-color:rgba(59,130,246,.25);">Edit</button>
+                <button class="delete-btn exec-delete-btn" data-id="${esc(ex.id)}">Delete</button>
+              </div>
             </div>`;
         });
       });
@@ -1286,6 +1294,13 @@
     });
 
     container.innerHTML = html || '<div class="exec-empty">No executives added yet.</div>';
+
+    container.querySelectorAll('.exec-edit-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const ex = execCache.find(e => e.id === this.dataset.id);
+        if (ex) enterEditMode(ex);
+      });
+    });
 
     container.querySelectorAll('.exec-delete-btn').forEach(btn => {
       btn.addEventListener('click', async function () {
@@ -1318,7 +1333,52 @@
     });
   }
 
-  // Subgroup field: hidden/optional for REC, suggested via datalist for others
+  // ── Edit mode ────────────────────────────────────────────────────────────
+  let editingExecId = null;
+
+  function enterEditMode(ex) {
+    editingExecId = ex.id;
+
+    document.getElementById('execCategory').value = ex.category;
+    updateExecSubgroupOptions();
+    document.getElementById('execSubgroup').value = ex.subgroup || '';
+    document.getElementById('execName').value = ex.name || '';
+    document.getElementById('execRole').value = ex.role || '';
+    document.getElementById('execSchool').value = ex.school || '';
+    document.getElementById('execInitials').value = ex.initials || '';
+
+    if (ex.photo_url) {
+      execPhotoUrl.value = ex.photo_url;
+      execImagePreviewImg.src = ex.photo_url;
+      execImagePreviewWrap.style.display = 'inline-block';
+      execImageDrop.style.display = 'none';
+    } else {
+      resetExecImageField();
+    }
+
+    document.getElementById('execEditBannerText').textContent = `Editing: ${ex.name}`;
+    document.getElementById('execEditBanner').style.display = 'flex';
+    execAddBtn.textContent = 'Save Changes';
+
+    document.getElementById('execForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function exitEditMode() {
+    editingExecId = null;
+    document.getElementById('execEditBanner').style.display = 'none';
+    execAddBtn.textContent = 'Add Executive';
+
+    document.getElementById('execName').value = '';
+    document.getElementById('execRole').value = '';
+    document.getElementById('execSchool').value = '';
+    document.getElementById('execInitials').value = '';
+    execSubgroupInput.value = '';
+    resetExecImageField();
+  }
+
+  document.getElementById('execCancelEditBtn').addEventListener('click', exitEditMode);
+
+
   const execCategorySelect = document.getElementById('execCategory');
   const execSubgroupWrap   = document.getElementById('execSubgroupWrap');
   const execSubgroupInput  = document.getElementById('execSubgroup');
@@ -1453,13 +1513,16 @@
     }
 
     execAddBtn.disabled = true;
-    execAddBtn.textContent = 'Adding…';
+    execAddBtn.textContent = editingExecId ? 'Saving…' : 'Adding…';
+
+    const isEdit = !!editingExecId;
 
     try {
       const res = await fetch('/api/admin/executives-create', {
-        method: 'POST',
+        method: isEdit ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          ...(isEdit ? { id: editingExecId } : {}),
           category, subgroup, name, role, school, initials,
           photo_url: execPhotoUrl.value,
         }),
@@ -1468,20 +1531,26 @@
       const data = await res.json();
 
       if (!res.ok) {
-        execMsg.textContent = '✗ ' + (data.error || 'Could not add executive.');
+        execMsg.textContent = '✗ ' + (data.error || (isEdit ? 'Could not save changes.' : 'Could not add executive.'));
         execMsg.classList.add('error');
         return;
       }
 
-      execMsg.textContent = '✓ Executive added and now live on the website.';
+      execMsg.textContent = isEdit
+        ? '✓ Changes saved and now live on the website.'
+        : '✓ Executive added and now live on the website.';
       execMsg.classList.add('success');
 
-      document.getElementById('execName').value = '';
-      document.getElementById('execRole').value = '';
-      document.getElementById('execSchool').value = '';
-      document.getElementById('execInitials').value = '';
-      execSubgroupInput.value = '';
-      resetExecImageField();
+      if (isEdit) {
+        exitEditMode();
+      } else {
+        document.getElementById('execName').value = '';
+        document.getElementById('execRole').value = '';
+        document.getElementById('execSchool').value = '';
+        document.getElementById('execInitials').value = '';
+        execSubgroupInput.value = '';
+        resetExecImageField();
+      }
 
       loadExecutives();
 
@@ -1491,7 +1560,7 @@
       execMsg.classList.add('error');
     } finally {
       execAddBtn.disabled = false;
-      execAddBtn.textContent = 'Add Executive';
+      execAddBtn.textContent = editingExecId ? 'Save Changes' : 'Add Executive';
     }
   });
 
