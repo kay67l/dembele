@@ -1238,7 +1238,10 @@
   async function loadExecutives() {
     const container = document.getElementById('execListContainer');
     try {
-      const res = await fetch('/api/executives', { credentials: 'same-origin' });
+      // Cache-bust: /api/executives is CDN-cached for the public site's benefit,
+      // but the admin dashboard needs to see writes (reorders, edits, deletes)
+      // immediately, not up to 60s stale.
+      const res = await fetch('/api/executives?_=' + Date.now(), { credentials: 'same-origin' });
       const data = await res.json();
       if (!res.ok) {
         container.innerHTML = '<div class="exec-empty">Could not load executives.</div>';
