@@ -801,7 +801,7 @@
   // ── Auth guard ──────────────────────────────────────────────────────────────
   (async function checkAuth() {
     try {
-      const res = await fetch('/api/admin/verify', { credentials: 'same-origin' });
+      const res = await fetch('/api/admin/auth', { credentials: 'same-origin' });
       if (!res.ok) {
         window.location.href = '/admin/';
         return;
@@ -817,7 +817,12 @@
 
   // ── Logout ──────────────────────────────────────────────────────────────────
   document.getElementById('logoutBtn').addEventListener('click', async () => {
-    await fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' });
+    await fetch('/api/admin/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'logout' }),
+      credentials: 'same-origin',
+    });
     window.location.href = '/admin/';
   });
 
@@ -1428,10 +1433,10 @@
         const dir = this.dataset.dir;
         this.disabled = true;
         try {
-          const res = await fetch('/api/admin/executives-reorder', {
+          const res = await fetch('/api/admin/executives-create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, direction: dir }),
+            body: JSON.stringify({ action: 'reorder', id, direction: dir }),
             credentials: 'same-origin',
           });
           if (res.ok) {
@@ -1736,10 +1741,10 @@
     this.textContent = 'Archiving…';
 
     try {
-      const res = await fetch('/api/admin/executives-archive', {
+      const res = await fetch('/api/admin/executives-create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ year }),
+        body: JSON.stringify({ action: 'archive', year }),
         credentials: 'same-origin',
       });
       const data = await res.json();

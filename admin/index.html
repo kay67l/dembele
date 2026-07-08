@@ -260,10 +260,10 @@
     msg.className   = 'msg';
 
     try {
-      const res  = await fetch('/api/admin/login', {
+      const res  = await fetch('/api/admin/auth', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ password }),
+        body:    JSON.stringify({ action: 'login', password }),
         credentials: 'same-origin',
       });
 
@@ -292,7 +292,7 @@
   pwd.addEventListener('keydown', (e) => { if (e.key === 'Enter') login(); });
 
   // Redirect if already logged in
-  fetch('/api/admin/verify', { credentials: 'same-origin' })
+  fetch('/api/admin/auth', { credentials: 'same-origin' })
     .then(r => { if (r.ok) window.location.href = '/admin/dashboard.html'; })
     .catch(() => {});
 </script>

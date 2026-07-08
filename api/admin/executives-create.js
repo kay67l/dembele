@@ -1,4 +1,7 @@
-// api/admin/executives-create.js — POST: add, PATCH: edit, DELETE: remove an executive
+// api/admin/executives-create.js — CRUD + archive + reorder for executives
+// (consolidated: absorbs the former executives-archive.js and executives-reorder.js
+//  to reduce serverless function count. Same behavior, same URL paths for those
+//  actions moved to POST { action: 'archive' | 'reorder' } on this endpoint.)
 const { createClient } = require('@supabase/supabase-js');
 const crypto = require('crypto');
 
@@ -29,6 +32,110 @@ function deriveInitials(name) {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
+// ── Archive: copy every row currently in `executives` into `past_executives`,
+// tagged with the given year. Never modifies or deletes anything in `executives`.
+async function handleArchive(req, res) {
+  const { year } = req.body || {};
+  if (!year?.trim()) {
+    return res.status(400).json({ error: 'Year label is required (e.g. "2024/2025").' });
+  }
+  const yearLabel = year.trim();
+
+  const { count: existingCount, error: countErr } = await supabase
+    .from('past_executives')
+    .select('id', { count: 'exact', head: true })
+    .eq('year', yearLabel);
+
+  if (countErr) {
+    console.error('[ARSRC Admin] Failed to check existing archive:', countErr);
+    return res.status(500).json({ error: 'Could not check for an existing archive under this year.' });
+  }
+  if (existingCount && existingCount > 0) {
+    return res.status(409).json({
+      error: `"${yearLabel}" has already been archived (${existingCount} entries). Delete that year first if you want to re-archive it, or use a different year label.`,
+    });
+  }
+
+  const { data: current, error: fetchErr } = await supabase
+    .from('executives')
+    .select('category, subgroup, name, role, school, initials, photo_url, sort_order');
+
+  if (fetchErr) {
+    console.error('[ARSRC Admin] Failed to read current executives for archiving:', fetchErr);
+    return res.status(500).json({ error: 'Could not read current executives.' });
+  }
+  if (!current || current.length === 0) {
+    return res.status(400).json({ error: 'There are no current executives to archive.' });
+  }
+
+  const snapshot = current.map(ex => ({ ...ex, year: yearLabel }));
+
+  const { error: insertErr } = await supabase.from('past_executives').insert(snapshot);
+  if (insertErr) {
+    console.error('[ARSRC Admin] Failed to archive executives:', insertErr);
+    return res.status(500).json({ error: 'Could not save the archive. Try again.' });
+  }
+
+  return res.status(201).json({ success: true, archived: snapshot.length, year: yearLabel });
+}
+
+// ── Reorder: move an executive up/down within its (category, subgroup) group
+// by swapping sort_order with its neighbor.
+async function handleReorder(req, res) {
+  const { id, direction } = req.body || {};
+  if (!id) return res.status(400).json({ error: 'id is required.' });
+  if (direction !== 'up' && direction !== 'down') {
+    return res.status(400).json({ error: 'direction must be "up" or "down".' });
+  }
+
+  const { data: target, error: targetErr } = await supabase
+    .from('executives')
+    .select('id, category, subgroup, sort_order')
+    .eq('id', id)
+    .single();
+
+  if (targetErr || !target) {
+    return res.status(404).json({ error: 'Executive not found.' });
+  }
+
+  let groupQuery = supabase
+    .from('executives')
+    .select('id, sort_order')
+    .eq('category', target.category);
+  groupQuery = target.subgroup === null
+    ? groupQuery.is('subgroup', null)
+    : groupQuery.eq('subgroup', target.subgroup);
+
+  const { data: group, error: groupErr } = await groupQuery
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: true });
+
+  if (groupErr || !group) {
+    return res.status(500).json({ error: 'Could not load group for reordering.' });
+  }
+
+  const idx = group.findIndex(r => r.id === id);
+  if (idx === -1) return res.status(404).json({ error: 'Executive not found in its group.' });
+
+  const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+  if (swapIdx < 0 || swapIdx >= group.length) {
+    return res.status(200).json({ success: true, moved: false });
+  }
+
+  const a = group[idx];
+  const b = group[swapIdx];
+
+  const { error: err1 } = await supabase.from('executives').update({ sort_order: b.sort_order }).eq('id', a.id);
+  const { error: err2 } = await supabase.from('executives').update({ sort_order: a.sort_order }).eq('id', b.id);
+
+  if (err1 || err2) {
+    console.error('[ARSRC Admin] Failed to reorder executives:', err1 || err2);
+    return res.status(500).json({ error: 'Could not reorder. Try again.' });
+  }
+
+  return res.status(200).json({ success: true, moved: true });
+}
+
 module.exports = async function handler(req, res) {
   const cookies = parseCookies(req.headers.cookie);
   if (!verifyToken(cookies['arsrc_session'], process.env.SESSION_SECRET)) {
@@ -49,8 +156,6 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Sub-group / committee name is required for this category.' });
     }
 
-    // Only update fields the client actually sent — this is a partial update,
-    // not a full overwrite, so omitted fields keep their existing DB value.
     const updates = {};
     if (category !== undefined) updates.category = category;
     if (name !== undefined) updates.name = name.trim();
@@ -61,7 +166,6 @@ module.exports = async function handler(req, res) {
     if (subgroup !== undefined) {
       updates.subgroup = (category === 'rec' || (category === undefined && subgroup === '')) ? null : subgroup.trim();
     }
-    // If category is being changed to 'rec', force subgroup to null regardless
     if (category === 'rec') updates.subgroup = null;
 
     if (Object.keys(updates).length === 0) {
@@ -93,9 +197,15 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({ success: true });
   }
 
-  // ── POST: add an executive ───────────────────────────────────────────────
+  // ── POST: add / archive / reorder, dispatched by action ──────────────────
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed.' });
 
+  const { action } = req.body || {};
+
+  if (action === 'archive') return handleArchive(req, res);
+  if (action === 'reorder') return handleReorder(req, res);
+
+  // Default (no action / action === 'add'): add a new executive
   const { category, subgroup, name, role, school, initials, photo_url } = req.body || {};
 
   if (!VALID_CATEGORIES.includes(category)) {
@@ -103,16 +213,12 @@ module.exports = async function handler(req, res) {
   }
   if (!name?.trim()) return res.status(400).json({ error: 'Name is required.' });
   if (!role?.trim()) return res.status(400).json({ error: 'Role is required.' });
-  // REC is the one flat category with no sub-group heading (matches the site layout);
-  // every other category is rendered under a named sub-committee.
   if (category !== 'rec' && !subgroup?.trim()) {
     return res.status(400).json({ error: 'Sub-group / committee name is required for this category.' });
   }
 
   const groupSubgroup = category === 'rec' ? null : subgroup.trim();
 
-  // New entries go to the bottom of their (category, subgroup) group by
-  // default — existing manually-arranged order is left untouched.
   let nextSortOrder = 0;
   {
     let query = supabase.from('executives').select('sort_order').eq('category', category);
