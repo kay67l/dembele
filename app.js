@@ -132,6 +132,23 @@ function downloadFile(fileName) {
       </div>`;
   }
 
+  // Compact horizontal card — used inside sub-group mini-grids (everything
+  // except REC). REC alone gets the large vertical .exec-card above.
+  function miniExecCardHTML(ex) {
+    const avatar = ex.photo_url
+      ? `<img class="mini-avatar-photo" src="${escExec(ex.photo_url)}" alt="">`
+      : `<div class="mini-avatar">${escExec(ex.initials || '')}</div>`;
+    return `
+      <div class="mini-exec-card reveal">
+        ${avatar}
+        <div class="mini-info">
+          <h5>${escExec(ex.name)}</h5>
+          <div class="mini-role">${escExec(ex.role)}</div>
+          ${ex.school ? `<div class="mini-school">${escExec(ex.school)}</div>` : ''}
+        </div>
+      </div>`;
+  }
+
   fetch('/api/executives')
     .then(r => r.ok ? r.json() : Promise.reject(r.status))
     .then(({ executives }) => {
@@ -143,7 +160,7 @@ function downloadFile(fileName) {
         ? recItems.map(execCardHTML).join('')
         : '<div class="news-empty">No REC members added yet.</div>';
 
-      // Every other tab: grouped into named sub-committees
+      // Every other tab: grouped into named sub-committees, compact cards
       GROUPED_CATEGORIES.forEach(cat => {
         const container = document.getElementById(`execGroups-${cat}`);
         if (!container) return;
@@ -160,7 +177,7 @@ function downloadFile(fileName) {
           <div class="exec-zone-group">
             <h4>${escExec(sg)}</h4>
             <div class="mini-exec-grid">
-              ${items.filter(e => (e.subgroup || 'General') === sg).map(execCardHTML).join('')}
+              ${items.filter(e => (e.subgroup || 'General') === sg).map(miniExecCardHTML).join('')}
             </div>
           </div>
         `).join('');

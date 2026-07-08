@@ -53,7 +53,7 @@ module.exports = async function handler(req, res) {
   if (!filename) return res.status(400).json({ error: 'Filename is required.' });
 
   // Restrict to known folders so callers can't write arbitrary paths into the bucket.
-  const ALLOWED_FOLDERS = ['posts', 'executives'];
+  const ALLOWED_FOLDERS = ['posts', 'executives', 'past-executives'];
   const safeFolder = ALLOWED_FOLDERS.includes(folder) ? folder : 'posts';
 
   // Always store as JPEG — Canvas compression always outputs JPEG

@@ -679,6 +679,120 @@
         <div class="exec-empty">Loading executives…</div>
       </div>
     </div>
+
+    <!-- Archive Current Executives -->
+    <div class="panel create-post-section">
+      <div class="panel-head">
+        <h2>🗄️ Archive Current Executives</h2>
+      </div>
+      <p style="font-size:13px; color:rgba(238,242,255,.5); margin-bottom:16px; line-height:1.6;">
+        Snapshots everyone currently listed in "Manage Executives" above into the Past Executives archive under a year label.
+        This does <strong>not</strong> touch or clear the current list — you'll still edit those names in place when the new term starts.
+      </p>
+      <div class="form-row">
+        <div>
+          <label for="archiveYear">Year Label</label>
+          <input type="text" id="archiveYear" placeholder="e.g. 2024/2025">
+        </div>
+      </div>
+      <div style="margin-top:14px;">
+        <button class="publish-btn" id="archiveBtn" style="background:linear-gradient(135deg,#7c3aed,#4c1d95);">Archive Current Executives</button>
+        <div class="post-msg" id="archiveMsg"></div>
+      </div>
+    </div>
+
+    <!-- Manage Past Executives -->
+    <div class="panel create-post-section">
+      <div class="panel-head">
+        <h2>📜 Manage Past Executives</h2>
+      </div>
+
+      <div class="post-form" id="pastExecForm">
+        <div class="form-row">
+          <div>
+            <label for="pastExecYear">Year</label>
+            <input type="text" id="pastExecYear" list="pastExecYearList" placeholder="e.g. 2021/2022">
+            <datalist id="pastExecYearList"></datalist>
+          </div>
+          <div>
+            <label for="pastExecCategory">Committee / Body</label>
+            <select id="pastExecCategory">
+              <option value="rec">Regional Executive Committee (REC)</option>
+              <option value="zec">Zonal Executive Committee (ZEC)</option>
+              <option value="lit">Literary &amp; Editorial</option>
+              <option value="wds">Writers &amp; Debaters Society (WDS)</option>
+              <option value="sec">Secretariat</option>
+              <option value="adhoc">ADHOC</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div id="pastExecSubgroupWrap">
+            <label for="pastExecSubgroup">Sub-group / Committee Name</label>
+            <input type="text" id="pastExecSubgroup" list="pastExecSubgroupList" placeholder="e.g. Zone 1">
+            <datalist id="pastExecSubgroupList"></datalist>
+          </div>
+          <div>
+            <label for="pastExecName">Full Name</label>
+            <input type="text" id="pastExecName" placeholder="e.g. James Hope Arthur">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label for="pastExecRole">Role / Position</label>
+            <input type="text" id="pastExecRole" placeholder="e.g. Regional President">
+          </div>
+          <div>
+            <label for="pastExecSchool">School <span style="color:rgba(238,242,255,.4);font-weight:400;">(optional)</span></label>
+            <input type="text" id="pastExecSchool" placeholder="e.g. Prempeh College">
+          </div>
+        </div>
+
+        <div>
+          <label for="pastExecInitials">Avatar Initials <span style="color:rgba(238,242,255,.4);font-weight:400;">(optional — auto-generated if blank)</span></label>
+          <input type="text" id="pastExecInitials" maxlength="4" placeholder="e.g. PR">
+        </div>
+
+        <div>
+          <label for="pastExecImageInput">Photo <span style="color:rgba(238,242,255,.4);font-weight:400;">(optional)</span></label>
+          <div class="image-drop" id="pastExecImageDrop">
+            <input type="file" id="pastExecImageInput" accept="image/png,image/jpeg,image/webp">
+            <div class="hint"><strong>Click to upload</strong> or drag a photo here — JPG, PNG or WEBP, max 5MB</div>
+          </div>
+          <div id="pastExecImagePreviewWrap" style="display:none;" class="image-preview-wrap">
+            <img id="pastExecImagePreviewImg" src="" alt="Past executive photo preview">
+            <button type="button" class="image-remove-btn" id="pastExecImageRemoveBtn">×</button>
+          </div>
+          <div class="image-upload-status" id="pastExecImageUploadStatus"></div>
+          <input type="hidden" id="pastExecPhotoUrl" value="">
+        </div>
+
+        <div id="pastExecEditBanner" style="display:none; margin-bottom:4px; padding:10px 14px; background:rgba(124,58,237,.12); border:1px solid rgba(124,58,237,.3); border-radius:10px; font-size:13px; color:#c4b5fd; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+          <span id="pastExecEditBannerText">Editing…</span>
+          <button type="button" id="pastExecCancelEditBtn" style="background:none; border:1px solid rgba(196,181,253,.4); color:#c4b5fd; border-radius:6px; padding:4px 10px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;">Cancel</button>
+        </div>
+
+        <div>
+          <button class="publish-btn" id="pastExecAddBtn">Add Past Executive</button>
+          <div class="post-msg" id="pastExecMsg"></div>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:22px;">
+        <div>
+          <label for="pastExecYearFilter">Filter by Year</label>
+          <select id="pastExecYearFilter">
+            <option value="">All years</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="pastExecListContainer">
+        <div class="exec-empty">Loading past executives…</div>
+      </div>
+    </div>
   </main>
 
 </div>
@@ -713,10 +827,11 @@
     document.getElementById('welcomeSub').textContent =
       `${now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' })} · Ashanti Region`;
 
-    // Load posts, messages, and executives in parallel
+    // Load posts, messages, executives, and past executives in parallel
     loadPosts();
     loadMessages();
     loadExecutives();
+    loadPastExecutives();
   }
 
   // ── Phase 4: Full messages log ──────────────────────────────────────────────
@@ -1602,6 +1717,415 @@
   });
 
   updateExecSubgroupOptions();
+
+  // ── Archive current executives ──────────────────────────────────────────
+  document.getElementById('archiveBtn').addEventListener('click', async function () {
+    const yearInput = document.getElementById('archiveYear');
+    const year = yearInput.value.trim();
+    const msg = document.getElementById('archiveMsg');
+    msg.className = 'post-msg';
+
+    if (!year) {
+      msg.textContent = '✗ Enter a year label first (e.g. 2024/2025).';
+      msg.classList.add('error');
+      return;
+    }
+    if (!confirm(`Archive all current executives under "${year}"? This copies everyone currently listed above into the Past Executives archive. The current list will NOT be changed or cleared.`)) return;
+
+    this.disabled = true;
+    this.textContent = 'Archiving…';
+
+    try {
+      const res = await fetch('/api/admin/executives-archive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ year }),
+        credentials: 'same-origin',
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        msg.textContent = '✗ ' + (data.error || 'Could not archive.');
+        msg.classList.add('error');
+        return;
+      }
+
+      msg.textContent = `✓ Archived ${data.archived} executives under "${data.year}".`;
+      msg.classList.add('success');
+      yearInput.value = '';
+      loadPastExecutives();
+    } catch {
+      msg.textContent = '✗ Network error. Check your connection and try again.';
+      msg.classList.add('error');
+    } finally {
+      this.disabled = false;
+      this.textContent = 'Archive Current Executives';
+    }
+  });
+
+  // ── Past executives management ──────────────────────────────────────────
+  let pastExecCache = [];
+  let pastExecYearFilterValue = '';
+  let editingPastExecId = null;
+
+  async function loadPastExecutives() {
+    const container = document.getElementById('pastExecListContainer');
+    try {
+      const res = await fetch('/api/past-executives?_=' + Date.now(), { credentials: 'same-origin' });
+      const data = await res.json();
+      if (!res.ok) {
+        container.innerHTML = '<div class="exec-empty">Could not load past executives.</div>';
+        return;
+      }
+      pastExecCache = data.pastExecutives || [];
+      updatePastExecYearOptions();
+      renderPastExecList();
+    } catch {
+      container.innerHTML = '<div class="exec-empty">Could not load past executives.</div>';
+    }
+  }
+
+  function updatePastExecYearOptions() {
+    const years = [...new Set(pastExecCache.map(e => e.year))]; // already sorted desc from API
+    const yearFilter = document.getElementById('pastExecYearFilter');
+    const currentFilterVal = yearFilter.value;
+    yearFilter.innerHTML = '<option value="">All years</option>' + years.map(y => `<option value="${esc(y)}">${esc(y)}</option>`).join('');
+    yearFilter.value = years.includes(currentFilterVal) ? currentFilterVal : '';
+
+    document.getElementById('pastExecYearList').innerHTML = years.map(y => `<option value="${esc(y)}"></option>`).join('');
+  }
+
+  document.getElementById('pastExecYearFilter').addEventListener('change', function () {
+    pastExecYearFilterValue = this.value;
+    renderPastExecList();
+  });
+
+  function renderPastExecList() {
+    const container = document.getElementById('pastExecListContainer');
+    const filtered = pastExecYearFilterValue
+      ? pastExecCache.filter(e => e.year === pastExecYearFilterValue)
+      : pastExecCache;
+
+    if (!filtered.length) {
+      container.innerHTML = '<div class="exec-empty">No past executives added yet.</div>';
+      return;
+    }
+
+    const years = [...new Set(filtered.map(e => e.year))];
+    let html = '';
+    years.forEach(yr => {
+      html += `<div class="exec-list-group"><h3 style="color:#c4b5fd;">${esc(yr)}</h3>`;
+      const inYear = filtered.filter(e => e.year === yr);
+
+      EXEC_CATEGORY_ORDER.forEach(cat => {
+        const inCat = inYear.filter(e => e.category === cat);
+        if (!inCat.length) return;
+        html += `<div style="font-size:11px;font-weight:700;color:rgba(238,242,255,.4);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.5px;">${esc(EXEC_CATEGORY_LABELS[cat])}</div>`;
+
+        const subgroups = [...new Set(inCat.map(e => e.subgroup || ''))];
+        subgroups.forEach(sg => {
+          if (sg) html += `<div style="font-size:11px;font-weight:700;color:rgba(238,242,255,.5);margin:8px 0 6px;">${esc(sg)}</div>`;
+          inCat.filter(e => (e.subgroup || '') === sg).forEach(ex => {
+            html += `
+              <div class="exec-row" data-id="${esc(ex.id)}">
+                <div class="exec-row-left">
+                  ${ex.photo_url
+                    ? `<img class="exec-row-thumb" src="${esc(ex.photo_url)}" alt="">`
+                    : `<div class="exec-row-thumb">${esc(ex.initials || '')}</div>`}
+                  <div class="exec-row-text">
+                    <div class="exec-row-name">${esc(ex.name)}</div>
+                    <div class="exec-row-meta">${esc(ex.role)}${ex.school ? ' · ' + esc(ex.school) : ''}</div>
+                  </div>
+                </div>
+                <div style="display:flex; gap:8px; flex-shrink:0;">
+                  <button class="delete-btn past-exec-edit-btn" data-id="${esc(ex.id)}" style="background:rgba(124,58,237,.12); color:#c4b5fd; border-color:rgba(124,58,237,.25);">Edit</button>
+                  <button class="delete-btn past-exec-delete-btn" data-id="${esc(ex.id)}">Delete</button>
+                </div>
+              </div>`;
+          });
+        });
+      });
+
+      html += `</div>`;
+    });
+
+    container.innerHTML = html;
+
+    container.querySelectorAll('.past-exec-edit-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const ex = pastExecCache.find(e => e.id === this.dataset.id);
+        if (ex) enterPastEditMode(ex);
+      });
+    });
+
+    container.querySelectorAll('.past-exec-delete-btn').forEach(btn => {
+      btn.addEventListener('click', async function () {
+        const id = this.dataset.id;
+        if (!confirm('Remove this past executive entry? This cannot be undone.')) return;
+        this.disabled = true;
+        this.textContent = 'Removing…';
+        try {
+          const res = await fetch('/api/admin/past-executives-create', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id }),
+            credentials: 'same-origin',
+          });
+          if (res.ok) {
+            pastExecCache = pastExecCache.filter(e => e.id !== id);
+            updatePastExecYearOptions();
+            renderPastExecList();
+          } else {
+            alert('Could not remove entry. Try again.');
+            this.disabled = false;
+            this.textContent = 'Delete';
+          }
+        } catch {
+          alert('Network error. Try again.');
+          this.disabled = false;
+          this.textContent = 'Delete';
+        }
+      });
+    });
+  }
+
+  // Subgroup datalist for the past-exec form, scoped by selected category
+  const pastExecCategorySelect = document.getElementById('pastExecCategory');
+  const pastExecSubgroupWrap   = document.getElementById('pastExecSubgroupWrap');
+  const pastExecSubgroupInput  = document.getElementById('pastExecSubgroup');
+  const pastExecSubgroupList   = document.getElementById('pastExecSubgroupList');
+
+  function updatePastExecSubgroupOptions() {
+    const cat = pastExecCategorySelect.value;
+    const isRec = cat === 'rec';
+    pastExecSubgroupWrap.style.opacity = isRec ? '0.4' : '1';
+    pastExecSubgroupInput.placeholder = isRec ? 'Not used for REC' : 'e.g. Zone 1';
+    pastExecSubgroupInput.disabled = isRec;
+
+    const options = [...new Set(pastExecCache.filter(e => e.category === cat && e.subgroup).map(e => e.subgroup))];
+    pastExecSubgroupList.innerHTML = options.map(o => `<option value="${esc(o)}"></option>`).join('');
+  }
+  pastExecCategorySelect.addEventListener('change', updatePastExecSubgroupOptions);
+
+  // Photo upload — reuses the same compressImage()/ALLOWED_TYPES/MAX_IMAGE_BYTES helpers
+  // defined earlier for post covers and current-executive photos.
+  const pastExecImageInput        = document.getElementById('pastExecImageInput');
+  const pastExecImageDrop         = document.getElementById('pastExecImageDrop');
+  const pastExecImagePreviewWrap  = document.getElementById('pastExecImagePreviewWrap');
+  const pastExecImagePreviewImg   = document.getElementById('pastExecImagePreviewImg');
+  const pastExecImageRemoveBtn    = document.getElementById('pastExecImageRemoveBtn');
+  const pastExecImageUploadStatus = document.getElementById('pastExecImageUploadStatus');
+  const pastExecPhotoUrl          = document.getElementById('pastExecPhotoUrl');
+
+  function resetPastExecImageField() {
+    pastExecPhotoUrl.value = '';
+    pastExecImagePreviewWrap.style.display = 'none';
+    pastExecImagePreviewImg.src = '';
+    pastExecImageDrop.style.display = 'block';
+    pastExecImageInput.value = '';
+    pastExecImageUploadStatus.textContent = '';
+    pastExecImageUploadStatus.className = 'image-upload-status';
+  }
+
+  async function handlePastExecImageFile(file) {
+    if (!file) return;
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      pastExecImageUploadStatus.textContent = '✗ Only JPG, PNG or WEBP images are allowed.';
+      pastExecImageUploadStatus.className = 'image-upload-status error';
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      pastExecImageUploadStatus.textContent = '✗ Image is too large — max 5MB.';
+      pastExecImageUploadStatus.className = 'image-upload-status error';
+      return;
+    }
+
+    const localUrl = URL.createObjectURL(file);
+    pastExecImagePreviewImg.src = localUrl;
+    pastExecImagePreviewWrap.style.display = 'inline-block';
+    pastExecImageDrop.style.display = 'none';
+    pastExecImageUploadStatus.textContent = 'Compressing…';
+    pastExecImageUploadStatus.className = 'image-upload-status';
+
+    try {
+      const compressed = await compressImage(file);
+
+      pastExecImageUploadStatus.textContent = 'Uploading…';
+      const urlRes = await fetch('/api/admin/upload-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, folder: 'past-executives' }),
+        credentials: 'same-origin',
+      });
+      const urlData = await urlRes.json();
+      if (!urlRes.ok) {
+        pastExecImageUploadStatus.textContent = '✗ ' + (urlData.error || 'Could not get upload URL.');
+        pastExecImageUploadStatus.className = 'image-upload-status error';
+        return;
+      }
+
+      const uploadRes = await fetch(urlData.signedUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'image/jpeg' },
+        body: compressed,
+      });
+      if (!uploadRes.ok) {
+        pastExecImageUploadStatus.textContent = '✗ Upload to storage failed. Check bucket policy.';
+        pastExecImageUploadStatus.className = 'image-upload-status error';
+        return;
+      }
+
+      pastExecPhotoUrl.value = urlData.publicUrl;
+      pastExecImageUploadStatus.textContent = '✓ Photo uploaded and ready.';
+      pastExecImageUploadStatus.className = 'image-upload-status success';
+    } catch (err) {
+      pastExecImageUploadStatus.textContent = '✗ ' + (err.message || 'Network error uploading photo.');
+      pastExecImageUploadStatus.className = 'image-upload-status error';
+    }
+  }
+
+  if (pastExecImageInput) {
+    pastExecImageInput.addEventListener('change', e => handlePastExecImageFile(e.target.files[0]));
+    ['dragenter', 'dragover'].forEach(evt =>
+      pastExecImageDrop.addEventListener(evt, e => { e.preventDefault(); pastExecImageDrop.classList.add('dragover'); })
+    );
+    ['dragleave', 'drop'].forEach(evt =>
+      pastExecImageDrop.addEventListener(evt, e => { e.preventDefault(); pastExecImageDrop.classList.remove('dragover'); })
+    );
+    pastExecImageDrop.addEventListener('drop', e => {
+      const file = e.dataTransfer.files[0];
+      if (file) handlePastExecImageFile(file);
+    });
+    pastExecImageRemoveBtn.addEventListener('click', resetPastExecImageField);
+  }
+
+  // Edit mode
+  function enterPastEditMode(ex) {
+    editingPastExecId = ex.id;
+
+    document.getElementById('pastExecYear').value = ex.year;
+    pastExecCategorySelect.value = ex.category;
+    updatePastExecSubgroupOptions();
+    pastExecSubgroupInput.value = ex.subgroup || '';
+    document.getElementById('pastExecName').value = ex.name || '';
+    document.getElementById('pastExecRole').value = ex.role || '';
+    document.getElementById('pastExecSchool').value = ex.school || '';
+    document.getElementById('pastExecInitials').value = ex.initials || '';
+
+    if (ex.photo_url) {
+      pastExecPhotoUrl.value = ex.photo_url;
+      pastExecImagePreviewImg.src = ex.photo_url;
+      pastExecImagePreviewWrap.style.display = 'inline-block';
+      pastExecImageDrop.style.display = 'none';
+    } else {
+      resetPastExecImageField();
+    }
+
+    document.getElementById('pastExecEditBannerText').textContent = `Editing: ${ex.name} (${ex.year})`;
+    document.getElementById('pastExecEditBanner').style.display = 'flex';
+    pastExecAddBtn.textContent = 'Save Changes';
+
+    document.getElementById('pastExecForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function exitPastEditMode() {
+    editingPastExecId = null;
+    document.getElementById('pastExecEditBanner').style.display = 'none';
+    pastExecAddBtn.textContent = 'Add Past Executive';
+
+    document.getElementById('pastExecYear').value = '';
+    document.getElementById('pastExecName').value = '';
+    document.getElementById('pastExecRole').value = '';
+    document.getElementById('pastExecSchool').value = '';
+    document.getElementById('pastExecInitials').value = '';
+    pastExecSubgroupInput.value = '';
+    resetPastExecImageField();
+  }
+
+  document.getElementById('pastExecCancelEditBtn').addEventListener('click', exitPastEditMode);
+
+  // Add / Save
+  const pastExecAddBtn = document.getElementById('pastExecAddBtn');
+  const pastExecMsg    = document.getElementById('pastExecMsg');
+
+  pastExecAddBtn.addEventListener('click', async function () {
+    const year     = document.getElementById('pastExecYear').value.trim();
+    const category = pastExecCategorySelect.value;
+    const subgroup = pastExecSubgroupInput.value.trim();
+    const name     = document.getElementById('pastExecName').value.trim();
+    const role     = document.getElementById('pastExecRole').value.trim();
+    const school   = document.getElementById('pastExecSchool').value.trim();
+    const initials = document.getElementById('pastExecInitials').value.trim();
+
+    pastExecMsg.className = 'post-msg';
+
+    if (!year) {
+      pastExecMsg.textContent = '✗ Year is required (e.g. 2021/2022).';
+      pastExecMsg.classList.add('error');
+      return;
+    }
+    if (!name || !role) {
+      pastExecMsg.textContent = '✗ Name and role are required.';
+      pastExecMsg.classList.add('error');
+      return;
+    }
+    if (category !== 'rec' && !subgroup) {
+      pastExecMsg.textContent = '✗ Sub-group / committee name is required for this category.';
+      pastExecMsg.classList.add('error');
+      return;
+    }
+
+    const isEdit = !!editingPastExecId;
+    pastExecAddBtn.disabled = true;
+    pastExecAddBtn.textContent = isEdit ? 'Saving…' : 'Adding…';
+
+    try {
+      const res = await fetch('/api/admin/past-executives-create', {
+        method: isEdit ? 'PATCH' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...(isEdit ? { id: editingPastExecId } : {}),
+          year, category, subgroup, name, role, school, initials,
+          photo_url: pastExecPhotoUrl.value,
+        }),
+        credentials: 'same-origin',
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        pastExecMsg.textContent = '✗ ' + (data.error || (isEdit ? 'Could not save changes.' : 'Could not add entry.'));
+        pastExecMsg.classList.add('error');
+        return;
+      }
+
+      pastExecMsg.textContent = isEdit ? '✓ Changes saved.' : '✓ Past executive added.';
+      pastExecMsg.classList.add('success');
+
+      if (isEdit) {
+        exitPastEditMode();
+      } else {
+        document.getElementById('pastExecName').value = '';
+        document.getElementById('pastExecRole').value = '';
+        document.getElementById('pastExecSchool').value = '';
+        document.getElementById('pastExecInitials').value = '';
+        pastExecSubgroupInput.value = '';
+        resetPastExecImageField();
+        // Year + category are left as-is — admins usually add several
+        // people for the same year/committee back-to-back.
+      }
+
+      loadPastExecutives();
+      setTimeout(() => { pastExecMsg.className = 'post-msg'; }, 5000);
+    } catch {
+      pastExecMsg.textContent = '✗ Network error. Check your connection and try again.';
+      pastExecMsg.classList.add('error');
+    } finally {
+      pastExecAddBtn.disabled = false;
+      pastExecAddBtn.textContent = editingPastExecId ? 'Save Changes' : 'Add Past Executive';
+    }
+  });
+
+  updatePastExecSubgroupOptions();
 </script>
 </body>
 </html>
