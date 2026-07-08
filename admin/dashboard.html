@@ -1545,7 +1545,7 @@
 
   function updateExecSubgroupOptions() {
     const cat = execCategorySelect.value;
-    const isRec = cat === 'rec';
+    const isRec = cat === 'rec' || cat === 'sec';
     execSubgroupWrap.style.opacity = isRec ? '0.4' : '1';
     execSubgroupInput.placeholder = isRec ? 'Not used for REC' : 'e.g. Zone 1';
     execSubgroupInput.disabled = isRec;
@@ -1665,7 +1665,7 @@
       execMsg.classList.add('error');
       return;
     }
-    if (category !== 'rec' && !subgroup) {
+    if (category !== 'rec' && category !== 'sec' && !subgroup) {
       execMsg.textContent = '✗ Sub-group / committee name is required for this category.';
       execMsg.classList.add('error');
       return;
@@ -1904,7 +1904,7 @@
 
   function updatePastExecSubgroupOptions() {
     const cat = pastExecCategorySelect.value;
-    const isRec = cat === 'rec';
+    const isRec = cat === 'rec' || cat === 'sec';
     pastExecSubgroupWrap.style.opacity = isRec ? '0.4' : '1';
     pastExecSubgroupInput.placeholder = isRec ? 'Not used for REC' : 'e.g. Zone 1';
     pastExecSubgroupInput.disabled = isRec;
@@ -2076,7 +2076,7 @@
       pastExecMsg.classList.add('error');
       return;
     }
-    if (category !== 'rec' && !subgroup) {
+    if (category !== 'rec' && category !== 'sec' && !subgroup) {
       pastExecMsg.textContent = '✗ Sub-group / committee name is required for this category.';
       pastExecMsg.classList.add('error');
       return;

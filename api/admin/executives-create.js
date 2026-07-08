@@ -152,7 +152,7 @@ module.exports = async function handler(req, res) {
     }
     if (name !== undefined && !name.trim()) return res.status(400).json({ error: 'Name cannot be empty.' });
     if (role !== undefined && !role.trim()) return res.status(400).json({ error: 'Role cannot be empty.' });
-    if (category && category !== 'rec' && subgroup !== undefined && !subgroup.trim()) {
+    if (category && category !== 'rec' && category !== 'sec' && subgroup !== undefined && !subgroup.trim()) {
       return res.status(400).json({ error: 'Sub-group / committee name is required for this category.' });
     }
 
@@ -164,9 +164,9 @@ module.exports = async function handler(req, res) {
     if (initials !== undefined) updates.initials = (initials.trim() || deriveInitials(name || '')).slice(0, 4).toUpperCase();
     if (photo_url !== undefined) updates.photo_url = photo_url.trim() || null;
     if (subgroup !== undefined) {
-      updates.subgroup = (category === 'rec' || (category === undefined && subgroup === '')) ? null : subgroup.trim();
+      updates.subgroup = (category === 'rec' || category === 'sec' || (category === undefined && subgroup === '')) ? null : subgroup.trim();
     }
-    if (category === 'rec') updates.subgroup = null;
+    if (category === 'rec' || category === 'sec') updates.subgroup = null;
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({ error: 'No fields to update.' });
@@ -213,11 +213,11 @@ module.exports = async function handler(req, res) {
   }
   if (!name?.trim()) return res.status(400).json({ error: 'Name is required.' });
   if (!role?.trim()) return res.status(400).json({ error: 'Role is required.' });
-  if (category !== 'rec' && !subgroup?.trim()) {
+  if (category !== 'rec' && category !== 'sec' && !subgroup?.trim()) {
     return res.status(400).json({ error: 'Sub-group / committee name is required for this category.' });
   }
 
-  const groupSubgroup = category === 'rec' ? null : subgroup.trim();
+  const groupSubgroup = (category === 'rec' || category === 'sec') ? null : subgroup.trim();
 
   let nextSortOrder = 0;
   {

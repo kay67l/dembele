@@ -111,9 +111,10 @@ function downloadFile(fileName) {
 // an empty-state message per tab if no executives have been added yet.
 (function () {
   const recGrid = document.getElementById('execGrid-rec');
+  const secGrid = document.getElementById('execGrid-sec');
   if (!recGrid) return; // not on a page with the executives section
 
-  const GROUPED_CATEGORIES = ['zec', 'lit', 'wds', 'sec', 'adhoc'];
+  const GROUPED_CATEGORIES = ['zec', 'lit', 'wds', 'adhoc'];
 
   function escExec(str) {
     return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -159,6 +160,14 @@ function downloadFile(fileName) {
       recGrid.innerHTML = recItems.length
         ? recItems.map(execCardHTML).join('')
         : '<div class="news-empty">No REC members added yet.</div>';
+
+      // Secretariat: also a flat grid, no sub-group headings
+      if (secGrid) {
+        const secItems = list.filter(e => e.category === 'sec');
+        secGrid.innerHTML = secItems.length
+          ? secItems.map(execCardHTML).join('')
+          : '<div class="news-empty">No Secretariat members added yet.</div>';
+      }
 
       // Every other tab: grouped into named sub-committees, compact cards
       GROUPED_CATEGORIES.forEach(cat => {

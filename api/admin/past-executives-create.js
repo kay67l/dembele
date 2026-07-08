@@ -56,6 +56,9 @@ module.exports = async function handler(req, res) {
     if (name !== undefined && !name.trim()) return res.status(400).json({ error: 'Name cannot be empty.' });
     if (role !== undefined && !role.trim()) return res.status(400).json({ error: 'Role cannot be empty.' });
     if (year !== undefined && !year.trim()) return res.status(400).json({ error: 'Year cannot be empty.' });
+    if (category && category !== 'rec' && category !== 'sec' && subgroup !== undefined && !subgroup.trim()) {
+      return res.status(400).json({ error: 'Sub-group / committee name is required for this category.' });
+    }
 
     const updates = {};
     if (year !== undefined) updates.year = year.trim();
@@ -65,8 +68,8 @@ module.exports = async function handler(req, res) {
     if (school !== undefined) updates.school = school.trim() || null;
     if (initials !== undefined) updates.initials = (initials.trim() || deriveInitials(name || '')).slice(0, 4).toUpperCase();
     if (photo_url !== undefined) updates.photo_url = photo_url.trim() || null;
-    if (subgroup !== undefined) updates.subgroup = (category === 'rec') ? null : (subgroup.trim() || null);
-    if (category === 'rec') updates.subgroup = null;
+    if (subgroup !== undefined) updates.subgroup = (category === 'rec' || category === 'sec') ? null : (subgroup.trim() || null);
+    if (category === 'rec' || category === 'sec') updates.subgroup = null;
 
     if (Object.keys(updates).length === 0) return res.status(400).json({ error: 'No fields to update.' });
 
@@ -87,11 +90,11 @@ module.exports = async function handler(req, res) {
   if (!VALID_CATEGORIES.includes(category)) return res.status(400).json({ error: 'Invalid committee/body selected.' });
   if (!name?.trim()) return res.status(400).json({ error: 'Name is required.' });
   if (!role?.trim()) return res.status(400).json({ error: 'Role is required.' });
-  if (category !== 'rec' && !subgroup?.trim()) {
+  if (category !== 'rec' && category !== 'sec' && !subgroup?.trim()) {
     return res.status(400).json({ error: 'Sub-group / committee name is required for this category.' });
   }
 
-  const groupSubgroup = category === 'rec' ? null : subgroup.trim();
+  const groupSubgroup = (category === 'rec' || category === 'sec') ? null : subgroup.trim();
   const groupYear = year.trim();
 
   // New entries append to the bottom of their (year, category, subgroup) group
