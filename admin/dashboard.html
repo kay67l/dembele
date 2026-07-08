@@ -474,7 +474,7 @@
 
   <nav class="admin-nav">
     <div class="brand">
-      <div class="badge"><img src="ar.png" alt="ARSRC Logo" style="width:100%;height:100%;object-fit:contain;"></div>
+      <div class="badge">AR</div>
       <div>
         <span>ARSRC Admin</span>
         <small>Council Management Dashboard</small>
@@ -1270,7 +1270,10 @@
       const subgroups = [...new Set(inCat.map(e => e.subgroup || ''))];
       subgroups.forEach(sg => {
         if (sg) html += `<div style="font-size:11px;font-weight:700;color:rgba(238,242,255,.5);margin:10px 0 6px;">${esc(sg)}</div>`;
-        inCat.filter(e => (e.subgroup || '') === sg).forEach(ex => {
+        const groupItems = inCat.filter(e => (e.subgroup || '') === sg);
+        groupItems.forEach((ex, i) => {
+          const isFirst = i === 0;
+          const isLast  = i === groupItems.length - 1;
           html += `
             <div class="exec-row" data-id="${esc(ex.id)}">
               <div class="exec-row-left">
@@ -1282,7 +1285,11 @@
                   <div class="exec-row-meta">${esc(ex.role)}${ex.school ? ' · ' + esc(ex.school) : ''}</div>
                 </div>
               </div>
-              <div style="display:flex; gap:8px; flex-shrink:0;">
+              <div style="display:flex; gap:6px; flex-shrink:0; align-items:center;">
+                <button class="delete-btn exec-move-btn" data-id="${esc(ex.id)}" data-dir="up" ${isFirst ? 'disabled' : ''}
+                  style="background:rgba(255,255,255,.05); color:rgba(238,242,255,.6); border-color:rgba(255,255,255,.1); padding:6px 9px;" title="Move up">▲</button>
+                <button class="delete-btn exec-move-btn" data-id="${esc(ex.id)}" data-dir="down" ${isLast ? 'disabled' : ''}
+                  style="background:rgba(255,255,255,.05); color:rgba(238,242,255,.6); border-color:rgba(255,255,255,.1); padding:6px 9px;" title="Move down">▼</button>
                 <button class="delete-btn exec-edit-btn" data-id="${esc(ex.id)}" style="background:rgba(59,130,246,.12); color:#93c5fd; border-color:rgba(59,130,246,.25);">Edit</button>
                 <button class="delete-btn exec-delete-btn" data-id="${esc(ex.id)}">Delete</button>
               </div>
@@ -1294,6 +1301,33 @@
     });
 
     container.innerHTML = html || '<div class="exec-empty">No executives added yet.</div>';
+
+
+    container.querySelectorAll('.exec-move-btn').forEach(btn => {
+      btn.addEventListener('click', async function () {
+        if (this.disabled) return;
+        const id  = this.dataset.id;
+        const dir = this.dataset.dir;
+        this.disabled = true;
+        try {
+          const res = await fetch('/api/admin/executives-reorder', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, direction: dir }),
+            credentials: 'same-origin',
+          });
+          if (res.ok) {
+            loadExecutives();
+          } else {
+            alert('Could not reorder. Try again.');
+            this.disabled = false;
+          }
+        } catch {
+          alert('Network error. Try again.');
+          this.disabled = false;
+        }
+      });
+    });
 
     container.querySelectorAll('.exec-edit-btn').forEach(btn => {
       btn.addEventListener('click', function () {

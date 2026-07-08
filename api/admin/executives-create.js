@@ -109,13 +109,26 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Sub-group / committee name is required for this category.' });
   }
 
+  const groupSubgroup = category === 'rec' ? null : subgroup.trim();
+
+  // New entries go to the bottom of their (category, subgroup) group by
+  // default — existing manually-arranged order is left untouched.
+  let nextSortOrder = 0;
+  {
+    let query = supabase.from('executives').select('sort_order').eq('category', category);
+    query = groupSubgroup === null ? query.is('subgroup', null) : query.eq('subgroup', groupSubgroup);
+    const { data: existing, error: existingErr } = await query.order('sort_order', { ascending: false }).limit(1);
+    if (!existingErr && existing && existing.length) nextSortOrder = existing[0].sort_order + 1;
+  }
+
   const record = {
     category,
-    subgroup: category === 'rec' ? null : subgroup.trim(),
+    subgroup: groupSubgroup,
     name: name.trim(),
     role: role.trim(),
     school: school?.trim() || null,
     initials: (initials?.trim() || deriveInitials(name)).slice(0, 4).toUpperCase(),
+    sort_order: nextSortOrder,
     ...(photo_url ? { photo_url: photo_url.trim() } : {}),
   };
 

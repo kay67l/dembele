@@ -17,7 +17,10 @@ module.exports = async function handler(req, res) {
 
   const { data, error } = await supabase
     .from('executives')
-    .select('id, category, subgroup, name, role, school, initials, photo_url, created_at')
+    .select('id, category, subgroup, name, role, school, initials, photo_url, sort_order, created_at')
+    .order('category', { ascending: true })
+    .order('subgroup', { ascending: true, nullsFirst: true })
+    .order('sort_order', { ascending: true })
     .order('created_at', { ascending: true });
 
   if (error) {
