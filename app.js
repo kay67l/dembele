@@ -106,9 +106,10 @@ function downloadFile(fileName) {
 
 
 // ─── Dynamic executives section ──────────────────────────────────────────────
-// Fetches from /api/executives and renders into the REC flat grid plus the
-// sub-group mini-grids for ZEC/Literary/WDS/Secretariat/ADHOC. Falls back to
-// an empty-state message per tab if no executives have been added yet.
+// Fetches from /api/executives and renders every tab (REC, Secretariat, and
+// the grouped ZEC/Literary/WDS/ADHOC sub-committees) with the same .exec-card
+// style, so all executive cards look identical regardless of category. Falls
+// back to an empty-state message per tab if no executives have been added yet.
 (function () {
   const recGrid = document.getElementById('execGrid-rec');
   const secGrid = document.getElementById('execGrid-sec');
@@ -133,23 +134,6 @@ function downloadFile(fileName) {
       </div>`;
   }
 
-  // Compact horizontal card — used inside sub-group mini-grids (everything
-  // except REC). REC alone gets the large vertical .exec-card above.
-  function miniExecCardHTML(ex) {
-    const avatar = ex.photo_url
-      ? `<img class="mini-avatar-photo" src="${escExec(ex.photo_url)}" alt="">`
-      : `<div class="mini-avatar">${escExec(ex.initials || '')}</div>`;
-    return `
-      <div class="mini-exec-card reveal">
-        ${avatar}
-        <div class="mini-info">
-          <h5>${escExec(ex.name)}</h5>
-          <div class="mini-role">${escExec(ex.role)}</div>
-          ${ex.school ? `<div class="mini-school">${escExec(ex.school)}</div>` : ''}
-        </div>
-      </div>`;
-  }
-
   fetch('/api/executives')
     .then(r => r.ok ? r.json() : Promise.reject(r.status))
     .then(({ executives }) => {
@@ -169,7 +153,7 @@ function downloadFile(fileName) {
           : '<div class="news-empty">No Secretariat members added yet.</div>';
       }
 
-      // Every other tab: grouped into named sub-committees, compact cards
+      // Every other tab: grouped into named sub-committees, same big card style as REC
       GROUPED_CATEGORIES.forEach(cat => {
         const container = document.getElementById(`execGroups-${cat}`);
         if (!container) return;
@@ -185,8 +169,8 @@ function downloadFile(fileName) {
         container.innerHTML = subgroups.map(sg => `
           <div class="exec-zone-group">
             <h4>${escExec(sg)}</h4>
-            <div class="mini-exec-grid">
-              ${items.filter(e => (e.subgroup || 'General') === sg).map(miniExecCardHTML).join('')}
+            <div class="exec-grid">
+              ${items.filter(e => (e.subgroup || 'General') === sg).map(execCardHTML).join('')}
             </div>
           </div>
         `).join('');

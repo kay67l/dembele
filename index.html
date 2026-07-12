@@ -277,18 +277,18 @@
   .accordion-body p { font-size: 13.5px; color: rgba(255,255,255,0.7); padding: 0 4px 18px; line-height: 1.7; }
 
   /* ===== EXECUTIVES ===== */
-  .exec-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; max-width: 1240px; margin: 0 auto; }
+  .exec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 26px; max-width: 1240px; margin: 0 auto; }
   .exec-card {
     background: white; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow);
     transition: transform .4s ease, box-shadow .4s ease; text-align: center; padding-bottom: 24px;
   }
   .exec-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 22px 44px rgba(16,42,107,0.2); }
   .exec-photo {
-    height: 150px; background: linear-gradient(135deg, var(--blue), var(--blue-deep));
+    height: 230px; background: linear-gradient(135deg, var(--blue), var(--blue-deep));
     display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 50px;
   }
   .exec-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(220,38,38,0.25), transparent); }
-  .exec-cover-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+  .exec-cover-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; z-index: 0; }
   .exec-avatar { z-index: 2; }
   .exec-avatar {
     width: 90px; height: 90px; border-radius: 50%; background: white; border: 4px solid white;
