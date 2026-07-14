@@ -548,6 +548,11 @@
         <h2>✍️ Publish a New Post</h2>
       </div>
 
+      <div id="postEditBanner" style="display:none; margin-bottom:14px; padding:10px 14px; background:rgba(59,130,246,.12); border:1px solid rgba(59,130,246,.3); border-radius:10px; font-size:13px; color:#93c5fd; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <span id="postEditBannerText">Editing post…</span>
+        <button type="button" id="postCancelEditBtn" style="background:none; border:1px solid rgba(147,197,253,.4); color:#93c5fd; border-radius:6px; padding:4px 10px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;">Cancel</button>
+      </div>
+
       <div class="post-form" id="postForm">
         <div class="form-row">
           <div>
@@ -1147,6 +1152,50 @@
     });
   }
 
+  // ── Post edit mode ──────────────────────────────────────────────────────────
+  let editingPostId = null;
+
+  function startEditPost(post) {
+    editingPostId = post.id;
+
+    document.getElementById('postTitle').value    = post.title || '';
+    document.getElementById('postCategory').value  = post.category || 'News';
+    document.getElementById('postExcerpt').value   = post.excerpt || '';
+    document.getElementById('postContent').value   = post.content || '';
+    document.getElementById('postAuthor').value    = post.author || 'ARSRC Council';
+    excerptCount.textContent = (post.excerpt || '').length;
+
+    if (post.image_url) {
+      postCoverImageUrl.value = post.image_url;
+      imagePreviewImg.src = post.image_url;
+      imagePreviewWrap.style.display = 'inline-block';
+      imageDrop.style.display = 'none';
+    } else {
+      resetImageField();
+    }
+
+    document.getElementById('postEditBannerText').textContent = `Editing: ${post.title}`;
+    document.getElementById('postEditBanner').style.display = 'flex';
+    publishBtn.textContent = 'Save Changes';
+
+    document.getElementById('postForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function exitPostEditMode() {
+    editingPostId = null;
+    document.getElementById('postEditBanner').style.display = 'none';
+    publishBtn.textContent = 'Publish Post';
+
+    document.getElementById('postTitle').value   = '';
+    document.getElementById('postExcerpt').value = '';
+    document.getElementById('postContent').value = '';
+    document.getElementById('postAuthor').value  = 'ARSRC Council';
+    excerptCount.textContent = '0';
+    resetImageField();
+  }
+
+  document.getElementById('postCancelEditBtn').addEventListener('click', exitPostEditMode);
+
   // Excerpt character counter
   const excerptField = document.getElementById('postExcerpt');
   const excerptCount = document.getElementById('excerptCount');
@@ -1312,36 +1361,48 @@
         return;
       }
 
+      const isEdit = !!editingPostId;
+
       publishBtn.disabled    = true;
-      publishBtn.textContent = 'Publishing…';
+      publishBtn.textContent = isEdit ? 'Saving…' : 'Publishing…';
 
       try {
         const res  = await fetch('/api/admin/posts-create', {
-          method: 'POST',
+          method: isEdit ? 'PATCH' : 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, category, excerpt, content, author, image_url: postCoverImageUrl.value }),
+          body: JSON.stringify({
+            ...(isEdit ? { id: editingPostId } : {}),
+            title, category, excerpt, content, author,
+            image_url: postCoverImageUrl.value,
+          }),
           credentials: 'same-origin',
         });
         const data = await res.json();
 
         if (!res.ok) {
-          postMsg.textContent = '✗ ' + (data.error || 'Could not publish post.');
+          postMsg.textContent = '✗ ' + (data.error || (isEdit ? 'Could not save changes.' : 'Could not publish post.'));
           postMsg.classList.add('error');
           return;
         }
 
-        postMsg.textContent = '✓ Post published successfully. It is now live on the website.';
+        postMsg.textContent = isEdit
+          ? '✓ Changes saved and now live on the website.'
+          : '✓ Post published successfully. It is now live on the website.';
         postMsg.classList.add('success');
 
-        // Clear form
-        document.getElementById('postTitle').value   = '';
-        document.getElementById('postExcerpt').value = '';
-        document.getElementById('postContent').value = '';
-        document.getElementById('postAuthor').value  = 'ARSRC Council';
-        excerptCount.textContent = '0';
-        resetImageField();
+        if (isEdit) {
+          exitPostEditMode();
+        } else {
+          // Clear form
+          document.getElementById('postTitle').value   = '';
+          document.getElementById('postExcerpt').value = '';
+          document.getElementById('postContent').value = '';
+          document.getElementById('postAuthor').value  = 'ARSRC Council';
+          excerptCount.textContent = '0';
+          resetImageField();
+        }
 
-        // Reload posts list to show new post
+        // Reload posts list to show new/updated post
         loadPosts();
 
         setTimeout(() => { postMsg.className = 'post-msg'; }, 5000);
@@ -1351,7 +1412,7 @@
         postMsg.classList.add('error');
       } finally {
         publishBtn.disabled    = false;
-        publishBtn.textContent = 'Publish Post';
+        publishBtn.textContent = editingPostId ? 'Save Changes' : 'Publish Post';
       }
     });
 
