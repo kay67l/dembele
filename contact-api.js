@@ -42,6 +42,10 @@
 
       // Success
       liveForm.reset();
+      if (data.emailFailed) {
+        showError('Message saved, but email notification failed. Please check Resend logs.');
+        return;
+      }
       showSuccess('✓ Message sent! The council will respond shortly.');
 
     } catch (err) {

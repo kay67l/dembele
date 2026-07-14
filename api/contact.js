@@ -10,6 +10,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY   // service_role, NOT anon
 );
 const resend = new Resend(process.env.RESEND_API_KEY);
+const ADMIN_EMAIL = 'ashantiregionalsrc@gmail.com';
 
 // ─── Sanitize for safe HTML email output ────────────────────────────────────
 function esc(str) {
@@ -72,7 +73,7 @@ module.exports = async function handler(req, res) {
   //     change the `from` line to: 'ARSRC Contact <noreply@arsrcvercel.app>'
   const { error: emailError } = await resend.emails.send({
     from:     'ARSRC Contact Form <onboarding@resend.dev>',
-    to:       process.env.ADMIN_EMAIL,
+    to:       ADMIN_EMAIL,
     reply_to: clean.email,   // so you can hit Reply in Gmail and it goes to sender
     subject:  `[ARSRC] ${esc(clean.subject)}`,
     html: `
