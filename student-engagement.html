@@ -16,14 +16,43 @@
     --z2: #d97706; --z2-deep: #92400e; --z2-tint: #fffbeb; /* gold/yellow */
     --z3: #16a34a; --z3-deep: #14532d; --z3-tint: #f0fdf4;
     --z4: #1d4ed8; --z4-deep: #102a6b; --z4-tint: #eff6ff;
+
+    /* Theme-swappable surface colors — light values by default */
+    --surface: #ffffff;
+    --surface-alt: #f4f7fc;
+    --nav-bg: rgba(255,255,255,0.92);
+    --card-border: #e3e9f7;
+    --footer-bg: #0a1a45;
+    --footer-text: rgba(255,255,255,0.7);
+    --heading: #102a6b;
+  }
+  html[data-theme="dark"] {
+    --ink: #e8ecf7; --gray: #9aa7c2; --shadow: 0 10px 30px rgba(0,0,0,0.45);
+    --surface: #131a2e; --surface-alt: #0c1120;
+    --nav-bg: rgba(12,17,32,0.88);
+    --card-border: rgba(255,255,255,0.08);
+    --footer-bg: #060a16; --footer-text: rgba(255,255,255,0.6);
+    --z1-tint: #2a1414; --z2-tint: #2a1f0c; --z3-tint: #10261a; --z4-tint: #101a30;
+    --heading: #7fa1f5;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior: smooth; }
-  body { font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif; background:var(--off-white); color:var(--ink); overflow-x:hidden; }
+  body { font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif; background:var(--off-white); color:var(--ink); overflow-x:hidden; transition:color .25s ease; }
   a { text-decoration:none; color:inherit; }
   ul { list-style:none; }
 
-  nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:16px 6%; display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.92); backdrop-filter:blur(12px); border-bottom:1px solid rgba(16,42,107,0.08); }
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:16px 6%; display:flex; align-items:center; justify-content:space-between; background:var(--nav-bg); backdrop-filter:blur(12px); border-bottom:1px solid rgba(16,42,107,0.08); transition:background .25s ease; }
+  .theme-toggle {
+    width:38px; height:38px; border-radius:50%; border:1.5px solid var(--card-border); background:var(--surface);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; margin-left:14px;
+    transition:transform .2s ease, background .25s ease;
+  }
+  .theme-toggle:hover { transform:scale(1.08); }
+  .theme-toggle svg { width:18px; height:18px; color:var(--ink); }
+  .theme-toggle .icon-sun { display:none; }
+  html[data-theme="dark"] .theme-toggle .icon-moon { display:none; }
+  html[data-theme="dark"] .theme-toggle .icon-sun { display:block; }
+  .nav-right { display:flex; align-items:center; }
   .nav-brand { display:flex; align-items:center; gap:10px; }
   .nav-badge { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#1d4ed8,#102a6b); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0; }
   .nav-badge img { width:100%; height:100%; object-fit:cover; display:block; }
@@ -37,11 +66,12 @@
 
   .page-head { position:relative; text-align:center; max-width:760px; margin:0 auto; padding:150px 24px 50px; z-index:5; }
   .page-head-panel {
-    background:#ffffff; border-radius:28px;
+    background:var(--surface); border-radius:28px;
     padding:38px 34px; box-shadow:0 20px 60px rgba(16,42,107,0.22); border:1px solid rgba(16,42,107,0.08);
+    transition:background .25s ease;
   }
   .page-head span.tag { display:inline-block; padding:6px 16px; border-radius:20px; background:rgba(29,78,216,0.1); color:var(--blue); font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-bottom:16px; }
-  .page-head h1 { font-size:clamp(1.8rem,3.6vw,2.6rem); font-weight:900; color:var(--blue-deep); margin-bottom:14px; line-height:1.25; }
+  .page-head h1 { font-size:clamp(1.8rem,3.6vw,2.6rem); font-weight:900; color:var(--heading); margin-bottom:14px; line-height:1.25; }
   .page-head p { color:var(--ink); opacity:.75; font-size:15px; line-height:1.7; }
 
   section.zone { padding:70px 6%; }
@@ -109,27 +139,27 @@
 
   .school-chip-grid { display:flex; flex-wrap:wrap; gap:10px; }
   .school-chip {
-    padding:9px 16px; background:white; border-radius:10px; font-size:13px; font-weight:600; color:var(--ink);
-    border:1px solid #e3e9f7; display:flex; align-items:center; gap:8px;
-    transition:transform .2s ease, box-shadow .2s ease;
+    padding:9px 16px; background:var(--surface); border-radius:10px; font-size:13px; font-weight:600; color:var(--ink);
+    border:1px solid var(--card-border); display:flex; align-items:center; gap:8px;
+    transition:transform .2s ease, box-shadow .2s ease, background .25s ease;
   }
   .school-chip:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(16,42,107,0.1); }
   .school-chip .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
   .tech-note { font-size:12.5px; color:var(--gray); margin:14px 0 10px; }
 
   /* WDS / LG sections */
-  .field-section { background:white; padding:70px 6%; }
+  .field-section { background:var(--surface); padding:70px 6%; transition:background .25s ease; }
   .field-inner { max-width:1180px; margin:0 auto; }
   .field-head { text-align:center; max-width:680px; margin:0 auto 44px; }
   .field-head .tag { display:inline-block; padding:6px 16px; border-radius:20px; font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-bottom:14px; }
-  .field-head h2 { font-size:clamp(1.6rem,3vw,2.2rem); font-weight:900; color:var(--blue-deep); margin-bottom:12px; }
+  .field-head h2 { font-size:clamp(1.6rem,3vw,2.2rem); font-weight:900; color:var(--heading); margin-bottom:12px; }
   .field-head p { color:var(--gray); font-size:14.5px; line-height:1.7; }
 
   .event-grid { display:grid; grid-template-columns:1fr 1fr; gap:26px; perspective:1400px; }
   @media (max-width:860px) { .event-grid { grid-template-columns:1fr; } }
   .event-card {
-    border-radius:20px; padding:30px; box-shadow:var(--shadow); background:var(--off-white); border-top:4px solid;
-    transform-style:preserve-3d; transition:transform .3s ease, box-shadow .3s ease;
+    border-radius:20px; padding:30px; box-shadow:var(--shadow); background:var(--surface-alt); border-top:4px solid;
+    transform-style:preserve-3d; transition:transform .3s ease, box-shadow .3s ease, background .25s ease;
   }
   .event-card:hover { box-shadow:0 24px 50px rgba(16,42,107,0.2); }
   .event-card h3 { font-size:18px; font-weight:800; color:var(--ink); margin-bottom:10px; }
@@ -139,7 +169,7 @@
   .event-card ul li::before { content:'—'; position:absolute; left:0; opacity:.5; }
   .event-photo-row { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
   .event-photo-placeholder {
-    flex:1; min-width:110px; aspect-ratio:4/3; border-radius:12px; border:2px dashed #cbd5e1; background:white;
+    flex:1; min-width:110px; aspect-ratio:4/3; border-radius:12px; border:2px dashed var(--card-border); background:var(--surface);
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:var(--gray); font-size:11px; text-align:center; padding:8px;
   }
   .event-photo-placeholder svg { width:22px; height:22px; opacity:.4; }
@@ -151,11 +181,21 @@
 
   .source-note { text-align:center; font-size:12px; color:var(--gray); margin-top:36px; }
 
-  footer { background:#0a1a45; color:rgba(255,255,255,0.7); text-align:center; padding:34px 6%; font-size:12.5px; }
+  footer { background:var(--footer-bg); color:var(--footer-text); text-align:center; padding:34px 6%; font-size:12.5px; transition:background .25s ease; }
   footer a { color:#93c5fd; font-weight:700; }
 
-  #scroll-bg { position:fixed; inset:0; z-index:-1; background:#f4f7fc; transition:background 120ms linear; }
+  #scroll-bg { position:fixed; inset:0; z-index:-1; background:var(--surface-alt); transition:background 120ms linear; }
 </style>
+<script>
+  // Applied before paint so there's no flash of the wrong theme on load.
+  (function () {
+    try {
+      const saved = localStorage.getItem('arsrc-theme');
+      const theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch (e) { /* localStorage unavailable — default light theme applies */ }
+  })();
+</script>
 </head>
 <body>
 
@@ -175,6 +215,12 @@
     <a href="#lg">LG</a>
   </div>
   <a class="back-btn" href="/">← Back to Home</a>
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" type="button">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+  </div>
 </nav>
 
 <div class="page-head reveal">
@@ -342,7 +388,7 @@
 </section>
 
 <!-- ================= LG ================= -->
-<section class="field-section" id="lg" style="background:var(--off-white);">
+<section class="field-section" id="lg" style="background:var(--surface-alt);">
   <div class="field-inner">
     <div class="field-head reveal">
       <span class="tag" style="background:rgba(220,38,38,0.1); color:var(--red);">Literary Group</span>
@@ -614,11 +660,15 @@
     z3: [22, 163, 74],   // green
     z4: [29, 78, 216],   // blue
   };
-  const WHITE = [255, 255, 255];
-  // Neutral resting color used wherever no zone has scroll-weight (top of page,
-  // between sections, footer) — a very light neutral, NOT a muddy average of
-  // the four saturated colors.
-  const NEUTRAL = [246, 248, 252];
+  // Blend targets flip with theme: light mode pulls toward white/near-white,
+  // dark mode pulls toward a dark navy so the ring stays readable either way.
+  const THEME_TARGETS = {
+    light: { base: [255, 255, 255], neutral: [246, 248, 252], mix: 0.8 },
+    dark:  { base: [10, 14, 26],    neutral: [15, 20, 36],    mix: 0.82 },
+  };
+  function currentTheme() {
+    return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  }
 
   const bgEl = document.getElementById('scroll-bg');
   const zoneEls = ['zone1', 'zone2', 'zone3', 'zone4'].map(id => ({
@@ -630,10 +680,10 @@
   let ticking = false;
   function updateBg() {
     ticking = false;
+    const { base, neutral, mix } = THEME_TARGETS[currentTheme()];
     const viewportCenter = window.scrollY + window.innerHeight / 2;
 
-    let r = NEUTRAL[0], g = NEUTRAL[1], b = NEUTRAL[2];
-    let totalWeight = 0;
+    let r = neutral[0], g = neutral[1], b = neutral[2];
 
     zoneEls.forEach(({ el, key }) => {
       if (!el) return;
@@ -649,16 +699,14 @@
         r = lerp(r, zr, weight);
         g = lerp(g, zg, weight);
         b = lerp(b, zb, weight);
-        totalWeight = Math.max(totalWeight, weight);
       }
     });
 
-    // Always pull heavily toward white so the result is a pastel tint of whichever
-    // hue currently dominates, never a saturated or muddy color — this is what
-    // keeps --ink / --gray text readable across the entire page.
-    const tintR = Math.round(lerp(r, WHITE[0], 0.8));
-    const tintG = Math.round(lerp(g, WHITE[1], 0.8));
-    const tintB = Math.round(lerp(b, WHITE[2], 0.8));
+    // Pull toward the theme's base (white in light mode, near-black in dark mode)
+    // so text stays legible everywhere while the hue still shifts by scroll position.
+    const tintR = Math.round(lerp(r, base[0], mix));
+    const tintG = Math.round(lerp(g, base[1], mix));
+    const tintB = Math.round(lerp(b, base[2], mix));
 
     bgEl.style.background = `rgb(${tintR}, ${tintG}, ${tintB})`;
   }
@@ -670,6 +718,17 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll);
   updateBg();
+
+  // ── Dark / light mode toggle ─────────────────────────────────────────────
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const next = currentTheme() === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('arsrc-theme', next); } catch (e) { /* ignore */ }
+      updateBg(); // re-blend immediately using the new theme's base color
+    });
+  }
 })();
 </script>
 </body>
