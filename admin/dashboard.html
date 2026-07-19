@@ -800,6 +800,123 @@
         <div class="exec-empty">Loading past executives…</div>
       </div>
     </div>
+
+    <!-- Student Engagement -->
+    <div class="panel create-post-section">
+      <div class="panel-head">
+        <h2>🌍 Student Engagement Page</h2>
+      </div>
+      <p style="font-size:13px; color:rgba(238,242,255,.5); margin-bottom:20px; line-height:1.6;">
+        Manage the zone slogans/logos, schools, student photos, and WDS/LG events shown on the
+        <a href="/student-engagement.html" target="_blank" style="color:#3b82f6;">Student Engagement page</a>.
+        Anything you add here goes live immediately — the page falls back to its built-in placeholder content
+        for anything you haven't added yet, so nothing goes blank in the meantime.
+      </p>
+
+      <h3 style="font-size:12px; font-weight:800; color:#3b82f6; text-transform:uppercase; letter-spacing:.5px; margin-bottom:12px;">Zone Content</h3>
+      <div id="engZonesContainer" style="display:flex; flex-direction:column; gap:14px; margin-bottom:32px;"></div>
+
+      <h3 style="font-size:12px; font-weight:800; color:#3b82f6; text-transform:uppercase; letter-spacing:.5px; margin-bottom:12px;">Schools</h3>
+      <div class="form-row">
+        <div>
+          <label for="engSchoolZone">Zone</label>
+          <select id="engSchoolZone">
+            <option value="z1">Zone 1</option>
+            <option value="z2">Zone 2</option>
+            <option value="z3">Zone 3</option>
+            <option value="z4">Zone 4</option>
+          </select>
+        </div>
+        <div>
+          <label for="engSchoolType">Type</label>
+          <select id="engSchoolType">
+            <option value="shs">SHS / SHTS</option>
+            <option value="tech">Technical Institute</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:10px;">
+        <label for="engSchoolName">School name</label>
+        <input type="text" id="engSchoolName" placeholder="e.g. Prempeh College">
+      </div>
+      <div style="margin-top:12px;">
+        <button class="publish-btn" id="engSchoolAddBtn">Add School</button>
+        <div class="post-msg" id="engSchoolMsg"></div>
+      </div>
+      <div id="engSchoolsListContainer" style="margin-top:16px;"><div class="exec-empty">Loading schools…</div></div>
+
+      <h3 style="font-size:12px; font-weight:800; color:#3b82f6; text-transform:uppercase; letter-spacing:.5px; margin:30px 0 12px;">Student Photos</h3>
+      <div class="form-row">
+        <div>
+          <label for="engStudentZone">Zone</label>
+          <select id="engStudentZone">
+            <option value="z1">Zone 1</option>
+            <option value="z2">Zone 2</option>
+            <option value="z3">Zone 3</option>
+            <option value="z4">Zone 4</option>
+          </select>
+        </div>
+        <div>
+          <label for="engStudentName">Name <span style="color:rgba(238,242,255,.4);font-weight:400;">(optional)</span></label>
+          <input type="text" id="engStudentName" placeholder="e.g. Ama Serwaa">
+        </div>
+      </div>
+      <div style="margin-top:10px;">
+        <label for="engStudentImageInput">Photo</label>
+        <div class="image-drop" id="engStudentImageDrop">
+          <input type="file" id="engStudentImageInput" accept="image/png,image/jpeg,image/webp">
+          <div class="hint"><strong>Click to upload</strong> or drag a photo here — JPG, PNG or WEBP, max 5MB</div>
+        </div>
+        <div id="engStudentImagePreviewWrap" style="display:none;" class="image-preview-wrap">
+          <img id="engStudentImagePreviewImg" src="" alt="Student photo preview">
+          <button type="button" class="image-remove-btn" id="engStudentImageRemoveBtn">×</button>
+        </div>
+        <div class="image-upload-status" id="engStudentImageUploadStatus"></div>
+        <input type="hidden" id="engStudentPhotoUrl" value="">
+      </div>
+      <div style="margin-top:12px;">
+        <button class="publish-btn" id="engStudentAddBtn">Add Student Photo</button>
+        <div class="post-msg" id="engStudentMsg"></div>
+      </div>
+      <div id="engStudentsListContainer" style="margin-top:16px;"><div class="exec-empty">Loading student photos…</div></div>
+
+      <h3 style="font-size:12px; font-weight:800; color:#3b82f6; text-transform:uppercase; letter-spacing:.5px; margin:30px 0 12px;">WDS / LG Events</h3>
+      <div id="engEventEditBanner" style="display:none; margin-bottom:14px; padding:10px 14px; background:rgba(59,130,246,.12); border:1px solid rgba(59,130,246,.3); border-radius:10px; font-size:13px; color:#93c5fd; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <span id="engEventEditBannerText">Editing event…</span>
+        <button type="button" id="engEventCancelEditBtn" style="background:none; border:1px solid rgba(147,197,253,.4); color:#93c5fd; border-radius:6px; padding:4px 10px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;">Cancel</button>
+      </div>
+      <div class="form-row">
+        <div>
+          <label for="engEventWing">Wing</label>
+          <select id="engEventWing">
+            <option value="wds">Writers &amp; Debaters Society (WDS)</option>
+            <option value="lg">Literary Group (LG)</option>
+          </select>
+        </div>
+        <div>
+          <label for="engEventTitle">Title</label>
+          <input type="text" id="engEventTitle" placeholder="e.g. Talefest 2026">
+        </div>
+      </div>
+      <div style="margin-top:10px;">
+        <label for="engEventDescription">Description</label>
+        <textarea id="engEventDescription" rows="3" placeholder="What happened, who took part, where…"></textarea>
+      </div>
+      <div style="margin-top:10px;">
+        <label for="engEventImageInput">Photos <span style="color:rgba(238,242,255,.4);font-weight:400;">(add one at a time, up to 6)</span></label>
+        <div class="image-drop" id="engEventImageDrop">
+          <input type="file" id="engEventImageInput" accept="image/png,image/jpeg,image/webp">
+          <div class="hint"><strong>Click to upload</strong> or drag a photo here — JPG, PNG or WEBP, max 5MB</div>
+        </div>
+        <div class="image-upload-status" id="engEventImageUploadStatus"></div>
+        <div id="engEventPhotoThumbs" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;"></div>
+      </div>
+      <div style="margin-top:12px;">
+        <button class="publish-btn" id="engEventAddBtn">Add Event</button>
+        <div class="post-msg" id="engEventMsg"></div>
+      </div>
+      <div id="engEventsListContainer" style="margin-top:16px;"><div class="exec-empty">Loading events…</div></div>
+    </div>
   </main>
 
 </div>
@@ -2207,6 +2324,424 @@
   });
 
   updatePastExecSubgroupOptions();
+
+  // ── Student Engagement management ───────────────────────────────────────
+  const ZONE_LABELS = { z1: 'Zone 1', z2: 'Zone 2', z3: 'Zone 3', z4: 'Zone 4' };
+  const WING_LABELS = { wds: 'WDS', lg: 'LG' };
+  let engCache = { zones: {}, schools: {}, students: {}, events: {} };
+  let engEditingEventId = null;
+  let engEventPhotoUrls = [];
+
+  // Generic upload helper — reuses the same compressImage()/ALLOWED_TYPES/
+  // MAX_IMAGE_BYTES helpers defined earlier for post covers and executive photos.
+  async function uploadEngagementImage(file, statusEl) {
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      statusEl.textContent = '✗ Only JPG, PNG or WEBP images are allowed.';
+      statusEl.className = 'image-upload-status error';
+      return null;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      statusEl.textContent = '✗ Image is too large — max 5MB.';
+      statusEl.className = 'image-upload-status error';
+      return null;
+    }
+    try {
+      statusEl.textContent = 'Compressing…';
+      statusEl.className = 'image-upload-status';
+      const compressed = await compressImage(file);
+
+      statusEl.textContent = 'Uploading…';
+      const urlRes = await fetch('/api/admin/upload-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, folder: 'engagement' }),
+        credentials: 'same-origin',
+      });
+      const urlData = await urlRes.json();
+      if (!urlRes.ok) {
+        statusEl.textContent = '✗ ' + (urlData.error || 'Could not get upload URL.');
+        statusEl.className = 'image-upload-status error';
+        return null;
+      }
+
+      const uploadRes = await fetch(urlData.signedUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'image/jpeg' },
+        body: compressed,
+      });
+      if (!uploadRes.ok) {
+        statusEl.textContent = '✗ Upload to storage failed. Check bucket policy.';
+        statusEl.className = 'image-upload-status error';
+        return null;
+      }
+
+      statusEl.textContent = '✓ Uploaded.';
+      statusEl.className = 'image-upload-status success';
+      return urlData.publicUrl;
+    } catch (err) {
+      statusEl.textContent = '✗ ' + (err.message || 'Network error uploading image.');
+      statusEl.className = 'image-upload-status error';
+      return null;
+    }
+  }
+
+  async function loadEngagement() {
+    try {
+      const res = await fetch('/api/engagement?_=' + Date.now(), { credentials: 'same-origin' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not load.');
+      engCache = { zones: data.zones || {}, schools: data.schools || {}, students: data.students || {}, events: data.events || {} };
+      renderEngZones();
+      renderEngSchools();
+      renderEngStudents();
+      renderEngEvents();
+    } catch {
+      document.getElementById('engZonesContainer').innerHTML = '<div class="exec-empty">Could not load engagement data.</div>';
+    }
+  }
+
+  // ── Zones ──────────────────────────────────────────────────────────────
+  function renderEngZones() {
+    const container = document.getElementById('engZonesContainer');
+    container.innerHTML = ['z1', 'z2', 'z3', 'z4'].map(z => {
+      const zone = engCache.zones[z] || {};
+      return `
+        <div class="exec-row" style="align-items:flex-start; flex-direction:column; gap:10px;">
+          <div style="display:flex; align-items:center; gap:12px; width:100%;">
+            <img id="engZoneLogoPreview_${z}" src="${zone.logo_url ? esc(zone.logo_url) : ''}"
+              style="width:44px; height:44px; border-radius:10px; object-fit:cover; background:rgba(255,255,255,.06); flex-shrink:0; ${zone.logo_url ? '' : 'display:none;'}">
+            <div style="flex:1;">
+              <div class="exec-row-name">${ZONE_LABELS[z]}</div>
+              <input type="text" id="engZoneSlogan_${z}" value="${esc(zone.slogan || '')}" placeholder="Zone slogan…" style="margin-top:6px;">
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; width:100%; flex-wrap:wrap;">
+            <label style="font-size:12px; color:#3b82f6; font-weight:700; cursor:pointer;">
+              Upload logo <input type="file" id="engZoneLogoInput_${z}" accept="image/png,image/jpeg,image/webp" style="display:none;">
+            </label>
+            <span class="image-upload-status" id="engZoneLogoStatus_${z}" style="margin:0;"></span>
+            <button class="publish-btn" style="padding:8px 16px; font-size:12px; margin-left:auto;" data-zone="${z}">Save</button>
+          </div>
+        </div>`;
+    }).join('');
+
+    ['z1', 'z2', 'z3', 'z4'].forEach(z => {
+      document.getElementById(`engZoneLogoInput_${z}`).addEventListener('change', async e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const statusEl = document.getElementById(`engZoneLogoStatus_${z}`);
+        const url = await uploadEngagementImage(file, statusEl);
+        if (url) {
+          engCache.zones[z] = engCache.zones[z] || {};
+          engCache.zones[z].logo_url = url;
+          const preview = document.getElementById(`engZoneLogoPreview_${z}`);
+          preview.src = url;
+          preview.style.display = '';
+        }
+      });
+    });
+
+    container.querySelectorAll('button[data-zone]').forEach(btn => {
+      btn.addEventListener('click', async function () {
+        const z = this.dataset.zone;
+        const slogan = document.getElementById(`engZoneSlogan_${z}`).value;
+        const logo_url = (engCache.zones[z] && engCache.zones[z].logo_url) || '';
+        this.disabled = true;
+        this.textContent = 'Saving…';
+        try {
+          const res = await fetch('/api/engagement', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'zone', zone_key: z, slogan, logo_url }),
+            credentials: 'same-origin',
+          });
+          const data = await res.json();
+          if (!res.ok) { alert(data.error || 'Could not save zone.'); return; }
+          engCache.zones[z] = { slogan: data.zone.slogan, logo_url: data.zone.logo_url };
+        } catch { alert('Network error.'); }
+        finally { this.disabled = false; this.textContent = 'Save'; }
+      });
+    });
+  }
+
+  // ── Schools ────────────────────────────────────────────────────────────
+  function renderEngSchools() {
+    const container = document.getElementById('engSchoolsListContainer');
+    let html = '';
+    ['z1', 'z2', 'z3', 'z4'].forEach(z => {
+      const shs = (engCache.schools[z] && engCache.schools[z].shs) || [];
+      const tech = (engCache.schools[z] && engCache.schools[z].tech) || [];
+      if (!shs.length && !tech.length) return;
+      html += `<div class="exec-list-group"><h3>${ZONE_LABELS[z]} (${shs.length + tech.length})</h3>`;
+      [...shs, ...tech].forEach(s => {
+        html += `
+          <div class="exec-row">
+            <div class="exec-row-left"><div class="exec-row-text">
+              <div class="exec-row-name">${esc(s.name)}</div>
+              <div class="exec-row-meta">${s.school_type === 'tech' ? 'Technical Institute' : 'SHS / SHTS'}</div>
+            </div></div>
+            <button class="delete-btn" data-id="${esc(s.id)}" data-kind="school">Delete</button>
+          </div>`;
+      });
+      html += `</div>`;
+    });
+    container.innerHTML = html || '<div class="exec-empty">No schools added yet — the page keeps showing its built-in list until you add some here.</div>';
+
+    container.querySelectorAll('[data-kind="school"]').forEach(btn => {
+      btn.addEventListener('click', async function () {
+        if (!confirm('Delete this school?')) return;
+        this.disabled = true;
+        try {
+          const res = await fetch('/api/engagement', {
+            method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'school', id: this.dataset.id }), credentials: 'same-origin',
+          });
+          if (res.ok) loadEngagement(); else { alert('Could not delete.'); this.disabled = false; }
+        } catch { alert('Network error.'); this.disabled = false; }
+      });
+    });
+  }
+
+  document.getElementById('engSchoolAddBtn').addEventListener('click', async function () {
+    const zone_key = document.getElementById('engSchoolZone').value;
+    const school_type = document.getElementById('engSchoolType').value;
+    const name = document.getElementById('engSchoolName').value.trim();
+    const msg = document.getElementById('engSchoolMsg');
+    msg.className = 'post-msg';
+    if (!name) { msg.textContent = '✗ School name is required.'; msg.classList.add('error'); return; }
+    this.disabled = true; this.textContent = 'Adding…';
+    try {
+      const res = await fetch('/api/engagement', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'school', zone_key, school_type, name }), credentials: 'same-origin',
+      });
+      const data = await res.json();
+      if (!res.ok) { msg.textContent = '✗ ' + (data.error || 'Could not add school.'); msg.classList.add('error'); return; }
+      msg.textContent = '✓ School added.'; msg.classList.add('success');
+      document.getElementById('engSchoolName').value = '';
+      await loadEngagement();
+      setTimeout(() => { msg.className = 'post-msg'; }, 4000);
+    } catch { msg.textContent = '✗ Network error.'; msg.classList.add('error'); }
+    finally { this.disabled = false; this.textContent = 'Add School'; }
+  });
+
+  // ── Student photos ────────────────────────────────────────────────────
+  function renderEngStudents() {
+    const container = document.getElementById('engStudentsListContainer');
+    let html = '';
+    ['z1', 'z2', 'z3', 'z4'].forEach(z => {
+      const list = engCache.students[z] || [];
+      if (!list.length) return;
+      html += `<div class="exec-list-group"><h3>${ZONE_LABELS[z]} (${list.length})</h3>`;
+      list.forEach(s => {
+        html += `
+          <div class="exec-row">
+            <div class="exec-row-left">
+              <img class="exec-row-thumb" src="${esc(s.photo_url)}" alt="">
+              <div class="exec-row-text"><div class="exec-row-name">${esc(s.name || 'Student photo')}</div></div>
+            </div>
+            <button class="delete-btn" data-id="${esc(s.id)}" data-kind="student">Delete</button>
+          </div>`;
+      });
+      html += `</div>`;
+    });
+    container.innerHTML = html || '<div class="exec-empty">No student photos uploaded yet.</div>';
+
+    container.querySelectorAll('[data-kind="student"]').forEach(btn => {
+      btn.addEventListener('click', async function () {
+        if (!confirm('Delete this photo?')) return;
+        this.disabled = true;
+        try {
+          const res = await fetch('/api/engagement', {
+            method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'student', id: this.dataset.id }), credentials: 'same-origin',
+          });
+          if (res.ok) loadEngagement(); else { alert('Could not delete.'); this.disabled = false; }
+        } catch { alert('Network error.'); this.disabled = false; }
+      });
+    });
+  }
+
+  const engStudentImageInput = document.getElementById('engStudentImageInput');
+  const engStudentImageDrop = document.getElementById('engStudentImageDrop');
+  const engStudentImagePreviewWrap = document.getElementById('engStudentImagePreviewWrap');
+  const engStudentImagePreviewImg = document.getElementById('engStudentImagePreviewImg');
+  const engStudentImageRemoveBtn = document.getElementById('engStudentImageRemoveBtn');
+  const engStudentImageUploadStatus = document.getElementById('engStudentImageUploadStatus');
+  const engStudentPhotoUrl = document.getElementById('engStudentPhotoUrl');
+
+  function resetEngStudentImageField() {
+    engStudentPhotoUrl.value = '';
+    engStudentImagePreviewWrap.style.display = 'none';
+    engStudentImagePreviewImg.src = '';
+    engStudentImageDrop.style.display = 'block';
+    engStudentImageInput.value = '';
+    engStudentImageUploadStatus.textContent = '';
+    engStudentImageUploadStatus.className = 'image-upload-status';
+  }
+
+  engStudentImageInput.addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const localUrl = URL.createObjectURL(file);
+    engStudentImagePreviewImg.src = localUrl;
+    engStudentImagePreviewWrap.style.display = 'inline-block';
+    engStudentImageDrop.style.display = 'none';
+    const url = await uploadEngagementImage(file, engStudentImageUploadStatus);
+    if (url) engStudentPhotoUrl.value = url; else resetEngStudentImageField();
+  });
+  engStudentImageRemoveBtn.addEventListener('click', resetEngStudentImageField);
+
+  document.getElementById('engStudentAddBtn').addEventListener('click', async function () {
+    const zone_key = document.getElementById('engStudentZone').value;
+    const name = document.getElementById('engStudentName').value.trim();
+    const photo_url = engStudentPhotoUrl.value;
+    const msg = document.getElementById('engStudentMsg');
+    msg.className = 'post-msg';
+    if (!photo_url) { msg.textContent = '✗ Please upload a photo first.'; msg.classList.add('error'); return; }
+    this.disabled = true; this.textContent = 'Adding…';
+    try {
+      const res = await fetch('/api/engagement', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'student', zone_key, name, photo_url }), credentials: 'same-origin',
+      });
+      const data = await res.json();
+      if (!res.ok) { msg.textContent = '✗ ' + (data.error || 'Could not add photo.'); msg.classList.add('error'); return; }
+      msg.textContent = '✓ Student photo added.'; msg.classList.add('success');
+      document.getElementById('engStudentName').value = '';
+      resetEngStudentImageField();
+      await loadEngagement();
+      setTimeout(() => { msg.className = 'post-msg'; }, 4000);
+    } catch { msg.textContent = '✗ Network error.'; msg.classList.add('error'); }
+    finally { this.disabled = false; this.textContent = 'Add Student Photo'; }
+  });
+
+  // ── Events ─────────────────────────────────────────────────────────────
+  function renderEngEventThumbs() {
+    const wrap = document.getElementById('engEventPhotoThumbs');
+    wrap.innerHTML = engEventPhotoUrls.map((url, i) => `
+      <div style="position:relative;">
+        <img src="${esc(url)}" style="width:64px; height:64px; border-radius:8px; object-fit:cover; border:1px solid rgba(255,255,255,.1);">
+        <button type="button" data-idx="${i}" class="image-remove-btn" style="width:20px; height:20px; font-size:11px;">×</button>
+      </div>`).join('');
+    wrap.querySelectorAll('button[data-idx]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        engEventPhotoUrls.splice(Number(btn.dataset.idx), 1);
+        renderEngEventThumbs();
+      });
+    });
+  }
+
+  document.getElementById('engEventImageInput').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const statusEl = document.getElementById('engEventImageUploadStatus');
+    if (engEventPhotoUrls.length >= 6) { statusEl.textContent = '✗ Maximum 6 photos per event.'; statusEl.className = 'image-upload-status error'; return; }
+    const url = await uploadEngagementImage(file, statusEl);
+    if (url) { engEventPhotoUrls.push(url); renderEngEventThumbs(); }
+    document.getElementById('engEventImageInput').value = '';
+  });
+
+  function resetEngEventForm() {
+    engEditingEventId = null;
+    engEventPhotoUrls = [];
+    renderEngEventThumbs();
+    document.getElementById('engEventTitle').value = '';
+    document.getElementById('engEventDescription').value = '';
+    document.getElementById('engEventWing').value = 'wds';
+    document.getElementById('engEventEditBanner').style.display = 'none';
+    document.getElementById('engEventAddBtn').textContent = 'Add Event';
+  }
+  document.getElementById('engEventCancelEditBtn').addEventListener('click', resetEngEventForm);
+
+  function startEditEngEvent(ev) {
+    engEditingEventId = ev.id;
+    engEventPhotoUrls = Array.isArray(ev.photo_urls) ? [...ev.photo_urls] : [];
+    renderEngEventThumbs();
+    document.getElementById('engEventWing').value = ev.wing;
+    document.getElementById('engEventTitle').value = ev.title || '';
+    document.getElementById('engEventDescription').value = ev.description || '';
+    document.getElementById('engEventEditBannerText').textContent = `Editing: ${ev.title}`;
+    document.getElementById('engEventEditBanner').style.display = 'flex';
+    document.getElementById('engEventAddBtn').textContent = 'Save Changes';
+    document.getElementById('engEventTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function renderEngEvents() {
+    const container = document.getElementById('engEventsListContainer');
+    let html = '';
+    ['wds', 'lg'].forEach(w => {
+      const list = engCache.events[w] || [];
+      if (!list.length) return;
+      html += `<div class="exec-list-group"><h3>${WING_LABELS[w]} (${list.length})</h3>`;
+      list.forEach(ev => {
+        html += `
+          <div class="exec-row">
+            <div class="exec-row-left"><div class="exec-row-text">
+              <div class="exec-row-name">${esc(ev.title)}</div>
+              <div class="exec-row-meta">${(ev.photo_urls || []).length} photo(s)</div>
+            </div></div>
+            <div style="display:flex; gap:8px;">
+              <button class="delete-btn" style="background:rgba(59,130,246,.12); color:#93c5fd; border-color:rgba(59,130,246,.2);" data-id="${esc(ev.id)}" data-kind="edit-event">Edit</button>
+              <button class="delete-btn" data-id="${esc(ev.id)}" data-kind="delete-event">Delete</button>
+            </div>
+          </div>`;
+      });
+      html += `</div>`;
+    });
+    container.innerHTML = html || '<div class="exec-empty">No events added yet — the page keeps showing its two example cards until you add some here.</div>';
+
+    container.querySelectorAll('[data-kind="edit-event"]').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const all = [...(engCache.events.wds || []), ...(engCache.events.lg || [])];
+        const ev = all.find(e => e.id === this.dataset.id);
+        if (ev) startEditEngEvent(ev);
+      });
+    });
+    container.querySelectorAll('[data-kind="delete-event"]').forEach(btn => {
+      btn.addEventListener('click', async function () {
+        if (!confirm('Delete this event?')) return;
+        this.disabled = true;
+        try {
+          const res = await fetch('/api/engagement', {
+            method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'event', id: this.dataset.id }), credentials: 'same-origin',
+          });
+          if (res.ok) loadEngagement(); else { alert('Could not delete.'); this.disabled = false; }
+        } catch { alert('Network error.'); this.disabled = false; }
+      });
+    });
+  }
+
+  document.getElementById('engEventAddBtn').addEventListener('click', async function () {
+    const wing = document.getElementById('engEventWing').value;
+    const title = document.getElementById('engEventTitle').value.trim();
+    const description = document.getElementById('engEventDescription').value.trim();
+    const msg = document.getElementById('engEventMsg');
+    msg.className = 'post-msg';
+    if (!title) { msg.textContent = '✗ Event title is required.'; msg.classList.add('error'); return; }
+    const isEdit = !!engEditingEventId;
+    this.disabled = true; this.textContent = isEdit ? 'Saving…' : 'Adding…';
+    try {
+      const res = await fetch('/api/engagement', {
+        method: isEdit ? 'PATCH' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(isEdit
+          ? { type: 'event', id: engEditingEventId, title, description, photo_urls: engEventPhotoUrls }
+          : { type: 'event', wing, title, description, photo_urls: engEventPhotoUrls }),
+        credentials: 'same-origin',
+      });
+      const data = await res.json();
+      if (!res.ok) { msg.textContent = '✗ ' + (data.error || 'Could not save event.'); msg.classList.add('error'); return; }
+      msg.textContent = isEdit ? '✓ Changes saved.' : '✓ Event added.'; msg.classList.add('success');
+      resetEngEventForm();
+      await loadEngagement();
+      setTimeout(() => { msg.className = 'post-msg'; }, 4000);
+    } catch { msg.textContent = '✗ Network error.'; msg.classList.add('error'); }
+    finally { this.disabled = false; this.textContent = engEditingEventId ? 'Save Changes' : 'Add Event'; }
+  });
+
+  loadEngagement();
 </script>
 </body>
 </html>
