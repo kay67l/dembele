@@ -64,8 +64,10 @@
   .jump-links a:hover { color:var(--blue); }
   @media (max-width:900px) { .jump-links { display:none; } }
 
-  .page-head { position:relative; text-align:center; max-width:760px; margin:0 auto; padding:150px 24px 50px; z-index:5; }
+  .page-head { position:relative; max-width:1280px; margin:0 auto; padding:150px 5% 60px; z-index:5; }
+  .hero-grid { display:flex; align-items:center; justify-content:space-between; gap:50px; }
   .page-head-panel {
+    flex:1 1 420px; max-width:480px; text-align:left; position:relative; z-index:2;
     background:var(--surface); border-radius:28px;
     padding:38px 34px; box-shadow:0 20px 60px rgba(16,42,107,0.22); border:1px solid rgba(16,42,107,0.08);
     transition:background .25s ease;
@@ -73,6 +75,79 @@
   .page-head span.tag { display:inline-block; padding:6px 16px; border-radius:20px; background:rgba(29,78,216,0.1); color:var(--blue); font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-bottom:16px; }
   .page-head h1 { font-size:clamp(1.8rem,3.6vw,2.6rem); font-weight:900; color:var(--heading); margin-bottom:14px; line-height:1.25; }
   .page-head p { color:var(--ink); opacity:.75; font-size:15px; line-height:1.7; }
+
+  /* ── Hero illustration: a 3D, mouse-tilting orb radiating each zone's color, ──
+     with a ring of jumping, hand-holding figures dancing around it ── */
+  .hero-stage { flex:1 1 380px; max-width:440px; height:380px; position:relative; perspective:1100px; }
+  .hero-tilt { position:relative; width:100%; height:100%; transform-style:preserve-3d; transition:transform .2s ease-out; will-change:transform; }
+
+  .hero-glow {
+    position:absolute; left:50%; top:50%; width:150px; height:150px; margin:-75px 0 0 -75px; border-radius:50%;
+    background:radial-gradient(circle at 35% 32%, #fff9db 0%, #fbbf24 38%, #f59e0b 62%, #dc2626 100%);
+    box-shadow:0 0 70px 18px rgba(245,158,11,.5), 0 0 140px 46px rgba(29,78,216,.28);
+    transform:translateZ(30px);
+    animation:glow-pulse 3.4s ease-in-out infinite;
+  }
+  @keyframes glow-pulse {
+    0%,100% { box-shadow:0 0 70px 18px rgba(245,158,11,.5), 0 0 140px 46px rgba(29,78,216,.28); }
+    50%     { box-shadow:0 0 90px 26px rgba(245,158,11,.65), 0 0 170px 60px rgba(29,78,216,.4); }
+  }
+
+  .ray {
+    position:absolute; left:50%; top:50%; width:16px; height:230px;
+    clip-path:polygon(38% 0%, 62% 0%, 100% 78%, 50% 100%, 0% 78%);
+    transform-origin:50% 0%; opacity:.75; filter:blur(.3px);
+    animation:ray-shimmer 2.6s ease-in-out infinite;
+  }
+  .ray.r1 { background:linear-gradient(180deg, var(--z1), transparent); transform:translate(-8px,-190px) rotate(-52deg); transform-origin:50% 190px; animation-delay:0s; }
+  .ray.r2 { background:linear-gradient(180deg, var(--z2), transparent); transform:translate(-8px,-190px) rotate(-18deg); transform-origin:50% 190px; animation-delay:.5s; }
+  .ray.r3 { background:linear-gradient(180deg, var(--z3), transparent); transform:translate(-8px,-190px) rotate(16deg);  transform-origin:50% 190px; animation-delay:1s; }
+  .ray.r4 { background:linear-gradient(180deg, var(--z4), transparent); transform:translate(-8px,-190px) rotate(50deg);  transform-origin:50% 190px; animation-delay:1.5s; }
+  @keyframes ray-shimmer { 0%,100% { opacity:.5; } 50% { opacity:.95; } }
+
+  .shooting-star {
+    position:absolute; width:3px; height:3px; border-radius:999px; background:#fff;
+    box-shadow:0 0 8px 2px rgba(59,130,246,.9), 0 0 16px 4px rgba(59,130,246,.4);
+    animation: shoot 5.5s linear infinite; transform:translateZ(70px);
+  }
+  .shooting-star::before {
+    content:''; position:absolute; top:50%; right:0; width:70px; height:1.5px; transform:translateY(-50%) rotate(180deg);
+    background:linear-gradient(90deg, rgba(59,130,246,.85), transparent);
+  }
+  .shooting-star.s2 { animation-delay:2.4s; }
+  .shooting-star.s3 { animation-delay:4.1s; }
+  @keyframes shoot {
+    0%   { top:2%;  left:-6%;  opacity:0; transform:translateZ(70px) rotate(35deg); }
+    6%   { opacity:1; }
+    28%  { opacity:1; }
+    38%  { top:38%; left:58%;  opacity:0; transform:translateZ(70px) rotate(35deg); }
+    100% { top:38%; left:58%;  opacity:0; transform:translateZ(70px) rotate(35deg); }
+  }
+
+  .dance-ring {
+    position:absolute; left:50%; top:50%; width:220px; height:220px; margin:-110px 0 0 -110px;
+    border-radius:50%; border:2px dashed rgba(255,255,255,.55);
+    transform:translateZ(55px); animation: ring-spin 20s linear infinite;
+  }
+  .dance-figure {
+    position:absolute; top:50%; left:50%; width:32px; height:32px; margin:-16px 0 0 -16px;
+    color:#fff; filter:drop-shadow(0 2px 4px rgba(0,0,0,.35)); animation: dance-jump 1.2s ease-in-out infinite;
+  }
+  .dance-figure svg { width:100%; height:100%; display:block; }
+  .dance-figure.i0 { transform:rotate(0deg)   translate(102px) rotate(0deg);   animation-delay:0s; }
+  .dance-figure.i1 { transform:rotate(60deg)  translate(102px) rotate(-60deg); animation-delay:.15s; }
+  .dance-figure.i2 { transform:rotate(120deg) translate(102px) rotate(-120deg); animation-delay:.3s; }
+  .dance-figure.i3 { transform:rotate(180deg) translate(102px) rotate(-180deg); animation-delay:.45s; }
+  .dance-figure.i4 { transform:rotate(240deg) translate(102px) rotate(-240deg); animation-delay:.6s; }
+  .dance-figure.i5 { transform:rotate(300deg) translate(102px) rotate(-300deg); animation-delay:.75s; }
+  @keyframes ring-spin { to { transform:translateZ(55px) rotate(360deg); } }
+  @keyframes dance-jump { 0%,100% { margin-top:-16px; } 50% { margin-top:-26px; } }
+
+  @media (max-width:900px) {
+    .hero-grid { flex-direction:column; text-align:center; }
+    .page-head-panel { text-align:center; max-width:560px; }
+  }
+  @media (max-width:640px) { .hero-stage { display:none; } }
 
   section.zone { padding:70px 6%; }
   .zone-inner { max-width:1180px; margin:0 auto; }
@@ -224,10 +299,32 @@
 </nav>
 
 <div class="page-head reveal">
-  <div class="page-head-panel">
-    <span class="tag">Engagement</span>
-    <h1>Student Engagement Across ARSRC</h1>
-    <p>A look at how students engage across our four zones and our two flagship societies — the Writers &amp; Debaters Society (WDS) and the Literary Group (LG). Photos, logos, and event details are managed live by the council through the admin dashboard.</p>
+  <div class="hero-grid">
+    <div class="page-head-panel">
+      <span class="tag">Engagement</span>
+      <h1>Student Engagement Across ARSRC</h1>
+      <p>A look at how students engage across our four zones and our two flagship societies — the Writers &amp; Debaters Society (WDS) and the Literary Group (LG). Photos, logos, and event details are managed live by the council through the admin dashboard.</p>
+    </div>
+    <div class="hero-stage" id="heroStage" aria-hidden="true">
+      <div class="hero-tilt" id="heroTilt">
+        <div class="ray r1"></div>
+        <div class="ray r2"></div>
+        <div class="ray r3"></div>
+        <div class="ray r4"></div>
+        <div class="hero-glow"></div>
+        <div class="shooting-star s1"></div>
+        <div class="shooting-star s2"></div>
+        <div class="shooting-star s3"></div>
+        <div class="dance-ring">
+          <div class="dance-figure i0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="4" r="2.2"/><path d="M12 7v7M12 9l-5 -2M12 9l5 -2M12 14l-4 6M12 14l4 6"/></svg></div>
+          <div class="dance-figure i1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="4" r="2.2"/><path d="M12 7v7M12 9l-5 -2M12 9l5 -2M12 14l-4 6M12 14l4 6"/></svg></div>
+          <div class="dance-figure i2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="4" r="2.2"/><path d="M12 7v7M12 9l-5 -2M12 9l5 -2M12 14l-4 6M12 14l4 6"/></svg></div>
+          <div class="dance-figure i3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="4" r="2.2"/><path d="M12 7v7M12 9l-5 -2M12 9l5 -2M12 14l-4 6M12 14l4 6"/></svg></div>
+          <div class="dance-figure i4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="4" r="2.2"/><path d="M12 7v7M12 9l-5 -2M12 9l5 -2M12 14l-4 6M12 14l4 6"/></svg></div>
+          <div class="dance-figure i5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="4" r="2.2"/><path d="M12 7v7M12 9l-5 -2M12 9l5 -2M12 14l-4 6M12 14l4 6"/></svg></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -613,6 +710,22 @@
   }
 
   loadEngagementData();
+
+  // ── Hero illustration 3D tilt (mouse-driven) ───────────────────────────────
+  (function initHeroTilt() {
+    const stage = document.getElementById('heroStage');
+    const tilt = document.getElementById('heroTilt');
+    if (!stage || !tilt) return;
+    stage.addEventListener('mousemove', (e) => {
+      const rect = stage.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      tilt.style.transform = `rotateY(${x * 24}deg) rotateX(${-y * 24}deg)`;
+    });
+    stage.addEventListener('mouseleave', () => {
+      tilt.style.transform = 'rotateY(0deg) rotateX(0deg)';
+    });
+  })();
 
   // ── Scroll-reveal animation ──────────────────────────────────────────────
   function initRevealObserver() {
