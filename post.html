@@ -16,8 +16,8 @@
     .nav-brand{display:flex;align-items:center;gap:11px;color:var(--navy);font-size:13px;font-weight:900;letter-spacing:.2px}
     .nav-mark{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,var(--blue),var(--navy));color:#fff;font-size:9px;letter-spacing:.5px;box-shadow:0 8px 18px rgba(29,78,216,.24)}
     .nav-back{display:inline-flex;align-items:center;gap:8px;color:var(--red);font-size:12px;font-weight:800}
-    .post-main{max-width:1240px;margin:0 auto;padding:clamp(60px,9vw,130px) clamp(20px,6vw,96px) 100px}
-    .post-intro{text-align:center;max-width:900px;margin:0 auto}
+    .post-main{max-width:1480px;margin:0 auto;padding:clamp(60px,9vw,130px) clamp(20px,6vw,96px) 100px}
+    .post-intro{text-align:center;max-width:1120px;margin:0 auto}
     .post-kicker{display:inline-flex;align-items:center;gap:10px;color:var(--red);font-size:10px;font-weight:900;letter-spacing:2.3px;text-transform:uppercase;margin-bottom:20px}
     .post-kicker::before,.post-kicker::after{content:'';width:28px;height:2px;border-radius:99px;background:linear-gradient(90deg,var(--red),var(--blue))}
     .post-title{font-family:Georgia,'Times New Roman',serif;color:var(--navy);font-size:clamp(2.7rem,7vw,6.8rem);font-weight:500;line-height:.96;letter-spacing:-.055em;text-wrap:balance}
@@ -28,11 +28,15 @@
     .post-hero-img{width:100%;height:100%;display:block;object-fit:cover}
     .post-hero::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(130deg,rgba(16,42,107,.08),transparent 44%,rgba(8,18,49,.52))}
     .post-hero::after{content:'ARSRC\A STUDENT DESK';white-space:pre;position:absolute;z-index:2;right:6%;bottom:7%;color:#fff;text-align:right;font-size:clamp(1rem,2.4vw,2rem);font-weight:900;letter-spacing:3px;line-height:1.05;text-shadow:0 4px 20px rgba(0,0,0,.3)}
-    .post-layout{display:grid;grid-template-columns:190px minmax(0,720px) 190px;gap:38px;justify-content:center;align-items:start}
+    .post-layout{display:grid;grid-template-columns:220px minmax(0,880px) 220px;gap:56px;justify-content:center;align-items:start}
     .post-aside{padding-top:12px;border-top:3px solid var(--red);color:var(--muted);font-size:11px;line-height:1.7}
     .post-aside strong{display:block;color:var(--navy);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:8px}
-    .post-content{font-family:Georgia,'Times New Roman',serif;color:#334155;font-size:clamp(1.08rem,1.4vw,1.22rem);line-height:1.9}
-    .post-content p{margin-bottom:26px}
+    .post-content{font-family:Georgia,'Times New Roman',serif;color:#334155;font-size:clamp(1.08rem,1.4vw,1.22rem);line-height:1.9;min-width:0}
+    .post-content p{margin-bottom:30px}
+    .inline-article-image{margin:44px 0 48px;break-inside:avoid}
+    .inline-article-image img{display:block;width:100%;max-height:650px;object-fit:cover;border-radius:18px;box-shadow:0 20px 48px rgba(16,42,107,.14)}
+    .inline-article-image figcaption{margin-top:12px;color:#7c8aa1;font:600 11px/1.6 'Segoe UI',sans-serif;letter-spacing:.2px}
+    .inline-article-image figcaption::before{content:'↳  ';color:var(--red);font-weight:900}
     .post-content p:first-child::first-letter{float:left;color:var(--red);font-size:4.8rem;font-weight:700;line-height:.76;padding:9px 10px 0 0}
     .post-end{padding-top:26px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;font-family:'Segoe UI',sans-serif;line-height:1.6}
     .post-end a{color:var(--red);font-weight:800}
@@ -42,7 +46,7 @@
     .state-link{color:var(--red);font-size:13px;font-weight:800}
     .spinner{width:34px;height:34px;border:3px solid rgba(29,78,216,.16);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
-    @media(max-width:980px){.post-layout{grid-template-columns:minmax(0,720px)}.post-aside{display:none}}
+    @media(max-width:980px){.post-layout{grid-template-columns:minmax(0,860px);max-width:860px;margin:0 auto}.post-aside{display:none}}
     @media(max-width:600px){.post-nav{padding:12px 18px}.nav-back{font-size:11px}.post-main{padding:56px 18px 72px}.post-title{font-size:clamp(2.5rem,13vw,4.5rem)}.post-hero{height:280px;margin:42px auto 48px;border-radius:18px}.post-content{font-size:1.05rem;line-height:1.8}.post-meta{gap:8px 12px}.post-meta span+span{padding-left:12px}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
   </style>
@@ -97,8 +101,26 @@
       const hero=document.getElementById('postHero');
       if(post.image_url){const img=document.createElement('img');img.className='post-hero-img';img.src=post.image_url;img.alt=post.title||'';hero.prepend(img)}
       ['backLink','footerBackLink'].forEach(id=>{const el=document.getElementById(id);el.href=backHref;el.textContent=editorial?(id==='backLink'?'← Back to Magazines & Stories':'← Return to Magazines & Stories'):(id==='backLink'?'← Back to News':'← Return to News')});
-      document.getElementById('postBody').innerHTML=String(post.content||'').split(/\n\n+/).filter(p=>p.trim()).map(p=>'<p>'+esc(p.trim()).replace(/\n/g,'<br>')+'</p>').join('');
+      document.getElementById('postBody').innerHTML=renderBody(post.content||'');
       document.getElementById('loadingState').style.display='none';document.getElementById('postContent').hidden=false;
+    }
+    function renderBody(raw){
+      return String(raw).split(/\n\n+/).filter(p=>p.trim()).map(function(block){
+        var trimmed=block.trim();
+        var match=trimmed.match(/^\[\[IMAGE\|([^|]+)\|([^|]*)\|([^\]]*)\]\]$/);
+        if(match){
+          var src=safeImageUrl(match[1]);
+          if(!src) return '';
+          var alt=esc(match[2]||'Article image');
+          var caption=esc(match[3]||'');
+          return '<figure class="inline-article-image"><img src="'+src+'" alt="'+alt+'" loading="lazy">'+(caption?'<figcaption>'+caption+'</figcaption>':'')+'</figure>';
+        }
+        return '<p>'+esc(trimmed).replace(/\n/g,'<br>')+'</p>';
+      }).join('');
+    }
+    function safeImageUrl(url){
+      var value=String(url||'').trim();
+      return /^(https?:\/\/|\/|assets\/)/i.test(value) ? esc(value) : '';
     }
     function showError(){document.getElementById('loadingState').style.display='none';document.getElementById('errorState').style.display='flex'}
     if(!slug){showError();return}

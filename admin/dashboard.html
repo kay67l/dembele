@@ -332,6 +332,19 @@
       font-family:inherit; border:1px solid rgba(59,130,246,.2); transition:background .2s;
     }
     .view-btn:hover { background:rgba(59,130,246,.25); }
+    .inline-image-editor { padding:16px; border:1px solid rgba(147,197,253,.14); border-radius:12px; background:rgba(59,130,246,.05); }
+    .inline-image-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:stretch; }
+    .inline-image-drop { min-height:92px; display:flex; align-items:center; justify-content:center; text-align:center; padding:14px; border:1px dashed rgba(147,197,253,.32); border-radius:9px; color:rgba(238,242,255,.5); font-size:12px; cursor:pointer; transition:border-color .2s, background .2s; }
+    .inline-image-drop:hover, .inline-image-drop.dragover { border-color:#60a5fa; background:rgba(59,130,246,.1); }
+    .inline-image-drop input { display:none; }
+    .inline-image-drop strong { display:block; color:#93c5fd; margin-bottom:4px; }
+    .inline-image-fields { display:grid; gap:8px; }
+    .inline-image-fields input { width:100%; }
+    .inline-insert-btn { border:0; border-radius:7px; background:linear-gradient(135deg,#2563eb,#1d4ed8); color:white; font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; padding:10px 12px; transition:transform .2s, opacity .2s; }
+    .inline-insert-btn:hover:not(:disabled) { transform:translateY(-1px); }
+    .inline-insert-btn:disabled { opacity:.4; cursor:not-allowed; }
+    .inline-image-note { margin-top:9px; color:rgba(238,242,255,.36); font-size:11px; line-height:1.5; }
+    @media (max-width:700px) { .inline-image-grid { grid-template-columns:1fr; } }
     .delete-btn {
       padding:6px 12px; border-radius:7px; border:none; cursor:pointer;
       background:rgba(220,38,38,.12); color:#fca5a5; font-size:12px; font-weight:700;
@@ -465,6 +478,20 @@
     .page-btn.active { background: #1d4ed8; border-color: #1d4ed8; color: white; }
     .page-btn:disabled { opacity: .3; cursor: not-allowed; }
     .page-info { font-size: 12px; color: rgba(238,242,255,.4); }
+    /* Admin command bar */
+    .admin-commandbar { position:sticky; top:0; z-index:15; display:flex; align-items:center; gap:18px; margin:0 0 24px; padding:10px 12px; background:rgba(15,23,42,.9); border:1px solid rgba(147,197,253,.13); border-radius:12px; backdrop-filter:blur(16px); box-shadow:0 12px 30px rgba(2,6,23,.18); }
+    .commandbar-label { color:rgba(238,242,255,.36); font-size:10px; font-weight:900; letter-spacing:1.4px; text-transform:uppercase; flex-shrink:0; }
+    .commandbar-links { display:flex; align-items:center; gap:4px; min-width:0; overflow-x:auto; scrollbar-width:none; }
+    .commandbar-links::-webkit-scrollbar { display:none; }
+    .command-link { display:inline-flex; align-items:center; gap:5px; padding:8px 10px; color:rgba(238,242,255,.56); border-radius:8px; font-size:12px; font-weight:750; text-decoration:none; white-space:nowrap; transition:background .2s,color .2s; }
+    .command-link:hover { color:#fff; background:rgba(59,130,246,.12); }
+    .command-link.active { color:#fff; background:rgba(59,130,246,.2); box-shadow:inset 0 0 0 1px rgba(96,165,250,.14); }
+    .nav-count { display:none; min-width:16px; height:16px; align-items:center; justify-content:center; padding:0 4px; border-radius:99px; background:#dc2626; color:#fff; font-size:9px; font-weight:900; }
+    .nav-count.has-count { display:inline-flex; }
+    .quick-publish { margin-left:auto; flex-shrink:0; padding:9px 13px; border-radius:8px; background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; font-size:11px; font-weight:900; text-decoration:none; white-space:nowrap; box-shadow:0 5px 14px rgba(37,99,235,.22); transition:transform .2s,box-shadow .2s; }
+    .quick-publish:hover { transform:translateY(-1px); box-shadow:0 8px 18px rgba(37,99,235,.3); }
+    [id] { scroll-margin-top:92px; }
+    @media (max-width:700px) { .admin-commandbar { top:0; gap:10px; padding:8px; } .commandbar-label { display:none; } .command-link { padding:8px 9px; } .quick-publish { padding:8px 10px; } }
   </style>
 </head>
 <body>
@@ -500,6 +527,22 @@
       <p id="welcomeSub">Loading dashboard…</p>
     </div>
 
+    <nav class="admin-commandbar" id="adminCommandbar" aria-label="Dashboard sections">
+      <span class="commandbar-label">Workspace</span>
+      <div class="commandbar-links">
+        <a class="command-link active" href="#overview" data-section="overview">Overview</a>
+        <a class="command-link" href="#messagesPanel" data-section="messagesPanel">Messages <span class="nav-count" id="navUnreadCount"></span></a>
+        <a class="command-link" href="#postsPanel" data-section="postsPanel">Posts</a>
+        <a class="command-link" href="#editorPanel" data-section="editorPanel">Publish</a>
+        <a class="command-link" href="#executivesPanel" data-section="executivesPanel">Executives</a>
+        <a class="command-link" href="#archivePanel" data-section="archivePanel">Archive</a>
+        <a class="command-link" href="#pastExecutivesPanel" data-section="pastExecutivesPanel">Past terms</a>
+        <a class="command-link" href="#engagementPanel" data-section="engagementPanel">Engagement</a>
+      </div>
+      <a class="quick-publish" href="#editorPanel">+ New post</a>
+    </nav>
+
+    <div id="overview"></div>
     <div class="stats-row">
       <div class="stat-card">
         <div class="label">Contact Messages</div>
@@ -521,7 +564,7 @@
     <div class="panels">
 
       <!-- Full messages log (Phase 4) -->
-      <div class="panel">
+      <div class="panel" id="messagesPanel">
         <div class="panel-head">
           <h2>Contact Messages <span class="unread-badge" id="unreadBadge" style="display:none;"></span></h2>
           <span class="badge-pill" id="msgBadge">Loading…</span>
@@ -537,7 +580,7 @@
       </div>
 
       <!-- Blog posts panel (Phase 3 — live) -->
-      <div class="panel">
+      <div class="panel" id="postsPanel">
         <div class="panel-head">
           <h2>News, Magazines &amp; Stories</h2>
           <span class="badge-pill" id="postBadge">Loading…</span>
@@ -549,7 +592,7 @@
     </div>
 
     <!-- Create New Post -->
-    <div class="panel create-post-section">
+    <div class="panel create-post-section" id="editorPanel">
       <div class="panel-head">
         <h2>✍️ Publish News, Magazine or Story</h2>
       </div>
@@ -604,6 +647,23 @@
           <textarea id="postContent" rows="5" placeholder="Write the full post content here…"></textarea>
         </div>
 
+        <div class="inline-image-editor">
+          <label>In-article image <span style="color:rgba(238,242,255,.4);font-weight:400;">(place your cursor in Full Content first)</span></label>
+          <div class="inline-image-grid">
+            <div class="inline-image-drop" id="inlineImageDrop">
+              <input type="file" id="inlineImageInput" accept="image/png,image/jpeg,image/webp">
+              <span id="inlineImageHint"><strong>Choose an image</strong> to insert at the cursor</span>
+            </div>
+            <div class="inline-image-fields">
+              <input type="text" id="inlineImageAlt" placeholder="Image description (alt text)">
+              <input type="text" id="inlineImageCaption" placeholder="Caption (optional)">
+              <button type="button" class="inline-insert-btn" id="insertInlineImageBtn" disabled>Upload &amp; insert image</button>
+            </div>
+          </div>
+          <div class="image-upload-status" id="inlineImageStatus"></div>
+          <div class="inline-image-note">Images are inserted as a formatted block and will appear between your paragraphs on the article page.</div>
+        </div>
+
         <div>
           <label for="postAuthor">Author</label>
           <input type="text" id="postAuthor" value="ARSRC Council" placeholder="Author name">
@@ -618,7 +678,7 @@
     </div>
 
     <!-- Manage Executives -->
-    <div class="panel create-post-section">
+    <div class="panel create-post-section" id="executivesPanel">
       <div class="panel-head">
         <h2>👥 Manage Executives</h2>
       </div>
@@ -696,7 +756,7 @@
     </div>
 
     <!-- Archive Current Executives -->
-    <div class="panel create-post-section">
+    <div class="panel create-post-section" id="archivePanel">
       <div class="panel-head">
         <h2>🗄️ Archive Current Executives</h2>
       </div>
@@ -717,7 +777,7 @@
     </div>
 
     <!-- Manage Past Executives -->
-    <div class="panel create-post-section">
+    <div class="panel create-post-section" id="pastExecutivesPanel">
       <div class="panel-head">
         <h2>📜 Manage Past Executives</h2>
       </div>
@@ -810,7 +870,7 @@
     </div>
 
     <!-- Student Engagement -->
-    <div class="panel create-post-section">
+    <div class="panel create-post-section" id="engagementPanel">
       <div class="panel-head">
         <h2>🌍 Student Engagement Page</h2>
       </div>
@@ -1015,6 +1075,11 @@
     document.getElementById('msgCount').textContent = total;
     document.getElementById('msgCountSub').textContent =
       unread > 0 ? `${unread} unread` : 'All read';
+    const navUnreadCount = document.getElementById('navUnreadCount');
+    if (navUnreadCount) {
+      navUnreadCount.textContent = unread > 99 ? '99+' : unread;
+      navUnreadCount.classList.toggle('has-count', unread > 0);
+    }
 
     // Unread badge in panel header
     const badge = document.getElementById('unreadBadge');
@@ -1091,6 +1156,26 @@
       if (currentPage < totalPages) { currentPage++; loadMessages(); }
     });
   }
+
+  // ── Workspace navigation ────────────────────────────────────────────────────
+  (function initWorkspaceNavigation() {
+    const links = [...document.querySelectorAll('.command-link[data-section]')];
+    const sections = links.map(link => document.getElementById(link.dataset.section)).filter(Boolean);
+    const setActive = id => links.forEach(link => link.classList.toggle('active', link.dataset.section === id));
+
+    links.forEach(link => link.addEventListener('click', () => setActive(link.dataset.section)));
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(entries => {
+        const visible = entries.filter(entry => entry.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActive(visible.target.id);
+      }, { rootMargin: '-96px 0px -62% 0px', threshold: [0, .25, .6] });
+      sections.forEach(section => observer.observe(section));
+    }
+
+    document.querySelector('.quick-publish')?.addEventListener('click', () => {
+      window.setTimeout(() => document.getElementById('postTitle')?.focus(), 350);
+    });
+  })();
 
   // ── Message modal ───────────────────────────────────────────────────────────
   function openMessageModal(msg) {
@@ -1464,6 +1549,99 @@
     });
 
     imageRemoveBtn.addEventListener('click', resetImageField);
+  }
+
+  // ── Inline article images ────────────────────────────────────────────────────
+  // Images are stored in the same bucket as cover images. The article body keeps
+  // a compact token so admins can place an image between paragraphs without
+  // requiring a separate body-block table.
+  const inlineImageInput = document.getElementById('inlineImageInput');
+  const inlineImageDrop = document.getElementById('inlineImageDrop');
+  const inlineImageAlt = document.getElementById('inlineImageAlt');
+  const inlineImageCaption = document.getElementById('inlineImageCaption');
+  const insertInlineImageBtn = document.getElementById('insertInlineImageBtn');
+  const inlineImageStatus = document.getElementById('inlineImageStatus');
+  const inlineImageHint = document.getElementById('inlineImageHint');
+  let inlineImageFile = null;
+
+  function cleanInlineValue(value, fallback) {
+    return String(value || fallback).replace(/[|\n\r]/g, ' ').trim().slice(0, 240);
+  }
+
+  function setInlineImageFile(file) {
+    if (!file) return;
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      inlineImageStatus.textContent = '✗ Only JPG, PNG or WEBP images are allowed.';
+      inlineImageStatus.className = 'image-upload-status error';
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      inlineImageStatus.textContent = '✗ Image is too large — max 5MB.';
+      inlineImageStatus.className = 'image-upload-status error';
+      return;
+    }
+    inlineImageFile = file;
+    insertInlineImageBtn.disabled = false;
+    inlineImageStatus.textContent = `${file.name} ready — place your cursor in Full Content, then insert.`;
+    inlineImageStatus.className = 'image-upload-status success';
+  }
+
+  async function insertInlineImage() {
+    if (!inlineImageFile) return;
+    const editor = document.getElementById('postContent');
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const alt = cleanInlineValue(inlineImageAlt.value, 'Article image');
+    const caption = cleanInlineValue(inlineImageCaption.value, '');
+    insertInlineImageBtn.disabled = true;
+    inlineImageStatus.textContent = 'Compressing and uploading…';
+    inlineImageStatus.className = 'image-upload-status';
+
+    try {
+      const compressed = await compressImage(inlineImageFile);
+      const urlRes = await fetch('/api/admin/upload-image', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: inlineImageFile.name, folder: 'article-images' }),
+        credentials: 'same-origin',
+      });
+      const urlData = await urlRes.json();
+      if (!urlRes.ok) throw new Error(urlData.error || 'Could not get upload URL.');
+      const uploadRes = await fetch(urlData.signedUrl, {
+        method: 'PUT', headers: { 'Content-Type': 'image/jpeg' }, body: compressed,
+      });
+      if (!uploadRes.ok) throw new Error('Upload to storage failed.');
+
+      const token = `\n\n[[IMAGE|${urlData.publicUrl}|${alt}|${caption}]]\n\n`;
+      editor.value = editor.value.slice(0, start) + token + editor.value.slice(end);
+      const nextCursor = start + token.length;
+      editor.focus();
+      editor.setSelectionRange(nextCursor, nextCursor);
+      inlineImageStatus.textContent = '✓ Image inserted at the cursor position.';
+      inlineImageStatus.className = 'image-upload-status success';
+      inlineImageFile = null;
+      inlineImageInput.value = '';
+      inlineImageAlt.value = '';
+      inlineImageCaption.value = '';
+      inlineImageHint.innerHTML = '<strong>Choose an image</strong> to insert at the cursor';
+    } catch (err) {
+      inlineImageStatus.textContent = '✗ ' + (err.message || 'Could not insert image.');
+      inlineImageStatus.className = 'image-upload-status error';
+    } finally {
+      insertInlineImageBtn.disabled = !inlineImageFile;
+    }
+  }
+
+  if (inlineImageInput && inlineImageDrop) {
+    inlineImageDrop.addEventListener('click', () => inlineImageInput.click());
+    inlineImageInput.addEventListener('change', e => setInlineImageFile(e.target.files[0]));
+    ['dragenter', 'dragover'].forEach(evt => inlineImageDrop.addEventListener(evt, e => {
+      e.preventDefault(); inlineImageDrop.classList.add('dragover');
+    }));
+    ['dragleave', 'drop'].forEach(evt => inlineImageDrop.addEventListener(evt, e => {
+      e.preventDefault(); inlineImageDrop.classList.remove('dragover');
+    }));
+    inlineImageDrop.addEventListener('drop', e => setInlineImageFile(e.dataTransfer.files[0]));
+    insertInlineImageBtn.addEventListener('click', insertInlineImage);
   }
 
   // Publish post
