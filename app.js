@@ -273,3 +273,53 @@ function downloadFile(fileName) {
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 })();
+
+
+// ─── Dynamic magazines and stories ───────────────────────────────────────────
+// Reuses the existing published-post API. Posts selected as Magazine or Story
+// appear in the editorial shelf and link to the shared article page by slug.
+(function () {
+  const rail = document.getElementById('magazineRail');
+  if (!rail) return;
+
+  const editorialTypes = new Set(['Magazine', 'Story']);
+  const escEditorial = (str) => String(str || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+  function editorialCard(post) {
+    const category = editorialTypes.has(post.category) ? post.category : 'Story';
+    const label = category === 'Magazine' ? 'Magazine' : 'Story';
+    const image = post.image_url
+      ? `background-image:linear-gradient(135deg,rgba(16,42,107,.18),rgba(220,38,38,.18)),url("${escEditorial(post.image_url)}");`
+      : '';
+    const date = post.created_at ? new Date(post.created_at).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : 'New';
+    const slug = post.slug ? encodeURIComponent(post.slug) : '';
+    return `
+      <a class="editorial-card" href="post.html?slug=${slug}">
+        <div class="editorial-thumb" style="${image}"><span class="editorial-thumb-label">${label}</span></div>
+        <div class="editorial-card-body">
+          <div class="eyebrow-row"><span class="eb">${escEditorial(category)}</span><span class="eb-bar"></span><span class="eb muted">Student desk</span></div>
+          <h4>${escEditorial(post.title)}</h4>
+          <p>${escEditorial(post.excerpt)}</p>
+          <div class="editorial-card-meta"><span>${escEditorial(post.author || 'ARSRC Council')}</span><span>${escEditorial(date)}</span></div>
+        </div>
+      </a>`;
+  }
+
+  fetch('/api/posts?category=editorial&_=editorial', { credentials: 'same-origin' })
+    .then(res => res.ok ? res.json() : Promise.reject(res.status))
+    .then(({ posts }) => {
+      const editorialPosts = (posts || []).filter(post => editorialTypes.has(post.category));
+      if (!editorialPosts.length) return;
+      rail.innerHTML = editorialPosts.map(editorialCard).join('');
+      rail.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+      if (typeof revealObserver !== 'undefined') {
+        rail.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+      }
+      rail.dispatchEvent(new Event('scroll'));
+    })
+    .catch(() => {
+      // The built-in editorial examples remain visible if the endpoint is unavailable.
+    });
+})();

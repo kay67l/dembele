@@ -326,6 +326,12 @@
     .cat-pill { display:inline-block; padding:2px 8px; border-radius:20px;
       font-size:10px; font-weight:700; margin-right:6px;
       background:rgba(59,130,246,.15); color:#3b82f6; border:1px solid rgba(59,130,246,.2); }
+    .view-btn {
+      padding:6px 12px; border-radius:7px; cursor:pointer; text-decoration:none;
+      background:rgba(59,130,246,.12); color:#93c5fd; font-size:12px; font-weight:700;
+      font-family:inherit; border:1px solid rgba(59,130,246,.2); transition:background .2s;
+    }
+    .view-btn:hover { background:rgba(59,130,246,.25); }
     .delete-btn {
       padding:6px 12px; border-radius:7px; border:none; cursor:pointer;
       background:rgba(220,38,38,.12); color:#fca5a5; font-size:12px; font-weight:700;
@@ -501,7 +507,7 @@
         <div class="sub" id="msgCountSub">Total received</div>
       </div>
       <div class="stat-card">
-        <div class="label">News Posts</div>
+        <div class="label">Published Posts</div>
         <div class="value" style="color:#a78bfa;" id="postCount">—</div>
         <div class="sub">Published</div>
       </div>
@@ -533,7 +539,7 @@
       <!-- Blog posts panel (Phase 3 — live) -->
       <div class="panel">
         <div class="panel-head">
-          <h2>News &amp; Blog Posts</h2>
+          <h2>News, Magazines &amp; Stories</h2>
           <span class="badge-pill" id="postBadge">Loading…</span>
         </div>
         <div id="postsList" class="posts-list">
@@ -545,7 +551,7 @@
     <!-- Create New Post -->
     <div class="panel create-post-section">
       <div class="panel-head">
-        <h2>✍️ Publish a New Post</h2>
+        <h2>✍️ Publish News, Magazine or Story</h2>
       </div>
 
       <div id="postEditBanner" style="display:none; margin-bottom:14px; padding:10px 14px; background:rgba(59,130,246,.12); border:1px solid rgba(59,130,246,.3); border-radius:10px; font-size:13px; color:#93c5fd; display:flex; align-items:center; justify-content:space-between; gap:10px;">
@@ -563,6 +569,8 @@
             <label for="postCategory">Category</label>
             <select id="postCategory">
               <option value="News">News</option>
+              <option value="Magazine">Magazine</option>
+              <option value="Story">Story</option>
               <option value="Announcement">Announcement</option>
               <option value="Achievement">Achievement</option>
               <option value="Event">Event</option>
@@ -572,7 +580,7 @@
         </div>
 
         <div>
-          <label for="postImageInput">Cover Image <span style="color:rgba(238,242,255,.4);font-weight:400;">(shown on the homepage news card)</span></label>
+          <label for="postImageInput">Cover Image <span style="color:rgba(238,242,255,.4);font-weight:400;">(shown on the homepage card and article page)</span></label>
           <div class="image-drop" id="imageDrop">
             <input type="file" id="postImageInput" accept="image/png,image/jpeg,image/webp">
             <div class="hint" id="imageDropHint"><strong>Click to upload</strong> or drag an image here — JPG, PNG or WEBP, max 5MB</div>
@@ -592,7 +600,7 @@
         </div>
 
         <div>
-          <label for="postContent">Full Content</label>
+          <label for="postContent">Full Content <span style="color:rgba(238,242,255,.4);font-weight:400;">(paragraphs separated by a blank line)</span></label>
           <textarea id="postContent" rows="5" placeholder="Write the full post content here…"></textarea>
         </div>
 
@@ -1218,6 +1226,7 @@
           </div>
         </div>
         <div class="post-item-actions" style="display:flex; gap:8px;">
+          ${p.slug ? `<a class="view-btn" href="/post.html?slug=${encodeURIComponent(p.slug)}" target="_blank" rel="noopener">View</a>` : ''}
           <button class="edit-btn" data-id="${esc(p.id)}">Edit</button>
           <button class="delete-btn" data-id="${esc(p.id)}">Delete</button>
         </div>

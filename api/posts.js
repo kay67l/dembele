@@ -1,5 +1,5 @@
 // api/posts.js — Phase 3: Public posts endpoint
-// Called by the news section on index.html. No auth required — public data.
+// Called by the news and editorial sections on index.html. No auth required.
 
 const { createClient } = require('@supabase/supabase-js');
 
@@ -11,16 +11,27 @@ const supabase = createClient(
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed.' });
 
-  // Cache at CDN level for 60s, serve stale for up to 5min while revalidating
-  // This means the news section is fast for visitors without hammering Supabase
+  // `?category=editorial` powers the Magazines & Stories shelf. The default
+  // feed remains the latest six published posts for the News section.
+  const { category } = req.query;
+  const editorial = category === 'editorial';
+
   res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
 
-  const { data, error } = await supabase
+  let query = supabase
     .from('blog_posts')
     .select('id, title, excerpt, author, category, slug, image_url, created_at')
-    .eq('published', true)
+    .eq('published', true);
+
+  if (editorial) {
+    query = query.in('category', ['Magazine', 'Story']);
+  } else if (category) {
+    query = query.eq('category', category);
+  }
+
+  const { data, error } = await query
     .order('created_at', { ascending: false })
-    .limit(6); // Show latest 6 on the homepage
+    .limit(6);
 
   if (error) {
     console.error('[ARSRC] Failed to fetch posts:', error);
