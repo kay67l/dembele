@@ -896,6 +896,26 @@
     .editorial-card { flex-basis: 82vw; }
     .editorial-progress { margin-left: 0; margin-right: 0; }
   }
+  /* ===== FINAL MOBILE COMPOSITION GUARD =====
+     This intentionally comes after the desktop editorial/3D overrides so the
+     About section cannot retain a wide image column on narrow touch screens. */
+  @media (max-width: 860px), (pointer: coarse) {
+    html, body { width:100%; max-width:100%; overflow-x:clip; }
+    .about-grid { display:grid !important; grid-template-columns:minmax(0,1fr) !important; gap:30px !important; width:100% !important; }
+    .about-text { width:100% !important; min-width:0 !important; }
+    .about-text .stat-labelling { width:100%; }
+    .about-text .stat-labelling ul { padding-left:1.2rem; margin:0 0 24px; }
+    .about-text .stat-labelling li { margin-bottom:10px; line-height:1.6; }
+    .about-illustration { width:100% !important; max-width:100% !important; aspect-ratio:4/3 !important; min-height:0 !important; }
+    .about-illustration img { width:100%; height:100%; object-fit:cover; display:block; }
+    #programmes .life-block { grid-template-columns:minmax(0,1fr) !important; width:100% !important; }
+    #programmes .life-block-text, #programmes .life-block-photo { width:100%; min-width:0; }
+    #programmes .life-stats { grid-template-columns:repeat(3,minmax(0,1fr)); width:100%; }
+  }
+  @media (max-width:600px) {
+    .about-illustration { aspect-ratio:1/1 !important; }
+    #programmes .life-stats { grid-template-columns:1fr !important; }
+  }
 </style>
 </head>
 <body>

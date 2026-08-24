@@ -15,6 +15,7 @@ module.exports = async function handler(req, res) {
   // feed remains the latest six published posts for the News section.
   const { category } = req.query;
   const editorial = category === 'editorial';
+  const allContent = category === 'all';
 
   res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
 
@@ -25,6 +26,9 @@ module.exports = async function handler(req, res) {
 
   if (editorial) {
     query = query.in('category', ['Magazine', 'Story']);
+  } else if (allContent) {
+    // Used only by the article reader for Previous/Next and related content.
+    // The default feed remains News-only for the homepage.
   } else if (category === 'news') {
     query = query.not('category', 'in', '("Magazine","Story")');
   } else if (category) {
@@ -33,7 +37,7 @@ module.exports = async function handler(req, res) {
 
   const { data, error } = await query
     .order('created_at', { ascending: false })
-    .limit(6);
+    .limit(allContent ? 30 : 6);
 
   if (error) {
     console.error('[ARSRC] Failed to fetch posts:', error);
