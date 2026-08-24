@@ -32,6 +32,7 @@
 
     --heading: #102a6b;
     --shadow: 0 18px 40px rgba(16,42,107,0.14);
+    --shadow-hover: 0 30px 60px rgba(16,42,107,0.24);
     --font-display: 'Fraunces', Georgia, serif;
     --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
@@ -40,6 +41,7 @@
     --line: rgba(255,255,255,0.1); --gray: #9aa7c2;
     --heading: #7fa1f5;
     --shadow: 0 18px 40px rgba(0,0,0,0.5);
+    --shadow-hover: 0 30px 60px rgba(0,0,0,0.65);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior: smooth; }
@@ -181,6 +183,14 @@
   .zone-num { font-family:var(--font-display); font-weight:900; font-size:clamp(4.2rem,8vw,6.4rem); line-height:.8; opacity:.92; }
   .zone-rail-top .zone-eyebrow { font-size:11px; font-weight:700; letter-spacing:1.6px; text-transform:uppercase; opacity:.85; margin-bottom:8px; }
   .zone-rail-top h2 { font-family:var(--font-display); font-weight:650; font-size:1.9rem; margin-bottom:12px; }
+  .zone-logo-placeholder {
+    width:100%; aspect-ratio:1/1; height:auto; border-radius:20px; margin:6px 0 22px;
+    background:rgba(255,255,255,0.14); border:2px dashed rgba(255,255,255,0.5);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-weight:650; font-size:44px; color:#fff;
+    flex-shrink:0; overflow:hidden;
+  }
+  .zone-logo-placeholder img { width:100%; height:100%; object-fit:cover; display:block; }
   .zone-slogan { font-style:italic; font-size:13.5px; opacity:.85; max-width:32ch; line-height:1.6; }
   .zone-slogan.placeholder { opacity:.6; }
   .zone-stat-row { display:flex; gap:28px; margin-top:26px; }
@@ -195,23 +205,60 @@
   .zone-subhead:not(:first-child) { margin-top:40px; }
   .zone-subhead::after { content:''; flex:1; height:1px; background:var(--line); }
 
-  /* calm horizontal gallery */
-  .gallery-row { display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:8px; }
-  .gallery-row::-webkit-scrollbar { height:5px; }
+  /* ===== GALLERY — editorial viewbook rhythm (staggered heights, serif
+     captions that lift on hover), the way admissions photo strips on
+     Ivy-tier sites read: unhurried, a little asymmetric, image-first. ===== */
+  .gallery-row {
+    display:flex; align-items:flex-start; gap:22px; overflow-x:auto; scroll-snap-type:x mandatory;
+    padding:6px 4px 22px;
+  }
+  .gallery-row::-webkit-scrollbar { height:6px; }
+  .gallery-row::-webkit-scrollbar-track { background:transparent; }
   .gallery-row::-webkit-scrollbar-thumb { background:var(--line); border-radius:10px; }
+
   .gallery-item {
-    scroll-snap-align:start; flex:0 0 200px; height:250px; border-radius:8px; overflow:hidden;
-    position:relative; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow);
+    scroll-snap-align:start; flex:0 0 232px; height:296px; border-radius:16px; overflow:hidden;
+    position:relative; background:var(--card); box-shadow:var(--shadow);
+    transition:transform .45s cubic-bezier(.22,.68,0,1), box-shadow .45s cubic-bezier(.22,.68,0,1);
   }
-  .gallery-item img { width:100%; height:100%; object-fit:cover; display:block; }
+  /* gentle stagger on every third card — the asymmetric rhythm that keeps a
+     photo strip from reading like a spreadsheet */
+  .gallery-item:nth-child(3n+2) { margin-top:30px; }
+  .gallery-item:nth-child(3n) { margin-top:14px; }
+  .gallery-item:hover { transform:translateY(-8px); box-shadow:var(--shadow-hover); }
+
+  .gallery-item img {
+    width:100%; height:100%; object-fit:cover; display:block;
+    transition:transform .7s cubic-bezier(.22,.68,0,1);
+  }
+  .gallery-item:hover img { transform:scale(1.07); }
+
+  .gallery-item::after {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(180deg, transparent 50%, rgba(6,12,31,0.82) 100%);
+  }
   .gallery-caption {
-    position:absolute; left:0; right:0; bottom:0; padding:12px 14px;
-    background:linear-gradient(0deg, rgba(0,0,0,.72), transparent);
-    color:#fff; font-size:12px; font-weight:600;
+    position:absolute; left:0; right:0; bottom:0; z-index:2; padding:20px 18px 16px;
+    color:#fff; font-family:var(--font-display); font-weight:600; font-size:14.5px; line-height:1.35;
+    transform:translateY(6px); opacity:.92; transition:transform .4s ease, opacity .4s ease;
   }
+  .gallery-item:hover .gallery-caption { transform:translateY(0); opacity:1; }
+
   .gallery-empty {
-    flex:0 0 200px; height:250px; border-radius:8px; display:flex; align-items:center; justify-content:center;
-    text-align:center; color:#fff; font-size:12.5px; font-weight:600; padding:20px; background:var(--zc);
+    flex:0 0 232px; height:296px; border-radius:16px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:10px; text-align:center; padding:24px;
+    background:var(--card); border:1.5px dashed var(--line); color:var(--gray);
+  }
+  .gallery-empty .ge-icon {
+    width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:color-mix(in srgb, var(--zc) 14%, transparent); color:var(--zc-deep);
+  }
+  .gallery-empty .ge-icon svg { width:17px; height:17px; }
+  .gallery-empty span { font-size:12.5px; font-weight:600; line-height:1.5; }
+
+  @media (max-width:640px) {
+    .gallery-item, .gallery-empty { flex-basis:200px; height:260px; }
+    .gallery-item:nth-child(3n+2), .gallery-item:nth-child(3n) { margin-top:0; }
   }
 
   .school-chip-grid { display:flex; flex-wrap:wrap; gap:9px; }
@@ -317,15 +364,15 @@
 <section class="video-spotlight reveal">
   <div class="video-frame" id="videoFrame">
     <video id="engagementVideo" muted loop playsinline poster="assets/videos/engagement-poster.jpg">
-      <source src="assets/videos/heroh-video.mp-video.mp4" type="video/mp4">
-      <source src="assets/videos/engagement-video.webm" type="video/webm">
+      <source src="assets/videos/hero-video.mp4" type="video/mp4">
+      <source src="assets/videos/engagementvideo.webm" type="video/webm">
     </video>
     <div class="video-placeholder" id="videoPlaceholder">
       <div class="vp-icon">▶</div>
       <div class="vp-label">Engagement in motion</div>
       <div class="vp-sub">Add engagement-video.mp4 to assets/videos/ and this becomes a highlight reel from council activities across all four zones.</div>
     </div>
-    <div class="video-scrim"></div>
+    <div class="video-scrim"></div> 
     <div class="video-caption">A year of ARSRC, in motion.</div>
     <button class="video-toggle" id="videoToggle" aria-label="Play or pause video" type="button">
       <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -341,6 +388,7 @@
       <div class="zone-rail-top">
         <div class="zone-eyebrow">Zone One</div>
         <h2>Zone 1</h2>
+        <div class="zone-logo-placeholder" id="z1-logo">Z1</div>
         <p class="zone-slogan placeholder" id="z1-slogan">[ Zone 1 slogan — to be supplied by the Zonal Executive ]</p>
       </div>
       <div>
@@ -371,6 +419,7 @@
       <div class="zone-rail-top">
         <div class="zone-eyebrow">Zone Two</div>
         <h2>Zone 2</h2>
+        <div class="zone-logo-placeholder" id="z2-logo">Z2</div>
         <p class="zone-slogan placeholder" id="z2-slogan">[ Zone 2 slogan — to be supplied by the Zonal Executive ]</p>
       </div>
       <div>
@@ -401,6 +450,7 @@
       <div class="zone-rail-top">
         <div class="zone-eyebrow">Zone Three</div>
         <h2>Zone 3</h2>
+        <div class="zone-logo-placeholder" id="z3-logo">Z3</div>
         <p class="zone-slogan placeholder" id="z3-slogan">[ Zone 3 slogan — to be supplied by the Zonal Executive ]</p>
       </div>
       <div>
@@ -431,6 +481,7 @@
       <div class="zone-rail-top">
         <div class="zone-eyebrow">Zone Four</div>
         <h2>Zone 4</h2>
+        <div class="zone-logo-placeholder" id="z4-logo">Z4</div>
         <p class="zone-slogan placeholder" id="z4-slogan">[ Zone 4 slogan — to be supplied by the Zonal Executive ]</p>
       </div>
       <div>
@@ -566,7 +617,11 @@
     const el = document.getElementById(containerId);
     if (!el) return;
     if (!photos.length) {
-      el.innerHTML = `<div class="gallery-empty">Photos coming soon —<br>added by the zonal executive</div>`;
+      el.innerHTML = `
+        <div class="gallery-empty">
+          <div class="ge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+          <span>Photos coming soon —<br>added by the zonal executive</span>
+        </div>`;
       return;
     }
     el.innerHTML = photos.map(p => `
@@ -602,6 +657,10 @@
         const el = document.getElementById(`${z}-slogan`);
         el.textContent = zone.slogan;
         el.classList.remove('placeholder');
+      }
+      if (zone && zone.logo_url) {
+        const logoEl = document.getElementById(`${z}-logo`);
+        if (logoEl) logoEl.innerHTML = `<img src="${esc(zone.logo_url)}" alt="${z.toUpperCase()} logo">`;
       }
 
       const adminSchools = (data.schools && data.schools[z]) || { shs: [], tech: [] };
