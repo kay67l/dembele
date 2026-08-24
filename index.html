@@ -483,11 +483,11 @@
   /* Stat strip: dark navy tiles instead of bare inline numbers — Stanford's contrast
      block for "$94B / 350,000+ / 400+" style figures. */
   .life-stats {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 28px;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; width:100%; margin-top: 28px;
     border-radius: 14px; overflow: hidden; box-shadow: var(--shadow);
   }
   .life-stats > div {
-    background: var(--blue-deep); padding: 20px 16px; text-align: center;
+    min-width:0; background: var(--blue-deep); padding: 22px 12px; text-align: center;
   }
   .life-stats .ls-num { font-family: 'Source Serif 4', Georgia, serif; font-size: 2rem; font-weight: 600; color: #fff; line-height: 1; }
   .life-stats .ls-label { font-size: 10.5px; color: rgba(255,255,255,.65); text-transform: uppercase; letter-spacing: .6px; font-weight: 700; margin-top: 8px; }
@@ -513,9 +513,14 @@
   .life-block:hover .life-mosaic > div { transform: scale(1.03); }
 
   @media (max-width: 900px) {
+    .about-grid { gap: 34px; }
     .life-intro, .life-block { grid-template-columns: 1fr; gap: 32px; margin-bottom: 60px; }
     .life-block.reverse .life-block-photo { order: 0; }
-    .life-stats { grid-template-columns: 1fr 1fr 1fr; }
+    .life-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width:640px) {
+    .life-stats { grid-template-columns: 1fr; }
+    .life-stats > div { padding:18px 14px; }
   }
 
   /* Horizontal-scrolling story row — restyled as Stanford-style news cards:
@@ -990,22 +995,20 @@
     <div class="about-text reveal">
       <h3>Aims &amp; Objectives</h3>
       <div class="stat-labelling">
-      <p> 
         <ul>
-          <li>~To constitute a mouthpiece for the interests of second cycle students in the Ashanti Region.</li>
-          <li>~To ensure a constant flow of information between students and educational authorities</li>
-          <li>~To offer a common forum for the discussion of students' problems in the Ashanti Region</li>
-          <li>~To train students in leadership skills not only to be student leaders but also to take up leadership positions in the nation.</li>
-          <li>~Shall contribute to the formation and the establishment of a National Students' Representative Council for second cycle institutions.</li>
-          <li>~The council shall seek to influence educational policies as pertaining students by holding regular meetings with stakeholders of education when necessary.</li>
-          <li>~To ensure the continuous existence and functioning of Students' Representative Councils in all member institutions. This is based on the fact that an effective SRC is an asset to schools' administration</li>  
-        </ul>  
-      </p>
+          <li>To constitute a mouthpiece for the interests of second-cycle students in the Ashanti Region.</li>
+          <li>To ensure a constant flow of information between students and educational authorities.</li>
+          <li>To offer a common forum for discussing students' problems in the Ashanti Region.</li>
+          <li>To train students in leadership skills and prepare them for future national leadership.</li>
+          <li>To contribute to the formation and establishment of a National Students' Representative Council for second-cycle institutions.</li>
+          <li>To influence educational policies affecting students through regular stakeholder meetings.</li>
+          <li>To ensure the continuous existence and functioning of Students' Representative Councils in all member institutions.</li>
+        </ul>
+      </div>
       <p>Founded in 1997, the ARSRC is the second oldest regional students' council in Ghana and remains one of the most active, having been recognized as Most Outstanding Regional SRC of the Year at the 2019 NUGS Excellence Awards. Today the Council coordinates 146 member schools across four zones.</p>
     </div>
-  </div>
     <div class="about-illustration reveal delay-1">
-      <img src = 'assets/images/1.jpg'>
+      <img src="assets/images/1.jpg" alt="ARSRC student representatives">
     </div>
   </div>
 
