@@ -81,6 +81,29 @@
   html[data-theme="dark"] .theme-toggle .icon-moon { display:none; }
   html[data-theme="dark"] .theme-toggle .icon-sun { display:block; }
 
+  /* ===== MOBILE MENU — hamburger + slide-down panel, replaces the jump
+     links once they're hidden below 900px, so zone navigation isn't lost. ===== */
+  .burger {
+    display:none; width:36px; height:36px; border-radius:9px; border:1px solid var(--line); background:var(--card);
+    align-items:center; justify-content:center; cursor:pointer; flex-direction:column; gap:4px;
+  }
+  .burger span { width:16px; height:1.5px; background:var(--ink); transition:transform .25s ease, opacity .25s ease; }
+  .burger.open span:nth-child(1) { transform:translateY(5.5px) rotate(45deg); }
+  .burger.open span:nth-child(2) { opacity:0; }
+  .burger.open span:nth-child(3) { transform:translateY(-5.5px) rotate(-45deg); }
+  @media (max-width:900px) { .burger { display:flex; } }
+
+  .mobile-menu {
+    display:none; position:fixed; top:73px; left:0; right:0; z-index:99;
+    background:var(--card); border-bottom:1px solid var(--line); box-shadow:0 20px 40px rgba(16,42,107,0.14);
+    padding:10px 6% 18px; flex-direction:column;
+  }
+  .mobile-menu.open { display:flex; }
+  .mobile-menu a {
+    padding:13px 4px; font-size:14px; font-weight:700; color:var(--ink); border-bottom:1px solid var(--line);
+  }
+  .mobile-menu a:last-child { border-bottom:none; }
+
   /* ===== HERO — oversized watermark numeral is the signature element ===== */
   .hero {
     position:relative; padding:150px 6% 0; overflow:hidden;
@@ -120,6 +143,12 @@
   .stat .n { font-family:var(--font-display); font-weight:650; font-size:clamp(1.8rem,3.4vw,2.6rem); line-height:1; }
   .stat .l { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.8px; color:var(--gray); margin-top:8px; }
   @media (max-width:640px) { .stat { flex:1 1 45%; border-right:none; border-bottom:1px solid var(--line); padding:20px 0; } .hero-watermark { font-size:70vw; } }
+  @media (max-width:640px) {
+    .hero { padding:110px 6% 0; min-height:0; }
+    .hero-inner { padding:40px 0 50px; }
+    .hero-lede { margin-top:20px; }
+    .stat-strip { margin-top:40px; }
+  }
 
   /* ===== VIDEO SPOTLIGHT — cinematic banner between hero and zones,
      same fallback pattern as the homepage hero video: shows a branded
@@ -171,7 +200,14 @@
   section.zone:nth-of-type(even) .zone-split { grid-template-columns: 1fr 300px; }
   section.zone:nth-of-type(even) .zone-rail { order:2; }
   section.zone:nth-of-type(even) .zone-main { order:1; }
-  @media (max-width:900px) { .zone-split { grid-template-columns:1fr !important; min-height:0; } section.zone .zone-rail, section.zone .zone-main { order:0 !important; } }
+  @media (max-width:900px) {
+    .zone-split { grid-template-columns:1fr !important; min-height:0; }
+    section.zone .zone-rail, section.zone .zone-main { order:0 !important; }
+    .zone-rail { padding:36px 28px !important; }
+    .zone-num { font-size:3.2rem !important; }
+    .zone-logo-placeholder { width:112px !important; height:112px !important; aspect-ratio:auto !important; font-size:30px !important; margin:6px 0 16px !important; }
+    .zone-main { padding:40px 6% 48px !important; }
+  }
 
   /* Left rail: solid zone-color block carrying the number + identity — this is
      what makes each zone visually distinct at a glance, not just a recolored badge. */
@@ -336,8 +372,20 @@
       <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
     </button>
+    <button class="burger" id="burger" aria-label="Toggle menu" aria-expanded="false" type="button">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#zone1">Zone 1</a>
+  <a href="#zone2">Zone 2</a>
+  <a href="#zone3">Zone 3</a>
+  <a href="#zone4">Zone 4</a>
+  <a href="#wds">WDS</a>
+  <a href="#lg">LG</a>
+</div>
 
 <header class="hero">
   <div class="hero-flagbar"><span style="background:var(--brand-blue-deep)"></span><span style="background:var(--brand-blue)"></span><span style="background:var(--brand-red)"></span></div>
@@ -365,14 +413,14 @@
   <div class="video-frame" id="videoFrame">
     <video id="engagementVideo" muted loop playsinline poster="assets/videos/engagement-poster.jpg">
       <source src="assets/videos/hero-video.mp4" type="video/mp4">
-      <source src="assets/videos/engagementvideo.webm" type="video/webm">
+      <source src="assets/videos/engagement-video.webm" type="video/webm">
     </video>
     <div class="video-placeholder" id="videoPlaceholder">
       <div class="vp-icon">▶</div>
       <div class="vp-label">Engagement in motion</div>
       <div class="vp-sub">Add engagement-video.mp4 to assets/videos/ and this becomes a highlight reel from council activities across all four zones.</div>
     </div>
-    <div class="video-scrim"></div> 
+    <div class="video-scrim"></div>
     <div class="video-caption">A year of ARSRC, in motion.</div>
     <button class="video-toggle" id="videoToggle" aria-label="Play or pause video" type="button">
       <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -714,6 +762,22 @@
       document.documentElement.setAttribute('data-theme', next);
       try { localStorage.setItem('arsrc-theme', next); } catch (e) { /* ignore */ }
     });
+  }
+
+  // ── Mobile menu ──────────────────────────────────────────────────────────
+  const burger = document.getElementById('burger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  if (burger && mobileMenu) {
+    burger.addEventListener('click', () => {
+      const isOpen = burger.classList.toggle('open');
+      mobileMenu.classList.toggle('open', isOpen);
+      burger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      burger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+    }));
   }
 
   // ── Video spotlight: swap placeholder for the real video once it loads,
