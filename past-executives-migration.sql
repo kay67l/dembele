@@ -1,7 +1,7 @@
 -- Adds a separate past_executives table — a snapshot/archive, independent
 -- from the live `executives` table. Archiving copies rows in; it never
 -- reads back from or modifies the current table.
--- Run in the Supabase SQL Editor.
+-- Run in the Supabase SQL Editor
 
 create table if not exists past_executives (
   id          uuid primary key default gen_random_uuid(),
