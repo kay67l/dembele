@@ -324,3 +324,36 @@ function downloadFile(fileName) {
       // The built-in editorial examples remain visible if the endpoint is unavailable.
     });
 })();
+
+
+// ─── Dynamic resources ────────────────────────────────────────────────────────
+(function () {
+  const grid = document.getElementById('resourceGrid');
+  if (!grid) return;
+
+  const escResource = value => String(value || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+  fetch('/api/resources?_=' + Date.now(), { credentials: 'same-origin' })
+    .then(res => res.ok ? res.json() : Promise.reject(res.status))
+    .then(({ resources }) => {
+      if (!resources || !resources.length) return;
+      grid.innerHTML = resources.map((resource, index) => {
+        const type = resource.file_type ? resource.file_type.split('/').pop().toUpperCase() : 'FILE';
+        const size = resource.file_size ? `${Math.max(1, Math.round(resource.file_size / 1024))} KB` : 'Download';
+        return `
+          <a class="resource-card reveal" href="${escResource(resource.file_url)}" target="_blank" rel="noopener" download>
+            <div class="resource-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+            <div><h5>${escResource(resource.title)}</h5><span>${escResource(resource.category || type)} · ${escResource(size)}</span>${resource.description ? `<p class="resource-description">${escResource(resource.description)}</p>` : ''}</div>
+          </a>`;
+      }).join('');
+      grid.querySelectorAll('.reveal').forEach(el => {
+        el.classList.add('visible');
+        if (typeof revealObserver !== 'undefined') revealObserver.observe(el);
+      });
+    })
+    .catch(() => {
+      // Keep the built-in fallback resources visible if the endpoint is unavailable.
+    });
+})();

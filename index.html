@@ -35,13 +35,14 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; width: 100%; max-width: 100%; overflow-x: clip; }
 
   body {
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
     background: var(--off-white);
     color: var(--ink);
-    overflow-x: hidden;
+    overflow-x: clip;
+    width: 100%; max-width: 100%;
   }
 
   a { text-decoration: none; color: inherit; }
@@ -136,12 +137,12 @@
   .burger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
   .mobile-menu {
-    position: fixed; top: 0; right: -100%; width: 72%; height: 100vh;
+    position: fixed; top: 0; right: 0; width: min(72%, 360px); height: 100vh;
     background: var(--white); box-shadow: -10px 0 30px rgba(0,0,0,0.15);
-    z-index: 1050; padding: 100px 30px; transition: right .4s ease;
+    z-index: 1050; padding: 100px 30px; transform: translateX(110%); transition: transform .4s ease;
     display: flex; flex-direction: column; gap: 26px;
   }
-  .mobile-menu.open { right: 0; }
+  .mobile-menu.open { transform: translateX(0); }
   .mobile-menu a { font-size: 17px; font-weight: 700; color: var(--blue-deep); }
 
   @media (max-width: 820px) {
@@ -1362,7 +1363,7 @@
     <h2>Resources</h2>
     <p>Official documents and forms for member schools and students.</p>
   </div>
-  <div class="resource-grid" style="grid-template-columns: repeat(5, 1fr);">
+  <div class="resource-grid" id="resourceGrid" style="grid-template-columns: repeat(5, 1fr);">
     <div class="resource-card reveal delay-1">
       <div class="resource-icon" onclick="downloadFile('assets\pdfs\arsrc-constitution.pdf')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
       <h5>Constitution</h5>

@@ -8,8 +8,12 @@
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+    html { width:100%; max-width:100%; overflow-x:clip; }
+
     body {
       min-height: 100vh;
+      width:100%; max-width:100%;
+      overflow-x:clip;
       background: #060c1f;
       font-family: 'Segoe UI', -apple-system, sans-serif;
       color: #eef2ff;
@@ -38,6 +42,7 @@
 
     /* Top navbar */
     .admin-nav {
+      width:100%; max-width:100%;
       background: rgba(10,19,48,0.9);
       border-bottom: 1px solid rgba(255,255,255,0.08);
       backdrop-filter: blur(12px);
@@ -85,7 +90,7 @@
     .logout-btn:hover { background: rgba(220,38,38,0.25); }
 
     /* Main content */
-    .main { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+    .main { width:100%; max-width:1100px; margin:0 auto; padding:40px 24px; }
 
     .welcome {
       margin-bottom: 36px;
@@ -344,7 +349,20 @@
     .inline-insert-btn:hover:not(:disabled) { transform:translateY(-1px); }
     .inline-insert-btn:disabled { opacity:.4; cursor:not-allowed; }
     .inline-image-note { margin-top:9px; color:rgba(238,242,255,.36); font-size:11px; line-height:1.5; }
-    @media (max-width:700px) { .inline-image-grid { grid-template-columns:1fr; } }
+    .panel-help { margin:-8px 0 18px; color:rgba(238,242,255,.5); font-size:13px; line-height:1.6; }
+    .field-note { color:rgba(238,242,255,.38); font-weight:400; }
+    .resource-file-drop { min-height:96px; display:flex; align-items:center; justify-content:center; text-align:center; padding:16px; border:1px dashed rgba(147,197,253,.32); border-radius:10px; color:rgba(238,242,255,.5); font-size:12px; cursor:pointer; transition:border-color .2s, background .2s; }
+    .resource-file-drop:hover, .resource-file-drop.dragover { border-color:#60a5fa; background:rgba(59,130,246,.1); }
+    .resource-file-drop input { display:none; }
+    .resource-file-drop strong { display:block; color:#93c5fd; margin-bottom:5px; }
+    .resource-admin-list { display:grid; gap:8px; margin-top:22px; }
+    .resource-admin-item { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px 14px; border:1px solid rgba(255,255,255,.08); border-radius:10px; background:rgba(255,255,255,.03); }
+    .resource-admin-item strong { display:block; font-size:13px; color:#eef2ff; }
+    .resource-admin-item span { display:block; color:rgba(238,242,255,.42); font-size:11px; margin-top:4px; }
+    .resource-admin-actions { display:flex; gap:7px; flex-shrink:0; }
+    .resource-cancel-btn { margin-left:8px; padding:10px 14px; border:1px solid rgba(255,255,255,.14); border-radius:8px; background:transparent; color:rgba(238,242,255,.64); cursor:pointer; font:inherit; font-size:12px; font-weight:700; }
+    @media (max-width:700px) { .inline-image-grid { grid-template-columns:1fr; } .resource-admin-item { align-items:flex-start; flex-direction:column; } .resource-admin-actions { width:100%; } }
+
     .delete-btn {
       padding:6px 12px; border-radius:7px; border:none; cursor:pointer;
       background:rgba(220,38,38,.12); color:#fca5a5; font-size:12px; font-weight:700;
@@ -537,6 +555,7 @@
         <a class="command-link" href="#executivesPanel" data-section="executivesPanel">Executives</a>
         <a class="command-link" href="#archivePanel" data-section="archivePanel">Archive</a>
         <a class="command-link" href="#pastExecutivesPanel" data-section="pastExecutivesPanel">Past terms</a>
+        <a class="command-link" href="#resourcesPanel" data-section="resourcesPanel">Resources</a>
         <a class="command-link" href="#engagementPanel" data-section="engagementPanel">Engagement</a>
       </div>
       <a class="quick-publish" href="#editorPanel">+ New post</a>
@@ -675,6 +694,27 @@
         </div>
       </div>
 
+    </div>
+
+    <!-- Manage Resources -->
+    <div class="panel create-post-section" id="resourcesPanel">
+      <div class="panel-head">
+        <h2>📚 Manage Resources</h2>
+        <span class="badge-pill" id="resourceBadge">Loading…</span>
+      </div>
+      <p class="panel-help">Upload official documents, forms, guides, and templates. Published resources appear on the public Resources section immediately.</p>
+      <div class="resource-admin-form">
+        <div class="form-row">
+          <div><label for="resourceTitle">Resource title</label><input type="text" id="resourceTitle" placeholder="e.g. ARSRC Constitution"></div>
+          <div><label for="resourceCategory">Type</label><select id="resourceCategory"><option>Policy</option><option>Form</option><option>Guide</option><option>Template</option><option>Other</option></select></div>
+        </div>
+        <div><label for="resourceDescription">Description <span class="field-note">(optional)</span></label><textarea id="resourceDescription" rows="2" placeholder="Short description shown on the website…"></textarea></div>
+        <div><label for="resourceFileInput">File <span class="field-note">(PDF, DOCX, XLSX, PPTX, ZIP — max 20MB)</span></label>
+          <div class="resource-file-drop" id="resourceFileDrop"><input type="file" id="resourceFileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.txt"><span id="resourceFileHint"><strong>Choose a file</strong> or drag it here</span></div>
+        </div>
+        <div><button class="publish-btn" id="resourceSaveBtn" disabled>Upload &amp; publish resource</button><button type="button" class="resource-cancel-btn" id="resourceCancelBtn" style="display:none">Cancel edit</button><div class="post-msg" id="resourceMsg"></div></div>
+      </div>
+      <div id="resourceAdminList" class="resource-admin-list"><div class="empty-state">Loading resources…</div></div>
     </div>
 
     <!-- Manage Executives -->
@@ -1721,6 +1761,66 @@
     });
 
   }
+
+  // ── Resources management ────────────────────────────────────────────────────
+  (function initResourcesAdmin() {
+    const fileInput = document.getElementById('resourceFileInput');
+    const fileDrop = document.getElementById('resourceFileDrop');
+    const fileHint = document.getElementById('resourceFileHint');
+    const saveBtn = document.getElementById('resourceSaveBtn');
+    const cancelBtn = document.getElementById('resourceCancelBtn');
+    const msg = document.getElementById('resourceMsg');
+    const list = document.getElementById('resourceAdminList');
+    const badge = document.getElementById('resourceBadge');
+    let selectedFile = null;
+    let editingId = null;
+    let editingUrl = '';
+
+    const allowed = ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','application/vnd.ms-powerpoint','application/vnd.openxmlformats-officedocument.presentationml.presentation','application/zip','text/plain'];
+    const maxBytes = 20 * 1024 * 1024;
+
+    function setMessage(text, state) { msg.textContent = text || ''; msg.className = 'post-msg' + (state ? ' ' + state : ''); }
+    function resetResourceForm() { editingId = null; editingUrl = ''; selectedFile = null; fileInput.value = ''; document.getElementById('resourceTitle').value = ''; document.getElementById('resourceDescription').value = ''; document.getElementById('resourceCategory').value = 'Policy'; fileHint.innerHTML = '<strong>Choose a file</strong> or drag it here'; saveBtn.textContent = 'Upload & publish resource'; saveBtn.disabled = true; cancelBtn.style.display = 'none'; setMessage(''); }
+    function chooseFile(file) {
+      if (!file) return;
+      if (!allowed.includes(file.type) && !/\.(pdf|docx?|xlsx?|pptx?|zip|txt)$/i.test(file.name)) return setMessage('✗ Unsupported file type.', 'error');
+      if (file.size > maxBytes) return setMessage('✗ File is too large — maximum 20MB.', 'error');
+      selectedFile = file; fileHint.textContent = file.name; saveBtn.disabled = false; setMessage('File ready to upload.', 'success');
+    }
+    async function uploadResourceFile(file) {
+      const urlRes = await fetch('/api/admin/upload-image', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ filename:file.name, folder:'resources' }), credentials:'same-origin' });
+      const urlData = await urlRes.json();
+      if (!urlRes.ok) throw new Error(urlData.error || 'Could not get upload URL.');
+      const uploaded = await fetch(urlData.signedUrl, { method:'PUT', headers:{'Content-Type':file.type || 'application/octet-stream'}, body:file });
+      if (!uploaded.ok) throw new Error('Resource upload failed.');
+      return urlData.publicUrl;
+    }
+    async function loadResources() {
+      try { const res = await fetch('/api/admin/resources?_=' + Date.now(), { credentials:'same-origin' }); if (!res.ok) throw new Error(); const data = await res.json(); renderResources(data.resources || []); }
+      catch { list.innerHTML = '<div class="empty-state">Resource management API is not connected yet.</div>'; badge.textContent = 'Unavailable'; }
+    }
+    function renderResources(resources) {
+      badge.textContent = `${resources.length} total`;
+      if (!resources.length) { list.innerHTML = '<div class="empty-state">No resources yet. Upload your first document above.</div>'; return; }
+      list.innerHTML = resources.map(resource => `<div class="resource-admin-item"><div><strong>${esc(resource.title)}</strong><span>${esc(resource.category || 'Document')} · ${esc(resource.file_name || 'Download')}</span></div><div class="resource-admin-actions"><a class="view-btn" href="${esc(resource.file_url)}" target="_blank" rel="noopener">View</a><button class="edit-btn" data-resource-edit="${esc(resource.id)}">Edit</button><button class="delete-btn" data-resource-delete="${esc(resource.id)}">Delete</button></div></div>`).join('');
+      list.querySelectorAll('[data-resource-edit]').forEach(btn => btn.addEventListener('click', () => startEdit(resources.find(item => item.id === btn.dataset.resourceEdit))));
+      list.querySelectorAll('[data-resource-delete]').forEach(btn => btn.addEventListener('click', () => deleteResource(btn.dataset.resourceDelete)));
+    }
+    function startEdit(resource) { if (!resource) return; editingId=resource.id; editingUrl=resource.file_url; document.getElementById('resourceTitle').value=resource.title||''; document.getElementById('resourceCategory').value=resource.category||'Policy'; document.getElementById('resourceDescription').value=resource.description||''; fileHint.textContent=resource.file_name||'Existing file retained'; saveBtn.textContent='Save resource changes'; saveBtn.disabled=false; cancelBtn.style.display='inline-block'; document.getElementById('resourcesPanel').scrollIntoView({behavior:'smooth',block:'start'}); }
+    async function deleteResource(id) { if (!confirm('Delete this resource?')) return; try { const res=await fetch('/api/admin/resources',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id}),credentials:'same-origin'}); if(!res.ok) throw new Error(); loadResources(); } catch { setMessage('Could not delete resource.', 'error'); } }
+    fileDrop?.addEventListener('click', () => fileInput.click()); fileInput?.addEventListener('change', e => chooseFile(e.target.files[0]));
+    ['dragenter','dragover'].forEach(type => fileDrop?.addEventListener(type, e => { e.preventDefault(); fileDrop.classList.add('dragover'); }));
+    ['dragleave','drop'].forEach(type => fileDrop?.addEventListener(type, e => { e.preventDefault(); fileDrop.classList.remove('dragover'); }));
+    fileDrop?.addEventListener('drop', e => chooseFile(e.dataTransfer.files[0]));
+    cancelBtn?.addEventListener('click', resetResourceForm);
+    saveBtn?.addEventListener('click', async () => {
+      const title=document.getElementById('resourceTitle').value.trim(); const description=document.getElementById('resourceDescription').value.trim(); const category=document.getElementById('resourceCategory').value;
+      if(!title || (!selectedFile && !editingUrl)) return setMessage('Add a title and choose a file.', 'error');
+      saveBtn.disabled=true; saveBtn.textContent=editingId?'Saving…':'Uploading…';
+      try { const fileUrl=selectedFile?await uploadResourceFile(selectedFile):editingUrl; const payload={title,description,category,file_url:fileUrl,file_name:selectedFile?.name||fileHint.textContent}; const res=await fetch('/api/admin/resources',{method:editingId?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(editingId?{...payload,id:editingId}:payload),credentials:'same-origin'}); if(!res.ok) throw new Error((await res.json()).error||'Could not save resource.'); setMessage(editingId?'✓ Resource updated.':'✓ Resource published.', 'success'); resetResourceForm(); loadResources(); } catch(err) { setMessage('✗ '+(err.message||'Could not save resource.'),'error'); saveBtn.disabled=false; saveBtn.textContent=editingId?'Save resource changes':'Upload & publish resource'; }
+    });
+    loadResources();
+  })();
 
   // ── Executives management ───────────────────────────────────────────────────
   const EXEC_CATEGORY_LABELS = {

@@ -44,8 +44,11 @@
     --shadow-hover: 0 30px 60px rgba(0,0,0,0.65);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  html { scroll-behavior: smooth; }
-  body { font-family: var(--font-body); background: var(--paper); color: var(--ink); overflow-x:hidden; transition: background .25s ease, color .25s ease; }
+  html { scroll-behavior: smooth; width:100%; max-width:100%; overflow-x:clip; }
+  body { font-family: var(--font-body); background: var(--paper); color: var(--ink); overflow-x:clip; width:100%; max-width:100%; transition: background .25s ease, color .25s ease; }
+  main, section, header, footer, .hero-inner, .zone-split, .zone-main, .field-inner, .event-grid { width:100%; max-width:100%; min-width:0; }
+  .gallery-row, .school-ticker, .event-grid { overflow-x:auto; }
+
   a { text-decoration:none; color:inherit; }
   ul { list-style:none; }
   ::selection { background: var(--brand-blue-light); color: #fff; }
@@ -138,7 +141,7 @@
   }
   .hero-flagbar { position:absolute; top:0; left:0; right:0; height:5px; display:flex; z-index:3; }
   .hero-flagbar span { flex:1; }
-  .hero-inner { max-width:1180px; margin:0 auto; position:relative; z-index:2; padding:60px 0; }
+  .hero-inner { width:100%; max-width:1180px; min-width:0; margin:0 auto; position:relative; z-index:2; padding:60px 0; }
   .hero-eyebrow {
     display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700;
     letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,0.92); margin-bottom:22px;
@@ -225,7 +228,7 @@
   .zone-stat-row .zone-stat b { font-family:var(--font-display); font-size:1.7rem; font-weight:650; display:block; }
   .zone-stat-row .zone-stat span { display:block; font-size:10.5px; text-transform:uppercase; letter-spacing:.6px; opacity:.8; margin-top:3px; }
 
-  .zone-main { padding:56px 6% 64px 5%; }
+  .zone-main { padding:56px 6% 64px 5%; min-width:0; overflow-x:clip; }
   .zone-subhead {
     font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px;
     color:var(--zc-deep); margin:0 0 18px; display:flex; align-items:center; gap:12px;
@@ -299,7 +302,7 @@
 
   /* ===== WDS / LG ===== */
   .field-section { background:var(--paper-2); padding:96px 6%; border-top:1px solid var(--line); }
-  .field-inner { max-width:1180px; margin:0 auto; }
+  .field-inner { width:100%; max-width:1180px; min-width:0; margin:0 auto; }
   .field-head { max-width:640px; margin-bottom:48px; }
   .field-head .tag { display:inline-block; font-size:11.5px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--fc-deep); margin-bottom:12px; }
   .field-head h2 { font-family:var(--font-display); font-weight:650; font-size:clamp(1.7rem,3.2vw,2.4rem); margin-bottom:14px; }

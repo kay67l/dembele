@@ -8,15 +8,15 @@
   <style>
     :root{--navy:#102a6b;--blue:#1d4ed8;--red:#dc2626;--ink:#111d3d;--muted:#64748b;--paper:#f6f8fc;--line:rgba(16,42,107,.13)}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth}
-    body{background:var(--paper);color:var(--ink);font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;overflow-x:hidden}
+    html{scroll-behavior:smooth;width:100%;max-width:100%;overflow-x:clip}
+    body{background:var(--paper);color:var(--ink);font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;overflow-x:clip;width:100%;max-width:100%}
     body::before{content:'';position:fixed;inset:0;z-index:-1;opacity:.035;pointer-events:none;background-image:radial-gradient(#102a6b .7px,transparent .7px);background-size:13px 13px}
     a{color:inherit;text-decoration:none}
     .post-nav{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:24px;padding:14px clamp(20px,6vw,96px);background:rgba(246,248,252,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
     .nav-brand{display:flex;align-items:center;gap:11px;color:var(--navy);font-size:13px;font-weight:900;letter-spacing:.2px}
     .nav-mark{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,var(--blue),var(--navy));color:#fff;font-size:9px;letter-spacing:.5px;box-shadow:0 8px 18px rgba(29,78,216,.24)}
     .nav-back{display:inline-flex;align-items:center;gap:8px;color:var(--red);font-size:12px;font-weight:800}
-    .post-main{max-width:1480px;margin:0 auto;padding:clamp(60px,9vw,130px) clamp(20px,6vw,96px) 100px}
+    .post-main{width:100%;max-width:1480px;margin:0 auto;padding:clamp(60px,9vw,130px) clamp(20px,6vw,96px) 100px}
     .post-intro{text-align:center;max-width:1120px;margin:0 auto}
     .post-kicker{display:inline-flex;align-items:center;gap:10px;color:var(--red);font-size:10px;font-weight:900;letter-spacing:2.3px;text-transform:uppercase;margin-bottom:20px}
     .post-kicker::before,.post-kicker::after{content:'';width:28px;height:2px;border-radius:99px;background:linear-gradient(90deg,var(--red),var(--blue))}
