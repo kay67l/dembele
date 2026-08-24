@@ -4,120 +4,106 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Loading… — ARSRC</title>
-  <!-- Open Graph — static fallback for social sharing (full values set by JS) -->
-  <meta property="og:site_name" content="Ashanti Regional Students' Representative Council">
-  <meta property="og:type" content="article">
-  <meta name="description" content="News and updates from the Ashanti Regional Students Representative Council.">
-  <meta property="og:image" content="ar.png">
+  <meta name="description" content="News, magazines, and stories from the Ashanti Regional Students' Representative Council.">
   <style>
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif; background:#060c1f; color:#eef2ff; min-height:100vh; overflow-x:hidden; }
-    body::before { content:''; position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:.035; mix-blend-mode:overlay; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-    nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:16px 6%; display:flex; align-items:center; justify-content:space-between; background:rgba(6,12,31,0.85); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,0.07); }
-    .nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; }
-    .nav-badge { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#1d4ed8,#102a6b); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; color:white; }
-    .nav-name { font-size:14px; font-weight:800; color:#eef2ff; }
-    .back-btn { font-size:13px; font-weight:700; color:rgba(238,242,255,.6); text-decoration:none; display:flex; align-items:center; gap:6px; transition:color .2s; }
-    .back-btn:hover { color:#3b82f6; }
-    .post-hero { width:100%; height:460px; position:relative; overflow:hidden; margin-top:70px; }
-    .post-hero-img { width:100%; height:100%; object-fit:cover; display:block; }
-    .post-hero-placeholder { width:100%; height:100%; background:linear-gradient(135deg,#102a6b 0%,#1d4ed8 50%,#dc2626 100%); }
-    .post-hero::after { content:''; position:absolute; inset:0; background:linear-gradient(to bottom, rgba(6,12,31,0) 0%, rgba(6,12,31,0.5) 60%, rgba(6,12,31,0.95) 100%); }
-    .post-wrap { max-width:740px; margin:0 auto; padding:0 24px 80px; position:relative; z-index:1; }
-    .post-header { margin-top:-120px; position:relative; z-index:2; margin-bottom:40px; }
-    .post-category { display:inline-block; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; background:rgba(29,78,216,0.3); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); margin-bottom:16px; }
-    .post-title { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:900; line-height:1.2; background:linear-gradient(135deg,#ffffff 30%,#93c5fd 100%); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:20px; }
-    .post-meta { display:flex; flex-wrap:wrap; gap:16px; align-items:center; font-size:13px; color:rgba(238,242,255,0.5); padding-bottom:24px; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:36px; }
-    .post-content { font-size:16px; line-height:1.85; color:rgba(238,242,255,0.82); }
-    .post-content p { margin-bottom:24px; }
-    .post-content p:last-child { margin-bottom:0; }
-    .post-footer { margin-top:56px; padding-top:28px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; }
-    .footer-link { font-size:14px; font-weight:700; color:#3b82f6; text-decoration:none; transition:opacity .2s; }
-    .footer-link:hover { opacity:.75; }
-    .state-screen { min-height:80vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; text-align:center; padding:40px 24px; }
-    .spinner { width:36px; height:36px; border-radius:50%; border:3px solid rgba(59,130,246,0.2); border-top-color:#3b82f6; animation:spin .8s linear infinite; }
-    @keyframes spin { to { transform:rotate(360deg); } }
-    .state-screen p { font-size:14px; color:rgba(238,242,255,.45); }
-    .state-screen h2 { font-size:22px; font-weight:800; color:#eef2ff; }
-    @media (max-width:600px) { .post-hero { height:280px; } .post-header { margin-top:-80px; } }
+    :root{--navy:#102a6b;--blue:#1d4ed8;--red:#dc2626;--ink:#111d3d;--muted:#64748b;--paper:#f6f8fc;--line:rgba(16,42,107,.13)}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--paper);color:var(--ink);font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;z-index:-1;opacity:.035;pointer-events:none;background-image:radial-gradient(#102a6b .7px,transparent .7px);background-size:13px 13px}
+    a{color:inherit;text-decoration:none}
+    .post-nav{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:24px;padding:14px clamp(20px,6vw,96px);background:rgba(246,248,252,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+    .nav-brand{display:flex;align-items:center;gap:11px;color:var(--navy);font-size:13px;font-weight:900;letter-spacing:.2px}
+    .nav-mark{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,var(--blue),var(--navy));color:#fff;font-size:9px;letter-spacing:.5px;box-shadow:0 8px 18px rgba(29,78,216,.24)}
+    .nav-back{display:inline-flex;align-items:center;gap:8px;color:var(--red);font-size:12px;font-weight:800}
+    .post-main{max-width:1240px;margin:0 auto;padding:clamp(60px,9vw,130px) clamp(20px,6vw,96px) 100px}
+    .post-intro{text-align:center;max-width:900px;margin:0 auto}
+    .post-kicker{display:inline-flex;align-items:center;gap:10px;color:var(--red);font-size:10px;font-weight:900;letter-spacing:2.3px;text-transform:uppercase;margin-bottom:20px}
+    .post-kicker::before,.post-kicker::after{content:'';width:28px;height:2px;border-radius:99px;background:linear-gradient(90deg,var(--red),var(--blue))}
+    .post-title{font-family:Georgia,'Times New Roman',serif;color:var(--navy);font-size:clamp(2.7rem,7vw,6.8rem);font-weight:500;line-height:.96;letter-spacing:-.055em;text-wrap:balance}
+    .post-excerpt{max-width:700px;margin:28px auto 0;color:var(--muted);font-size:clamp(1rem,1.6vw,1.18rem);line-height:1.75}
+    .post-meta{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 18px;margin-top:25px;color:#8390a5;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.75px}
+    .post-meta span+span{padding-left:18px;border-left:1px solid var(--line)}
+    .post-hero{height:clamp(300px,49vw,610px);margin:56px auto 74px;position:relative;overflow:hidden;border-radius:26px;background:linear-gradient(135deg,#102a6b,#1d4ed8 54%,#9f1414);box-shadow:0 26px 70px rgba(16,42,107,.2);isolation:isolate}
+    .post-hero-img{width:100%;height:100%;display:block;object-fit:cover}
+    .post-hero::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(130deg,rgba(16,42,107,.08),transparent 44%,rgba(8,18,49,.52))}
+    .post-hero::after{content:'ARSRC\A STUDENT DESK';white-space:pre;position:absolute;z-index:2;right:6%;bottom:7%;color:#fff;text-align:right;font-size:clamp(1rem,2.4vw,2rem);font-weight:900;letter-spacing:3px;line-height:1.05;text-shadow:0 4px 20px rgba(0,0,0,.3)}
+    .post-layout{display:grid;grid-template-columns:190px minmax(0,720px) 190px;gap:38px;justify-content:center;align-items:start}
+    .post-aside{padding-top:12px;border-top:3px solid var(--red);color:var(--muted);font-size:11px;line-height:1.7}
+    .post-aside strong{display:block;color:var(--navy);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:8px}
+    .post-content{font-family:Georgia,'Times New Roman',serif;color:#334155;font-size:clamp(1.08rem,1.4vw,1.22rem);line-height:1.9}
+    .post-content p{margin-bottom:26px}
+    .post-content p:first-child::first-letter{float:left;color:var(--red);font-size:4.8rem;font-weight:700;line-height:.76;padding:9px 10px 0 0}
+    .post-end{padding-top:26px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;font-family:'Segoe UI',sans-serif;line-height:1.6}
+    .post-end a{color:var(--red);font-weight:800}
+    .state-screen{min-height:74vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;padding:40px 20px;text-align:center;color:var(--muted)}
+    .state-screen h2{color:var(--navy);font-family:Georgia,serif;font-size:32px;font-weight:500}
+    .state-screen p{font-size:14px}
+    .state-link{color:var(--red);font-size:13px;font-weight:800}
+    .spinner{width:34px;height:34px;border:3px solid rgba(29,78,216,.16);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:980px){.post-layout{grid-template-columns:minmax(0,720px)}.post-aside{display:none}}
+    @media(max-width:600px){.post-nav{padding:12px 18px}.nav-back{font-size:11px}.post-main{padding:56px 18px 72px}.post-title{font-size:clamp(2.5rem,13vw,4.5rem)}.post-hero{height:280px;margin:42px auto 48px;border-radius:18px}.post-content{font-size:1.05rem;line-height:1.8}.post-meta{gap:8px 12px}.post-meta span+span{padding-left:12px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
   </style>
 </head>
 <body>
-<nav>
-  <a class="nav-brand" href="/"><div class="nav-badge">
-    <img src="assets/images/ar.png"
-         alt="ARSRC Logo"
-         style="width:100%;height:100%;object-fit:contain;">
-</div><span class="nav-name">ARSRC</span></a>
-  <a class="back-btn" href="/#news">← Back to News</a>
-</nav>
+  <nav class="post-nav" aria-label="Article navigation">
+    <a class="nav-brand" href="/"><span class="nav-mark">ARSRC</span><span>Student Desk</span></a>
+    <a class="nav-back" id="backLink" href="/#news">← Back to News</a>
+  </nav>
 
-<div class="state-screen" id="loadingState"><div class="spinner"></div><p>Loading post…</p></div>
-<div class="state-screen" id="errorState" style="display:none;"><h2>Post not found</h2><p>This post may have been removed or the link is incorrect.</p><a class="footer-link" href="/#news">← Browse all news</a></div>
+  <div class="state-screen" id="loadingState"><div class="spinner" aria-hidden="true"></div><p>Loading article…</p></div>
+  <div class="state-screen" id="errorState" style="display:none"><h2>Article not found</h2><p>This article may have been removed or the link is incorrect.</p><a class="state-link" id="errorBackLink" href="/#news">← Browse the latest news</a></div>
 
-<div id="postContent" style="display:none;">
-  <div class="post-hero" id="postHero">
-    <div class="post-hero-placeholder" id="heroPlaceholder"></div>
-  </div>
-  <div class="post-wrap">
-    <div class="post-header">
-      <div class="post-category" id="postCategory"></div>
+  <main class="post-main" id="postContent" hidden>
+    <header class="post-intro">
+      <div class="post-kicker" id="postCategory">ARSRC Stories</div>
       <h1 class="post-title" id="postTitle"></h1>
-      <div class="post-meta">
-        <span>✍️ <span id="postAuthor"></span></span>
-        <span>📅 <span id="postDate"></span></span>
-      </div>
+      <p class="post-excerpt" id="postExcerpt"></p>
+      <div class="post-meta"><span id="postAuthor">ARSRC Council</span><span id="postDate"></span><span id="postFormat">Student-led article</span></div>
+    </header>
+    <div class="post-hero" id="postHero"><span id="heroPlaceholder" aria-hidden="true"></span></div>
+    <div class="post-layout">
+      <aside class="post-aside"><strong>About this article</strong><span id="postAsideText">A publication from the Ashanti Regional Students' Representative Council.</span></aside>
+      <article class="post-content" id="postBody"></article>
+      <aside class="post-aside"><strong>Keep reading</strong><span>Explore more student voices, field notes, and council updates in the ARSRC editorial shelf.</span></aside>
     </div>
-    <div class="post-content" id="postBody"></div>
-    <div class="post-footer">
-      <a class="footer-link" href="/#news">← All news</a>
-      <span style="font-size:12px;color:rgba(238,242,255,.3);">Ashanti Regional SRC</span>
-    </div>
-  </div>
-</div>
+    <div class="post-end"><a id="footerBackLink" href="/#news">← Return to the collection</a></div>
+  </main>
 
-<script>
-(function () {
-  const params = new URLSearchParams(window.location.search);
-  const slug   = params.get('slug');
-  if (!slug) { showError(); return; }
-
-  fetch('/api/post?slug=' + encodeURIComponent(slug))
-    .then(r => r.ok ? r.json() : Promise.reject(r.status))
-    .then(function(d) { renderPost(d.post); })
-    .catch(showError);
-
-  function renderPost(post) {
-    document.title = post.title + ' — ARSRC';
-    var hero = document.getElementById('postHero');
-    if (post.image_url) {
-      var img = document.createElement('img');
-      img.className = 'post-hero-img'; img.alt = post.title; img.src = post.image_url;
-      hero.insertBefore(img, hero.firstChild);
-      document.getElementById('heroPlaceholder').style.display = 'none';
+  <script>
+  (function(){
+    const slug=new URLSearchParams(location.search).get('slug');
+    const seedPosts={
+      'student-leader-field-guide':{title:'What makes a student leader?',category:'Magazine',author:'ARSRC Stories',excerpt:'A practical field guide to listening, showing up, and turning shared concerns into collective action.',content:'Leadership is not only the moment when a name is called. It is the quiet work of listening carefully, making room for another voice, and returning to a shared problem until the group can move forward.\n\nAcross the ARSRC network, student leadership grows through practice: asking better questions, communicating clearly, and choosing responsibility when it would be easier to look away.\n\nThe strongest leaders leave a room with more people feeling capable than when they entered it.',created_at:'2026-08-24T00:00:00Z'},
+      'four-zones-one-voice':{title:'Four zones, one student voice',category:'Story',author:'ARSRC Field Notes',excerpt:'A visual journey through the schools, people, and small rituals that make the network feel like home.',content:'Every zone carries its own rhythm, colors, and traditions. Together they create a regional network that is more than a map of schools. It is a living conversation between students who may be far apart but are working toward the same future.\n\nThe story of ARSRC is found in the small moments: a team arriving early, a debate continuing after the bell, and a new student finding confidence in a room full of peers.',created_at:'2026-08-24T00:00:00Z'},
+      'questions-are-leadership':{title:'Questions are a form of leadership',category:'Story',author:'The Debate Desk',excerpt:'Why the strongest rooms are built by students who ask better questions — and make space for honest answers.',content:'A good question can slow a room down in the best possible way. It can uncover an assumption, invite a quieter perspective, or turn a disagreement into a shared investigation.\n\nFor student leaders, curiosity is not hesitation. It is a discipline: understand the issue, listen for what is missing, and ask what would help everyone take the next step.',created_at:'2026-08-24T00:00:00Z'},
+      'notes-from-the-road-ahead':{title:'Notes from the road ahead',category:'Magazine',author:'ARSRC Letters',excerpt:'Short reflections from students carrying the work forward in their schools, communities, and future careers.',content:'The future is not a single destination. It is built through the habits we practice now: keeping our promises, learning from people unlike ourselves, and leaving systems kinder and more useful than we found them.\n\nThese notes are from students thinking honestly about the road ahead and the kind of leadership they want to carry with them.',created_at:'2026-08-24T00:00:00Z'}
+    };
+    const esc=v=>String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const isEditorial=post=>post.category==='Magazine'||post.category==='Story';
+    function render(post){
+      if(!post){showError();return}
+      const editorial=isEditorial(post), backHref=editorial?'/#magazines':'/#news';
+      document.title=(post.title||'ARSRC')+' — ARSRC';
+      document.getElementById('postCategory').textContent=post.category||'ARSRC Stories';
+      document.getElementById('postTitle').textContent=post.title||'';
+      document.getElementById('postExcerpt').textContent=post.excerpt||'';
+      document.getElementById('postAuthor').textContent=post.author||'ARSRC Council';
+      document.getElementById('postDate').textContent=post.created_at?new Date(post.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'ARSRC editorial';
+      document.getElementById('postFormat').textContent=editorial?(post.category==='Magazine'?'Magazine feature':'Student-led story'):'Council update';
+      document.getElementById('postAsideText').textContent=editorial?'A student-led publication from the ARSRC editorial desk.':'An update from the Ashanti Regional Students’ Representative Council.';
+      const hero=document.getElementById('postHero');
+      if(post.image_url){const img=document.createElement('img');img.className='post-hero-img';img.src=post.image_url;img.alt=post.title||'';hero.prepend(img)}
+      ['backLink','footerBackLink'].forEach(id=>{const el=document.getElementById(id);el.href=backHref;el.textContent=editorial?(id==='backLink'?'← Back to Magazines & Stories':'← Return to Magazines & Stories'):(id==='backLink'?'← Back to News':'← Return to News')});
+      document.getElementById('postBody').innerHTML=String(post.content||'').split(/\n\n+/).filter(p=>p.trim()).map(p=>'<p>'+esc(p.trim()).replace(/\n/g,'<br>')+'</p>').join('');
+      document.getElementById('loadingState').style.display='none';document.getElementById('postContent').hidden=false;
     }
-    var catEl = document.getElementById('postCategory');
-    catEl.textContent = post.category;
-    var catColors = { 'News':'rgba(29,78,216,0.3)', 'Announcement':'rgba(220,38,38,0.3)', 'Achievement':'rgba(5,150,105,0.3)', 'Event':'rgba(109,40,217,0.3)', 'Press Release':'rgba(180,83,9,0.3)' };
-    catEl.style.background = catColors[post.category] || catColors['News'];
-    document.getElementById('postTitle').textContent  = post.title;
-    document.getElementById('postAuthor').textContent = post.author;
-    document.getElementById('postDate').textContent   = new Date(post.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
-    var bodyEl = document.getElementById('postBody');
-    bodyEl.innerHTML = post.content.split(/\n\n+/).filter(function(p){ return p.trim(); }).map(function(p){ return '<p>' + esc(p.trim()) + '</p>'; }).join('');
-    document.getElementById('loadingState').style.display = 'none';
-    document.getElementById('postContent').style.display  = 'block';
-  }
-
-  function showError() {
-    document.getElementById('loadingState').style.display = 'none';
-    document.getElementById('errorState').style.display   = 'flex';
-  }
-
-  function esc(str) {
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-  }
-})();
-</script>
+    function showError(){document.getElementById('loadingState').style.display='none';document.getElementById('errorState').style.display='flex'}
+    if(!slug){showError();return}
+    fetch('/api/post?slug='+encodeURIComponent(slug),{credentials:'same-origin'}).then(r=>r.ok?r.json():Promise.reject(r.status)).then(d=>render(d.post)).catch(()=>render(seedPosts[slug]));
+  })();
+  </script>
 </body>
 </html>

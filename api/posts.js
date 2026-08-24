@@ -25,6 +25,8 @@ module.exports = async function handler(req, res) {
 
   if (editorial) {
     query = query.in('category', ['Magazine', 'Story']);
+  } else if (category === 'news') {
+    query = query.not('category', 'in', '("Magazine","Story")');
   } else if (category) {
     query = query.eq('category', category);
   }

@@ -204,10 +204,11 @@ function downloadFile(fileName) {
     </div>
   `).join('');
 
-  fetch('/api/posts')
+  fetch('/api/posts?category=news')
     .then(r => r.ok ? r.json() : Promise.reject(r.status))
     .then(({ posts }) => {
-      if (!posts || posts.length === 0) {
+      const newsPosts = (posts || []).filter(post => post.category !== 'Magazine' && post.category !== 'Story');
+      if (newsPosts.length === 0) {
         container.innerHTML = `
           <div class="news-empty">
             <p>No posts yet. Check back soon for council updates.</p>
@@ -224,7 +225,7 @@ function downloadFile(fileName) {
         'Press Release':'linear-gradient(135deg, #f59e0b, #b45309)',
       };
 
-      container.innerHTML = posts.map(post => {
+      container.innerHTML = newsPosts.map(post => {
         const gradient = categoryGradients[post.category] || categoryGradients['News'];
         const date = new Date(post.created_at).toLocaleDateString('en-GB', {
           day: 'numeric', month: 'short', year: 'numeric'
