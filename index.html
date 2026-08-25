@@ -947,6 +947,25 @@
   @media (max-width:1100px){#executives .exec-grid{grid-template-columns:repeat(2,minmax(240px,1fr)) !important;max-width:760px;}#executives .exec-photo{height:315px;min-height:315px;}}
   @media (max-width:640px){#executives .exec-grid{grid-template-columns:minmax(0,1fr) !important;max-width:420px;gap:22px;}#executives .exec-card{min-height:460px;}#executives .exec-photo{height:340px;min-height:340px;margin-bottom:62px;}#executives .exec-card h4{font-size:17px;}}
 </style>
+<style>
+  /* Mobile editorial width refinement */
+  @media (max-width: 640px), (pointer: coarse) and (max-width: 900px){
+    #news .news-grid{display:grid !important;grid-template-columns:minmax(0,1fr) !important;gap:18px;width:100%;max-width:620px;margin-left:auto;margin-right:auto;}
+    #news .news-card{width:100% !important;min-width:0 !important;max-width:none !important;}
+    #news .news-card > *{max-width:100%;}
+    #news .news-card img,.news-card .news-image,.news-card .news-thumb{width:100%;max-width:100%;height:auto;min-height:210px;object-fit:cover;}
+    #apec .life-block{width:100%;max-width:680px;margin:0 auto;display:grid !important;grid-template-columns:minmax(0,1fr) !important;gap:30px !important;align-items:stretch !important;}
+    #apec .life-block-text{width:100%;max-width:58ch;margin:0 auto;padding:0 4px;}
+    #apec .life-block-text p{max-width:58ch;width:100%;font-size:15px;line-height:1.78;}
+    #apec .life-block-photo{width:100%;min-height:340px;height:clamp(340px,72vw,460px);max-width:100%;border-radius:18px;order:2;}
+    #apec .life-block-text{order:1;}
+  }
+</style>
+<style>
+  /* Magazine cover resilience: support both legacy image folders used by ARSRC deployments. */
+  #magazineRail .editorial-card:first-child .editorial-thumb{background-color:#102a6b;background-image:linear-gradient(135deg,rgba(29,78,216,.18),rgba(220,38,38,.18)),url('assets/images/5.jpg'),url('images/5.jpg') !important;background-size:cover,cover,cover;background-position:center,center,center;}
+  #magazineRail .editorial-card:first-child .editorial-thumb::before{content:'ARSRC\A MAGAZINE';white-space:pre;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.88);font:900 clamp(20px,4vw,40px)/.9 'Segoe UI',sans-serif;letter-spacing:2px;text-align:center;text-shadow:0 8px 20px rgba(0,0,0,.25);opacity:.16;pointer-events:none;}
+</style>
 </head>
 <body>
 
