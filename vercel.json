@@ -1,10 +1,7 @@
 {
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
-      ]
-    }
+  "version": 2,
+  "rewrites": [
+    { "source": "/api/admin/:path*", "destination": "/api/admin-dispatch?route=:path*" },
+    { "source": "/api/:path*", "destination": "/api/public-dispatch?route=:path*" }
   ]
 }
