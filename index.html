@@ -936,6 +936,17 @@
   .administration-badge{display:inline-flex;align-items:center;gap:9px;margin:0 auto 16px;padding:8px 14px;border-radius:999px;background:linear-gradient(135deg,rgba(220,38,38,.1),rgba(29,78,216,.1));border:1px solid rgba(220,38,38,.22);color:var(--red);font-size:11px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;box-shadow:0 8px 18px rgba(16,42,107,.06)}
   .administration-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px rgba(220,38,38,.1)}
 </style>
+<style>
+  /* Executive portrait-card refinement */
+  #executives .exec-grid{grid-template-columns:repeat(4,minmax(235px,1fr)) !important;gap:24px;align-items:stretch;}
+  #executives .exec-card{min-height:430px;height:100%;display:flex;flex-direction:column;padding-bottom:28px;}
+  #executives .exec-photo{height:305px;min-height:305px;margin-bottom:58px;flex-shrink:0;}
+  #executives .exec-cover-photo{object-fit:cover;object-position:center top;}
+  #executives .exec-card h4{padding:0 18px;line-height:1.25;}
+  #executives .exec-school{line-height:1.5;}
+  @media (max-width:1100px){#executives .exec-grid{grid-template-columns:repeat(2,minmax(240px,1fr)) !important;max-width:760px;}#executives .exec-photo{height:315px;min-height:315px;}}
+  @media (max-width:640px){#executives .exec-grid{grid-template-columns:minmax(0,1fr) !important;max-width:420px;gap:22px;}#executives .exec-card{min-height:460px;}#executives .exec-photo{height:340px;min-height:340px;margin-bottom:62px;}#executives .exec-card h4{font-size:17px;}}
+</style>
 </head>
 <body>
 
