@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard — ARSRC</title>
-  <link rel="icon" type="image/png" href="assets/images/ar.png">
-  <link rel="apple-touch-icon" href="assets/images/ar.png">
+  <link rel="icon" type="image/png" sizes="any" href="/favicon.png?v=2">
+<link rel="shortcut icon" href="/favicon.png?v=2">
+  <link rel="apple-touch-icon" href="/favicon.png?v=2">
   <meta name="robots" content="noindex, nofollow">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -696,7 +697,7 @@
         </div>
 
         <div>
-          <label for="postAuthor">Author(s)</label>
+          <label for="postAuthor">Author</label>
           <input type="text" id="postAuthor" value="ARSRC Council" placeholder="Author name">
         </div>
 
@@ -705,6 +706,7 @@
           <div class="post-msg" id="postMsg"></div>
         </div>
       </div>
+
     </div>
 
     <!-- Manage Resources -->
@@ -1486,14 +1488,14 @@
   const imageUploadStatus = document.getElementById('imageUploadStatus');
   const postCoverImageUrl = document.getElementById('postCoverImageUrl');
 
-  const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB
+  const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
   const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
   function resetImageField() {
     postCoverImageUrl.value = '';
     imagePreviewWrap.style.display = 'none';
     imagePreviewImg.src = '';
-    imageDrop.style.display = 'block';s
+    imageDrop.style.display = 'block';
     imageInput.value = '';
     imageUploadStatus.textContent = '';
     imageUploadStatus.className = 'image-upload-status';
