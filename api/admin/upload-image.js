@@ -53,14 +53,16 @@ module.exports = async function handler(req, res) {
   if (!filename) return res.status(400).json({ error: 'Filename is required.' });
 
   // Restrict to known folders so callers can't write arbitrary paths into the bucket.
-  const ALLOWED_FOLDERS = ['posts', 'executives', 'past-executives', 'engagement'];
+  const ALLOWED_FOLDERS = ['posts', 'executives', 'past-executives', 'engagement', 'resources'];
   const safeFolder = ALLOWED_FOLDERS.includes(folder) ? folder : 'posts';
-
-  // Always store as JPEG — Canvas compression always outputs JPEG
-  const path = `${safeFolder}/${Date.now()}-${crypto.randomBytes(4).toString('hex')}.jpg`;
+  const isResource = safeFolder === 'resources';
+  const bucket = isResource ? 'arsrc-resources' : 'post-images';
+  const originalExt = String(filename).toLowerCase().match(/\.[a-z0-9]{1,8}$/)?.[0] || '';
+  const extension = isResource ? originalExt : '.jpg';
+  const path = `${safeFolder}/${Date.now()}-${crypto.randomBytes(4).toString('hex')}${extension}`;
 
   const { data, error } = await supabase.storage
-    .from('post-images')
+    .from(bucket)
     .createSignedUploadUrl(path);
 
   if (error) {
@@ -70,7 +72,7 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  const publicUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/post-images/${path}`;
+  const publicUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`;
 
   return res.status(200).json({
     signedUrl: data.signedUrl,

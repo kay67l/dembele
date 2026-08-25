@@ -1801,6 +1801,13 @@
     const maxBytes = 20 * 1024 * 1024;
 
     function setMessage(text, state) { msg.textContent = text || ''; msg.className = 'post-msg' + (state ? ' ' + state : ''); }
+    async function readApiResponse(response, fallbackMessage) {
+      const raw = await response.text();
+      let data = null;
+      try { data = raw ? JSON.parse(raw) : {}; } catch { throw new Error(response.status === 404 ? 'Resource API route not found. Deploy /api/admin/resources and /api/admin/upload-image.' : 'The resource API returned HTML instead of JSON. Check the server route or authentication redirect.'); }
+      if (!response.ok) throw new Error(data?.error || fallbackMessage);
+      return data;
+    }
     function resetResourceForm() { editingId = null; editingUrl = ''; selectedFile = null; fileInput.value = ''; document.getElementById('resourceTitle').value = ''; document.getElementById('resourceDescription').value = ''; document.getElementById('resourceCategory').value = 'Policy'; fileHint.innerHTML = '<strong>Choose a file</strong> or drag it here'; saveBtn.textContent = 'Upload & publish resource'; saveBtn.disabled = true; cancelBtn.style.display = 'none'; setMessage(''); }
     function chooseFile(file) {
       if (!file) return;
@@ -1809,16 +1816,15 @@
       selectedFile = file; fileHint.textContent = file.name; saveBtn.disabled = false; setMessage('File ready to upload.', 'success');
     }
     async function uploadResourceFile(file) {
-      const urlRes = await fetch('/api/admin/upload-image', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ filename:file.name, folder:'resources' }), credentials:'same-origin' });
-      const urlData = await urlRes.json();
-      if (!urlRes.ok) throw new Error(urlData.error || 'Could not get upload URL.');
+      const urlRes = await fetch('/api/admin/upload-image', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ filename:file.name, folder:'resources' }), credentials:'same-origin' });
+      const urlData = await readApiResponse(urlRes, 'Could not get upload URL.');
       const uploaded = await fetch(urlData.signedUrl, { method:'PUT', headers:{'Content-Type':file.type || 'application/octet-stream'}, body:file });
       if (!uploaded.ok) throw new Error('Resource upload failed.');
       return urlData.publicUrl;
     }
     async function loadResources() {
-      try { const res = await fetch('/api/admin/resources?_=' + Date.now(), { credentials:'same-origin' }); if (!res.ok) throw new Error(); const data = await res.json(); renderResources(data.resources || []); }
-      catch { list.innerHTML = '<div class="empty-state">Resource management API is not connected yet.</div>'; badge.textContent = 'Unavailable'; }
+      try { const res = await fetch('/api/admin/resources?_=' + Date.now(), { credentials:'same-origin', headers:{'Accept':'application/json'} }); const data = await readApiResponse(res, 'Could not load resources.'); renderResources(data.resources || []); }
+      catch (err) { list.innerHTML = '<div class="empty-state">' + esc(err.message || 'Resource management API is not connected yet.') + '</div>'; badge.textContent = 'Unavailable'; }
     }
     function renderResources(resources) {
       badge.textContent = `${resources.length} total`;
@@ -1828,7 +1834,7 @@
       list.querySelectorAll('[data-resource-delete]').forEach(btn => btn.addEventListener('click', () => deleteResource(btn.dataset.resourceDelete)));
     }
     function startEdit(resource) { if (!resource) return; editingId=resource.id; editingUrl=resource.file_url; document.getElementById('resourceTitle').value=resource.title||''; document.getElementById('resourceCategory').value=resource.category||'Policy'; document.getElementById('resourceDescription').value=resource.description||''; fileHint.textContent=resource.file_name||'Existing file retained'; saveBtn.textContent='Save resource changes'; saveBtn.disabled=false; cancelBtn.style.display='inline-block'; document.getElementById('resourcesPanel').scrollIntoView({behavior:'smooth',block:'start'}); }
-    async function deleteResource(id) { if (!confirm('Delete this resource?')) return; try { const res=await fetch('/api/admin/resources',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id}),credentials:'same-origin'}); if(!res.ok) throw new Error(); loadResources(); } catch { setMessage('Could not delete resource.', 'error'); } }
+    async function deleteResource(id) { if (!confirm('Delete this resource?')) return; try { const res=await fetch('/api/admin/resources',{method:'DELETE',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({id}),credentials:'same-origin'}); await readApiResponse(res, 'Could not delete resource.'); loadResources(); } catch (err) { setMessage(err.message || 'Could not delete resource.', 'error'); } }
     fileDrop?.addEventListener('click', () => fileInput.click()); fileInput?.addEventListener('change', e => chooseFile(e.target.files[0]));
     ['dragenter','dragover'].forEach(type => fileDrop?.addEventListener(type, e => { e.preventDefault(); fileDrop.classList.add('dragover'); }));
     ['dragleave','drop'].forEach(type => fileDrop?.addEventListener(type, e => { e.preventDefault(); fileDrop.classList.remove('dragover'); }));
@@ -1838,7 +1844,7 @@
       const title=document.getElementById('resourceTitle').value.trim(); const description=document.getElementById('resourceDescription').value.trim(); const category=document.getElementById('resourceCategory').value;
       if(!title || (!selectedFile && !editingUrl)) return setMessage('Add a title and choose a file.', 'error');
       saveBtn.disabled=true; saveBtn.textContent=editingId?'Saving…':'Uploading…';
-      try { const fileUrl=selectedFile?await uploadResourceFile(selectedFile):editingUrl; const payload={title,description,category,file_url:fileUrl,file_name:selectedFile?.name||fileHint.textContent}; const res=await fetch('/api/admin/resources',{method:editingId?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(editingId?{...payload,id:editingId}:payload),credentials:'same-origin'}); if(!res.ok) throw new Error((await res.json()).error||'Could not save resource.'); setMessage(editingId?'✓ Resource updated.':'✓ Resource published.', 'success'); resetResourceForm(); loadResources(); } catch(err) { setMessage('✗ '+(err.message||'Could not save resource.'),'error'); saveBtn.disabled=false; saveBtn.textContent=editingId?'Save resource changes':'Upload & publish resource'; }
+      try { const fileUrl=selectedFile?await uploadResourceFile(selectedFile):editingUrl; const payload={title,description,category,file_url:fileUrl,file_name:selectedFile?.name||fileHint.textContent,file_type:selectedFile?.type||null,file_size:selectedFile?.size||null}; const res=await fetch('/api/admin/resources',{method:editingId?'PATCH':'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(editingId?{...payload,id:editingId}:payload),credentials:'same-origin'}); await readApiResponse(res, 'Could not save resource.'); setMessage(editingId?'✓ Resource updated.':'✓ Resource published.', 'success'); resetResourceForm(); loadResources(); } catch(err) { setMessage('✗ '+(err.message||'Could not save resource.'),'error'); saveBtn.disabled=false; saveBtn.textContent=editingId?'Save resource changes':'Upload & publish resource'; }
     });
     loadResources();
   })();
