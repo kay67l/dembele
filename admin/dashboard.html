@@ -1486,14 +1486,14 @@
   const imageUploadStatus = document.getElementById('imageUploadStatus');
   const postCoverImageUrl = document.getElementById('postCoverImageUrl');
 
-  const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
+  const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB
   const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
   function resetImageField() {
     postCoverImageUrl.value = '';
     imagePreviewWrap.style.display = 'none';
     imagePreviewImg.src = '';
-    imageDrop.style.display = 'block';
+    imageDrop.style.display = 'block';s
     imageInput.value = '';
     imageUploadStatus.textContent = '';
     imageUploadStatus.className = 'image-upload-status';
