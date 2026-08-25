@@ -916,6 +916,12 @@
     .about-illustration { aspect-ratio:1/1 !important; }
     #programmes .life-stats { grid-template-columns:1fr !important; }
   }
+  .miss-src-thumb{position:relative;overflow:hidden;background:radial-gradient(circle at 72% 24%,rgba(255,255,255,.38),transparent 16%),linear-gradient(135deg,#7c163f 0%,#b91c4d 43%,#f59e0b 100%);}
+  .miss-src-thumb::before{content:'MISS\\A SRC';white-space:pre;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font:900 clamp(28px,5vw,62px)/.85 'Segoe UI',sans-serif;letter-spacing:3px;text-align:center;transform:rotate(-8deg);text-shadow:0 10px 22px rgba(70,7,33,.3);}
+  .miss-src-thumb::after{content:'ASHANTI';position:absolute;right:18px;bottom:14px;color:rgba(255,255,255,.82);font:900 10px/1 'Segoe UI',sans-serif;letter-spacing:2px;}
+  .miss-src-card{border-color:rgba(185,28,77,.25);}
+  .miss-src-card .story-link{display:inline-flex;align-items:center;gap:7px;margin-top:16px;color:#b91c4d;font-size:11px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;}
+  .miss-src-card .story-link::after{content:'↗';font-size:15px;}
 </style>
 </head>
 <body>
@@ -1316,6 +1322,16 @@
           <h5>Hand-Over &amp; Awards Ceremony</h5>
           <p>Honouring outgoing executives for their service and formally welcoming incoming leadership.</p>
           <span class="story-meta">Closing every term</span>
+        </div>
+      </div>
+      <div class="story-card miss-src-card">
+        <div class="story-thumb miss-src-thumb" aria-label="Miss SRC Ashanti programme graphic"></div>
+        <div class="story-body">
+          <div class="eyebrow-row"><span class="eb">Student voice</span><span class="eb-bar"></span><span class="eb muted">Programme</span></div>
+          <h5>Miss SRC Ashanti</h5>
+          <p>A platform for confidence, service, talent, and student representation across the Ashanti Region.</p>
+          <span class="story-meta">Follow official channels for auditions, voting, qualifiers, and finale updates.</span>
+          <a class="story-link" href="https://www.instagram.com/ashsrc/" target="_blank" rel="noopener">Follow @ashsrc</a>
         </div>
       </div>
     </div>
