@@ -363,6 +363,16 @@
     .resource-admin-item span { display:block; color:rgba(238,242,255,.42); font-size:11px; margin-top:4px; }
     .resource-admin-actions { display:flex; gap:7px; flex-shrink:0; }
     .resource-cancel-btn { margin-left:8px; padding:10px 14px; border:1px solid rgba(255,255,255,.14); border-radius:8px; background:transparent; color:rgba(238,242,255,.64); cursor:pointer; font:inherit; font-size:12px; font-weight:700; }
+    .admin-setting-card{margin-bottom:20px;padding:20px 22px;border:1px solid rgba(147,197,253,.16);border-radius:14px;background:linear-gradient(135deg,rgba(29,78,216,.11),rgba(220,38,38,.07));}
+    .admin-setting-card h3{font-size:14px;font-weight:800;color:#eef2ff;margin-bottom:6px;}
+    .admin-setting-card p{font-size:12px;line-height:1.6;color:rgba(238,242,255,.48);margin-bottom:14px;}
+    .admin-setting-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end;}
+    .admin-setting-row input{width:100%;}
+    .admin-setting-btn{padding:11px 16px;border:0;border-radius:8px;background:linear-gradient(135deg,#dc2626,#9f1414);color:#fff;font:700 12px 'Segoe UI',sans-serif;cursor:pointer;white-space:nowrap;}
+    .admin-setting-btn:disabled{opacity:.55;cursor:wait;}
+    .setting-msg{margin-top:9px;font-size:12px;font-weight:700;color:rgba(238,242,255,.5);}
+    .setting-msg.success{color:#34d399;}.setting-msg.error{color:#fca5a5;}
+    @media(max-width:700px){.admin-setting-row{grid-template-columns:1fr}.admin-setting-btn{width:100%}.admin-setting-card{padding:18px}}
     @media (max-width:700px) { .inline-image-grid { grid-template-columns:1fr; } .resource-admin-item { align-items:flex-start; flex-direction:column; } .resource-admin-actions { width:100%; } }
 
     .delete-btn {
@@ -723,6 +733,15 @@
     <div class="panel create-post-section" id="executivesPanel">
       <div class="panel-head">
         <h2>👥 Manage Executives</h2>
+      </div>
+      <div class="admin-setting-card" id="administrationSetting">
+        <h3>Current administration</h3>
+        <p>This label appears above the public Executives section. Update it here when a new executive batch takes office.</p>
+        <div class="admin-setting-row">
+          <div><label for="administrationInput">Administration label</label><input type="text" id="administrationInput" value="29th Administration" maxlength="80" placeholder="e.g. 30th Administration"></div>
+          <button type="button" class="admin-setting-btn" id="saveAdministrationBtn">Save administration</button>
+        </div>
+        <div class="setting-msg" id="administrationMsg" role="status"></div>
       </div>
 
       <div id="execEditBanner" style="display:none; margin-bottom:14px; padding:10px 14px; background:rgba(59,130,246,.12); border:1px solid rgba(59,130,246,.3); border-radius:10px; font-size:13px; color:#93c5fd; display:flex; align-items:center; justify-content:space-between; gap:10px;">
@@ -3030,6 +3049,32 @@
     finally { this.disabled = false; this.textContent = engEditingEventId ? 'Save Changes' : 'Add Event'; }
   });
 
+  const administrationInput = document.getElementById('administrationInput');
+  const saveAdministrationBtn = document.getElementById('saveAdministrationBtn');
+  const administrationMsg = document.getElementById('administrationMsg');
+  function showAdministrationMsg(text, kind=''){ if(!administrationMsg) return; administrationMsg.textContent=text; administrationMsg.className='setting-msg'+(kind?' '+kind:''); }
+  async function loadAdministrationSetting(){
+    try{
+      const res=await fetch('/api/settings?key=current_administration',{credentials:'same-origin'});
+      if(!res.ok) throw new Error('Unable to load setting');
+      const data=await res.json();
+      const value=String(data.value||data.setting?.value||'').trim();
+      if(value && administrationInput) administrationInput.value=value;
+    }catch(e){ showAdministrationMsg('Using the default: 29th Administration.'); }
+  }
+  if(saveAdministrationBtn) saveAdministrationBtn.addEventListener('click', async function(){
+    const value=administrationInput.value.trim();
+    if(!value){ showAdministrationMsg('Enter an administration label first.','error'); administrationInput.focus(); return; }
+    saveAdministrationBtn.disabled=true; saveAdministrationBtn.textContent='Saving…'; showAdministrationMsg('');
+    try{
+      const res=await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({key:'current_administration',value})});
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok) throw new Error(data.error||'Could not save setting');
+      showAdministrationMsg('✓ Administration label saved.','success');
+    }catch(e){ showAdministrationMsg('✗ '+e.message+'. Add the settings API route before using this control.','error'); }
+    finally{ saveAdministrationBtn.disabled=false; saveAdministrationBtn.textContent='Save administration'; }
+  });
+  loadAdministrationSetting();
   loadEngagement();
 </script>
 </body>

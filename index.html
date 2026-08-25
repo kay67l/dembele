@@ -933,6 +933,8 @@
   .miss-src-card{border-color:rgba(185,28,77,.25);}
   .miss-src-card .story-link{display:inline-flex;align-items:center;gap:7px;margin-top:16px;color:#b91c4d;font-size:11px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;}
   .miss-src-card .story-link::after{content:'↗';font-size:15px;}
+  .administration-badge{display:inline-flex;align-items:center;gap:9px;margin:0 auto 16px;padding:8px 14px;border-radius:999px;background:linear-gradient(135deg,rgba(220,38,38,.1),rgba(29,78,216,.1));border:1px solid rgba(220,38,38,.22);color:var(--red);font-size:11px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;box-shadow:0 8px 18px rgba(16,42,107,.06)}
+  .administration-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px rgba(220,38,38,.1)}
 </style>
 </head>
 <body>
@@ -1146,6 +1148,7 @@
 <section id="executives">
   <div class="section-head reveal">
     <span class="section-tag">Leadership</span>
+    <div class="administration-badge" id="currentAdministration" aria-label="Current administration">29th Administration</div>
     <h2>Meet Our Executives</h2>
     <p>Around 50 students serve in regional-level leadership roles defined by the constitution — across the Regional Executive Committee, the four Zonal Executive Committees, the Literary &amp; Editorial Committees, the Writers &amp; Debaters Society, and the Permanent Secretariat. Browse by body below, and drop in real names once the current term is announced.</p>
     <a href="/past-executives.html" style="display:inline-block; margin-top:10px; font-size:13px; font-weight:700; color:#3b82f6; text-decoration:none;">View Past Executives →</a>
@@ -1621,6 +1624,16 @@
     rail.addEventListener('scroll', update, { passive: true });
     update();
   })();
+</script>
+<script>
+(function(){
+  const badge=document.getElementById('currentAdministration');
+  if(!badge) return;
+  fetch('/api/settings?key=current_administration',{credentials:'same-origin'})
+    .then(r=>r.ok?r.json():Promise.reject(new Error('settings unavailable')))
+    .then(data=>{ const value=String(data.value||data.setting?.value||'').trim(); if(value) badge.textContent=value; })
+    .catch(()=>{});
+})();
 </script>
 </body>
 </html>
