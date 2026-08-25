@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard.html
+Disallow: /api/admin/
+Disallow: /api/admin-dispatch
+Sitemap: https://ashsrc.vercel.app/sitemap.xml

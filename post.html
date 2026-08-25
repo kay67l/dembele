@@ -8,6 +8,13 @@
 <link rel="shortcut icon" href="/favicon.png?v=2">
   <link rel="apple-touch-icon" href="/favicon.png?v=2">
   <meta name="description" content="News, magazines, and stories from the Ashanti Regional Students' Representative Council.">
+  <link rel="canonical" id="postCanonical" href="https://ashsrc.vercel.app/post.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" id="postOgTitle" content="ARSRC News, Magazines &amp; Stories">
+  <meta property="og:description" id="postOgDescription" content="News, magazines, and stories from the Ashanti Regional Students' Representative Council.">
+  <meta property="og:url" id="postOgUrl" content="https://ashsrc.vercel.app/post.html">
+  <meta property="og:image" id="postOgImage" content="https://ashsrc.vercel.app/favicon.png">
+  <meta name="twitter:card" content="summary_large_image">
   <style>
     .reading-progress{position:fixed;top:0;left:0;width:100%;height:4px;z-index:40;background:rgba(16,42,107,.12);pointer-events:none}.reading-progress span{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--red),var(--blue));transition:width .08s linear}
     :root{--navy:#102a6b;--blue:#1d4ed8;--red:#dc2626;--ink:#111d3d;--muted:#64748b;--paper:#f6f8fc;--line:rgba(16,42,107,.13)}
@@ -95,10 +102,10 @@
   (function(){
     const slug=new URLSearchParams(location.search).get('slug');
     const seedPosts={
-      'student-leader-field-guide':{title:'What makes a student leader?',category:'Magazine',author:'ARSRC Stories',excerpt:'A practical field guide to listening, showing up, and turning shared concerns into collective action.',content:'Leadership is not only the moment when a name is called. It is the quiet work of listening carefully, making room for another voice, and returning to a shared problem until the group can move forward.\n\nAcross the ARSRC network, student leadership grows through practice: asking better questions, communicating clearly, and choosing responsibility when it would be easier to look away.\n\nThe strongest leaders leave a room with more people feeling capable than when they entered it.',created_at:'2026-08-24T00:00:00Z'},
-      'four-zones-one-voice':{title:'Four zones, one student voice',category:'Story',author:'ARSRC Field Notes',excerpt:'A visual journey through the schools, people, and small rituals that make the network feel like home.',content:'Every zone carries its own rhythm, colors, and traditions. Together they create a regional network that is more than a map of schools. It is a living conversation between students who may be far apart but are working toward the same future.\n\nThe story of ARSRC is found in the small moments: a team arriving early, a debate continuing after the bell, and a new student finding confidence in a room full of peers.',created_at:'2026-08-24T00:00:00Z'},
-      'questions-are-leadership':{title:'Questions are a form of leadership',category:'Story',author:'The Debate Desk',excerpt:'Why the strongest rooms are built by students who ask better questions — and make space for honest answers.',content:'A good question can slow a room down in the best possible way. It can uncover an assumption, invite a quieter perspective, or turn a disagreement into a shared investigation.\n\nFor student leaders, curiosity is not hesitation. It is a discipline: understand the issue, listen for what is missing, and ask what would help everyone take the next step.',created_at:'2026-08-24T00:00:00Z'},
-      'notes-from-the-road-ahead':{title:'Notes from the road ahead',category:'Magazine',author:'ARSRC Letters',excerpt:'Short reflections from students carrying the work forward in their schools, communities, and future careers.',content:'The future is not a single destination. It is built through the habits we practice now: keeping our promises, learning from people unlike ourselves, and leaving systems kinder and more useful than we found them.\n\nThese notes are from students thinking honestly about the road ahead and the kind of leadership they want to carry with them.',created_at:'2026-08-24T00:00:00Z'}
+      'student-leader-field-guide':{title:'What makes a student leader?',category:'Magazine',author:'ARSRC Stories',excerpt:'A practical field guide to listening, showing up, and turning shared concerns into collective action.',content:'Leadership is not only the moment when a name is called. It is the quiet work of listening carefully, making room for another voice, and returning to a shared problem until the group can move forward.\\n\\nAcross the ARSRC network, student leadership grows through practice: asking better questions, communicating clearly, and choosing responsibility when it would be easier to look away.\\n\\nThe strongest leaders leave a room with more people feeling capable than when they entered it.',created_at:'2026-08-24T00:00:00Z'},
+      'four-zones-one-voice':{title:'Four zones, one student voice',category:'Story',author:'ARSRC Field Notes',excerpt:'A visual journey through the schools, people, and small rituals that make the network feel like home.',content:'Every zone carries its own rhythm, colors, and traditions. Together they create a regional network that is more than a map of schools. It is a living conversation between students who may be far apart but are working toward the same future.\\n\\nThe story of ARSRC is found in the small moments: a team arriving early, a debate continuing after the bell, and a new student finding confidence in a room full of peers.',created_at:'2026-08-24T00:00:00Z'},
+      'questions-are-leadership':{title:'Questions are a form of leadership',category:'Story',author:'The Debate Desk',excerpt:'Why the strongest rooms are built by students who ask better questions — and make space for honest answers.',content:'A good question can slow a room down in the best possible way. It can uncover an assumption, invite a quieter perspective, or turn a disagreement into a shared investigation.\\n\\nFor student leaders, curiosity is not hesitation. It is a discipline: understand the issue, listen for what is missing, and ask what would help everyone take the next step.',created_at:'2026-08-24T00:00:00Z'},
+      'notes-from-the-road-ahead':{title:'Notes from the road ahead',category:'Magazine',author:'ARSRC Letters',excerpt:'Short reflections from students carrying the work forward in their schools, communities, and future careers.',content:'The future is not a single destination. It is built through the habits we practice now: keeping our promises, learning from people unlike ourselves, and leaving systems kinder and more useful than we found them.\\n\\nThese notes are from students thinking honestly about the road ahead and the kind of leadership they want to carry with them.',created_at:'2026-08-24T00:00:00Z'}
     };
     const esc=v=>String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const isEditorial=post=>post.category==='Magazine'||post.category==='Story';
@@ -121,6 +128,14 @@
       if(!post){showError();return}
       const editorial=isEditorial(post), backHref=editorial?'/#magazines':'/#news';
       document.title=(post.title||'ARSRC')+' — ARSRC';
+      const canonicalUrl='https://ashsrc.vercel.app/post.html?slug='+encodeURIComponent(post.slug||slug);
+      const metaDescription=post.excerpt||"News, magazines, and stories from the Ashanti Regional Students' Representative Council.";
+      document.querySelector('meta[name="description"]').setAttribute('content',metaDescription);
+      document.getElementById('postCanonical').setAttribute('href',canonicalUrl);
+      document.getElementById('postOgTitle').setAttribute('content',document.title);
+      document.getElementById('postOgDescription').setAttribute('content',metaDescription);
+      document.getElementById('postOgUrl').setAttribute('content',canonicalUrl);
+      if(post.image_url) document.getElementById('postOgImage').setAttribute('content',post.image_url);
       document.getElementById('postCategory').textContent=post.category||'ARSRC Stories';
       document.getElementById('postTitle').textContent=post.title||'';
       document.getElementById('postExcerpt').textContent=post.excerpt||'';
